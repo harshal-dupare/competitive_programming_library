@@ -22,6 +22,54 @@ using namespace std;
 #define reply(a) cout << a << endl;
 
 template <typename I>
+class graph;
+
+template <typename I>
+class generator
+{
+public:
+    void line(I n, graph<I> &G)
+    {
+    }
+
+    void complete(I n, graph<I> &G)
+    {
+    }
+
+    void cycle(I n, graph<I> &G)
+    {
+    }
+
+    void k_regular(I k, I n, graph<I> &G)
+    {
+    }
+
+    void hypercube(I n, graph<I> &G)
+    {
+    }
+
+    void octahedral(I n, graph<I> &G)
+    {
+        // scope to optimize
+        this->complete(2, G);
+        graph<I> K2;
+        for (I i = 1; i < n; i++)
+        {
+            G = G + K2;
+        }
+    }
+
+    void complete_biparted(I n, I m, graph<I> &G)
+    {
+    }
+
+    void perterson(graph<I> &G)
+    {
+    }
+
+}
+
+template <typename I>
 class graph
 {
 public:
@@ -48,18 +96,20 @@ public:
 
     // primary data
     I n;
+    I edge_count;
     vector<vector<I>> adjl;
     vector<I> deg;
 
     // secondary data
-    I inf = HUGE_VALL;
+    I inf = 1e+12;
     I null_value = 0;
     vector<vector<I>> adjm;
-    unordered_map<I, I> edge_weight;
 
+    graph();
     graph(I n)
     {
         this->n = n;
+        this->edge_count = 0;
         this->adjl = vector<vector<I>>(n, vector<I>(0));
         this->deg = vector<I>(n, 0);
     }
@@ -70,29 +120,7 @@ public:
         this->adjl[y].push_back(x);
         this->deg[x]++;
         this->deg[y]++;
-    }
-
-    void add_weighted_edge(I x, I y, I w)
-    {
-        this->adjl[x].push_back(y);
-        this->adjl[y].push_back(x);
-        this->deg[x]++;
-        this->deg[y]++;
-        this->edge_weight[x * n + y] = w;
-    }
-
-
-    void set_adjWM()
-    {
-        this->adjm.assign(n, vector<I>(n, this->inf));
-        for (I i = 0; i < n; i++)
-        {
-            adjm[i][i] = this->null_value;
-            for (auto j : this->adjl[i])
-            {
-                adjm[i][j] = edge_weight[i * n + j];
-            }
-        }
+        this->edge_count++;
     }
 
     void set_adjM()
@@ -118,19 +146,8 @@ public:
             this->adjl[x.first].push_back(this->n);
             this->deg[x.first]++;
         }
-        if (using_mtrix)
-        {
-            for (auto x : adj)
-            {
-                this->adjl[x.first].push_back(this->n);
-                this->deg[x.first]++;
-                this->adjm[make_pair(x.first, this->n)] = x.second;
-                this->adjm[make_pair(this->n, x.first)] = x.second;
-            }
-        }
         this->n++;
     }
-
 
     void bfs(I x, vector<I> &level, vector<bool> &visted)
     {
@@ -159,8 +176,8 @@ public:
     void dfs(I x, vector<I> &order, vector<I> &parent, vector<bool> &visted)
     {
         stack<I> snow;
-
         snow.push(x);
+
         I ct = 0;
         parent[x] = x;
 
@@ -184,7 +201,6 @@ public:
             }
         }
     }
-
 
     I connected_components(vector<I> &component)
     {
@@ -221,95 +237,6 @@ public:
         return c;
     }
 
-    // need to complete
-    void bridges(vector<pair<I, I>> &bridges)
-    {
-        stack<I> st;
-        stack<I> back_vertex;
-        vector<I> processed(this->n, -1);
-        st.push(0);
-
-        while (!st.empty())
-        {
-            I x = st.top();
-            st.pop();
-            processed[x] = 1;
-            for (auto y : this->adj[x])
-            {
-                if (processed[y] == 1)
-                {
-                }
-                else if (processed[y] == 0)
-                {
-                }
-                else
-                {
-                    st.push(y);
-                    processed[y] = 0;
-                }
-            }
-        }
-    }
-
-
-    // O(Elog(E)) time
-    void dijkstra(I x, vector<I> &dist, vector<I> &prev)
-    {
-        dist.assign(this->n, 1000007);
-        vector<bool> relaxed(this->n, false);
-        dist[x] = 0;
-        prev.assign(this->n, 0);
-        prev[x] = x;
-        // value and index
-        priority_queue<pair<I, I>> q;
-        q.push(make_pair(0, x));
-
-        while (!q.empty())
-        {
-            auto vw = q.top();
-            I v = vw.second;
-            I w = (vw.first) * (-1);
-            q.pop();
-            if (relaxed[v])
-            {
-                continue;
-            }
-            else
-            {
-                relaxed[v] = true;
-            }
-
-            for (auto nbr : this->adjl[v])
-            {
-                I weg = adjm[make_pair(v, nbr)];
-                if ((!relaxed[nbr]) && dist[v] + w < dist[nbr])
-                {
-                    dist[nbr] = dist[v] + w;
-                    prev[nbr] = v;
-                    q.push(make_pair((-1) * dist[nbr], nbr));
-                }
-            }
-        }
-    }
-
-    // need to complete
-    void floyd_warshall(vector<vector<I>> &d)
-    {
-        d = this->adjm;
-        for (I k=0;k<n;k++)
-        {
-            for(I i=0;i<n;i++)
-            {
-                for(I j=0;j<n;j++)
-                {
-                    d[i][j] = min(d[i][j],d[i][k]+d[k][j]);
-                }
-            }
-        }
-    }
-
-
-
     bool is_biparted(vector<I> &partition)
     {
         bool poss = true;
@@ -342,22 +269,90 @@ public:
         return poss;
     }
 
-    // need to complete
-    void prims()
+    bool is_eulerian(pair<I, I> &p)
     {
-        set<pair<I, I>> pq;
-        pq.insert(make_pair(0, 0));
-        for (I i = 1; i < this->n; i++)
+        p.first = -1;
+        p.second = -1;
+        I ct = 0;
+        for (I i = 0; i < n; i++)
         {
+            if (this->deg[i] & 1)
+            {
+                if (ct & 1)
+                {
+                    p.first = i;
+                }
+                else
+                {
+                    p.second = i;
+                }
+                ct++;
+                if (ct > 3)
+                {
+                    return false;
+                }
+            }
+        }
+
+        if (ct & 1)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 
-    // need to complete
-    I dinics_algorithm()
+    void compliment_graph(graph<I> &Gc)
     {
-        I max_flow;
+        vector<bool> allset(n);
+        for (I i = 0; i < n; i++)
+        {
+            allset[i] = true;
+        }
 
-        return max_flow;
+        for (I i = 0; i < n; i++)
+        {
+            for (auto j : this->adjl[i])
+            {
+                allset[j] = false;
+            }
+
+            for (I j = 0; j < n; j++)
+            {
+                if (allset[j] & i != j)
+                {
+                    Gc.add_edge(i, j);
+                    allset[j] = true;
+                }
+            }
+        }
+    }
+
+    bool degree_isomorphic(const graph<I> &O)
+    {
+        if (O.n != this->n)
+        {
+            return false;
+        }
+
+        vector<I> dct(n, 0);
+        for (I i = 0; i < n; i++)
+        {
+            dct[O.deg[i]]++;
+            dct[this->deg[i]]--;
+        }
+
+        for (I i = 0; i < n; i++)
+        {
+            if (dct[i] != 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // calcultes the coloring which will be given by the greedy method with the given ordering
@@ -395,9 +390,10 @@ public:
         }
     }
 
-    void degree_order_coloring(vector<I> &ordering)
+    void degree_order_coloring(vector<I> &coloring)
     {
         vector<pair<I, I>> plst;
+        vector<I> ordering(n);
         for (I i = 0; i < this->n; i++)
         {
             plst.push_back(make_pair(this->deg[i], i));
@@ -409,8 +405,161 @@ public:
             ordering[i] = plst[this->n - 1 - i].second;
         }
 
-        return this->ordering_to_coloring(ordering);
+        this->ordering_to_coloring(ordering, coloring);
     }
+
+    graph<I> operator+(const graph<I> &O)
+    {
+        graph<I> GO(O.n + this->n);
+
+        for (I i = 0; i < this->n; i++)
+        {
+            for (auto j : this->adjl[i])
+            {
+                GO.add_edge(i, j);
+            }
+        }
+
+        for (I i = 0; i < O.n; i++)
+        {
+            for (auto j : O.adjl[i])
+            {
+                GO.add_edge(this->n + i, this->n + j);
+            }
+        }
+
+        for (I i = 0; i < this->n; i++)
+        {
+            for (I j = 0; j < O.n; j++)
+            {
+                GO.add_edge(i, this->n + j);
+            }
+        }
+
+        return GO;
+    }
+
+    void operator+=(const graph<I> &O)
+    {
+        graph<I> GO;
+        for (I i = 0; i < this->n; i++)
+        {
+            for (auto j : this->adjl[i])
+            {
+                GO.add_edge(i, j);
+            }
+        }
+
+        for (I i = 0; i < O.n; i++)
+        {
+            for (auto j : O.adjl[i])
+            {
+                GO.add_edge(this->n + i, this->n + j);
+            }
+        }
+
+        for (I i = 0; i < this->n; i++)
+        {
+            for (I j = 0; j < O.n; j++)
+            {
+                GO.add_edge(i, this->n + j);
+            }
+        }
+    }
+
+    // need to complete section
+
+    void radius()
+    {
+    }
+
+    void diameter()
+    {
+    }
+
+    void eccentricity(I v)
+    {
+    }
+
+    void center()
+    {
+    }
+
+    void line_graph()
+    {
+    }
+
+    I tuckers_algorithm()
+    {
+        // new idea is to pair all the edges on a vertex into (in, out) pair
+    }
+
+    void floyd_warshall(vector<vector<I>> &d)
+    {
+        d = this->adjm;
+        for (I k = 0; k < n; k++)
+        {
+            for (I i = 0; i < n; i++)
+            {
+                for (I j = 0; j < n; j++)
+                {
+                    d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+                }
+            }
+        }
+    }
+
+    I grith()
+    {
+        // length of shortest cycle
+    }
+
+    void bridges(vector<pair<I, I>> &bridges)
+    {
+        stack<I> st;
+        stack<I> back_vertex;
+        vector<I> processed(this->n, -1);
+        st.push(0);
+
+        while (!st.empty())
+        {
+            I x = st.top();
+            st.pop();
+            processed[x] = 1;
+            for (auto y : this->adj[x])
+            {
+                if (processed[y] == 1)
+                {
+                }
+                else if (processed[y] == 0)
+                {
+                }
+                else
+                {
+                    st.push(y);
+                    processed[y] = 0;
+                }
+            }
+        }
+    }
+
+    void prims()
+    {
+        set<pair<I, I>> pq;
+        pq.insert(make_pair(0, 0));
+        for (I i = 1; i < this->n; i++)
+        {
+        }
+    }
+
+    I dinics_algorithm()
+    {
+        I max_flow;
+
+        return max_flow;
+    }
+
+    // utils
 
     void print_deg()
     {
@@ -468,7 +617,7 @@ public:
     vector<I> deg;
 
     // secondary data
-    I inf = HUGE_VALL;
+    I inf = 1e+12;
     I null_value = 0;
     vector<vector<I>> adjm;
     unordered_map<I, I> edge_weight;
@@ -488,7 +637,6 @@ public:
         this->deg[y]++;
         this->edge_weight[x * n + y] = w;
     }
-
 
     void set_adjWM()
     {
@@ -512,16 +660,6 @@ public:
             this->adjl[this->n].push_back(x);
             this->adjl[x.first].push_back(this->n);
             this->deg[x.first]++;
-        }
-        if (using_mtrix)
-        {
-            for (auto x : adj)
-            {
-                this->adjl[x.first].push_back(this->n);
-                this->deg[x.first]++;
-                this->adjm[make_pair(x.first, this->n)] = x.second;
-                this->adjm[make_pair(this->n, x.first)] = x.second;
-            }
         }
         this->n++;
     }
@@ -578,7 +716,6 @@ public:
             }
         }
     }
-
 
     I connected_components(vector<I> &component)
     {
@@ -645,7 +782,6 @@ public:
         }
     }
 
-
     // O(Elog(E)) time
     void dijkstra(I x, vector<I> &dist, vector<I> &prev)
     {
@@ -690,19 +826,17 @@ public:
     void floyd_warshall(vector<vector<I>> &d)
     {
         d = this->adjm;
-        for (I k=0;k<n;k++)
+        for (I k = 0; k < n; k++)
         {
-            for(I i=0;i<n;i++)
+            for (I i = 0; i < n; i++)
             {
-                for(I j=0;j<n;j++)
+                for (I j = 0; j < n; j++)
                 {
-                    d[i][j] = min(d[i][j],d[i][k]+d[k][j]);
+                    d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
                 }
             }
         }
     }
-
-
 
     bool is_biparted(vector<I> &partition)
     {
@@ -850,39 +984,26 @@ public:
     };
 
     I n;
-    vector<vector<I>> adjl;
+    vector<vector<I>> oadjl;
+    vector<vector<I>> iadjl;
     vector<I> odeg;
     vector<I> ideg;
-
-    bool using_mtrix = false;
-    map<pair<I, I>, I> adjm;
-
-    bool using_edgl = false;
-    map<edge<I>, I> edjl;
 
     dgraph(I n)
     {
         this->n = n;
-        this->adjl = vector<vector<I>>(n, vector<I>(0));
+        this->oadjl = vector<vector<I>>(n, vector<I>(0));
+        this->iadjl = vector<vector<I>>(n, vector<I>(0));
         this->odeg = vector<I>(n, 0);
         this->ideg = vector<I>(n, 0);
     }
 
-    void set_edjl()
+    void add_edge(I x, I y)
     {
-        this->using_edgl = true;
-        return;
-    }
-
-    void add_edge(I x, I y, I weight = 1)
-    {
-        this->adjl[x].push_back(y);
+        this->oadjl[x].push_back(y);
+        this->iadjl[y].push_back(x);
         this->odeg[x]++;
         this->ideg[y]++;
-        if (using_mtrix)
-        {
-            adjm[make_pair(x, y)] = weight;
-        }
     }
 
     void bfs(I x, vector<I> &level, vector<bool> &visted)
@@ -897,7 +1018,7 @@ public:
             auto t = snow.front();
             visted[t] = true;
             snow.pop();
-            for (auto y : adjl[t])
+            for (auto y : oadjl[t])
             {
                 if (!visted[y])
                 {
@@ -924,7 +1045,7 @@ public:
             order[t] = ct;
             ct++;
             snow.pop();
-            for (auto y : adjl[t])
+            for (auto y : oadjl[t])
             {
                 if (!visted[y])
                 {
@@ -938,28 +1059,75 @@ public:
         }
     }
 
-    void print_deg()
+    // need to complete section
+
+    I tuckers_algorithm()
     {
-        for (I i = 0; i < this->n; i++)
-        {
-            cout << i << ":" << this->deg[i] << ", ";
-        }
-        cout << endl;
     }
 
-    void print_adjl()
+    void floyd_warshall(vector<vector<I>> &d)
     {
-        I i = 0;
-        for (auto x : this->adjl)
+        d = this->adjm;
+        for (I k = 0; k < n; k++)
         {
-            cout << i << ": ";
-            for (auto y : x)
+            for (I i = 0; i < n; i++)
             {
-                cout << y << ", ";
+                for (I j = 0; j < n; j++)
+                {
+                    d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+                }
             }
-            cout << endl;
-            i++;
         }
+    }
+
+    I grith()
+    {
+        // length of shortest cycle
+    }
+
+    void bridges(vector<pair<I, I>> &bridges)
+    {
+        stack<I> st;
+        stack<I> back_vertex;
+        vector<I> processed(this->n, -1);
+        st.push(0);
+
+        while (!st.empty())
+        {
+            I x = st.top();
+            st.pop();
+            processed[x] = 1;
+            for (auto y : this->adj[x])
+            {
+                if (processed[y] == 1)
+                {
+                }
+                else if (processed[y] == 0)
+                {
+                }
+                else
+                {
+                    st.push(y);
+                    processed[y] = 0;
+                }
+            }
+        }
+    }
+
+    void prims()
+    {
+        set<pair<I, I>> pq;
+        pq.insert(make_pair(0, 0));
+        for (I i = 1; i < this->n; i++)
+        {
+        }
+    }
+
+    I dinics_algorithm()
+    {
+        I max_flow;
+
+        return max_flow;
     }
 
     I connected_components(vector<I> &component)
@@ -997,40 +1165,46 @@ public:
         return c;
     }
 
-    void dijkstra(I x, vector<I> dist, vector<I> prev)
+    void topological_sort()
     {
-        dist.assign(this->n, 1000007);
-        vector<bool> relaxed(this->n, false);
-        dist[x] = 0;
-        prev.assign(this->n, 0);
-        // index and value
-        priority_queue<pair<I, I>> q;
-        q.push(make_pair(0, x));
+    }
 
-        while (!q.empty())
+    // utils
+    void print_deg()
+    {
+        for (I i = 0; i < this->n; i++)
         {
-            auto vw = q.top();
-            I v = vw.second;
-            I w = (vw.first) * (-1);
-            q.pop();
-            if (relaxed[v])
-            {
-                continue;
-            }
-            else
-            {
-                relaxed[v] = true;
-            }
+            cout << "[ " << i << ":" << this->ideg[i] << "," << this->odeg[i] << " ], ";
+        }
+        cout << endl;
+    }
 
-            for (auto nbr : this->adjl[v])
+    void print_adjl()
+    {
+        I i = 0;
+        cerr << "Out adj\n";
+        for (auto x : this->oadjl)
+        {
+            cout << i << ": ";
+            for (auto y : x)
             {
-                if ((!relaxed[nbr]) && dist[v] + w < dist[nbr])
-                {
-                    dist[nbr] = dist[v] + w;
-                    prev[nbr] = v;
-                    q.push(make_pair((-1) * dist[nbr]), nbr);
-                }
+                cout << y << ", ";
             }
+            cout << endl;
+            i++;
+        }
+
+        i = 0;
+        cerr << "In adj\n";
+        for (auto x : this->iadjl)
+        {
+            cout << i << ": ";
+            for (auto y : x)
+            {
+                cout << y << ", ";
+            }
+            cout << endl;
+            i++;
         }
     }
 };
@@ -1058,12 +1232,6 @@ public:
     vector<I> odeg;
     vector<I> ideg;
 
-    bool using_mtrix = false;
-    map<pair<I, I>, I> adjm;
-
-    bool using_edgl = false;
-    map<edge<I>, I> edjl;
-
     wdgraph(I n)
     {
         this->n = n;
@@ -1072,21 +1240,11 @@ public:
         this->ideg = vector<I>(n, 0);
     }
 
-    void set_edjl()
-    {
-        this->using_edgl = true;
-        return;
-    }
-
     void add_edge(I x, I y, I weight = 1)
     {
         this->adjl[x].push_back(y);
         this->odeg[x]++;
         this->ideg[y]++;
-        if (using_mtrix)
-        {
-            adjm[make_pair(x, y)] = weight;
-        }
     }
 
     void bfs(I x, vector<I> &level, vector<bool> &visted)
@@ -1239,12 +1397,10 @@ public:
     }
 };
 
-
 #define ll long long
 
 int main()
 {
-
     ll n, m;
     cin >> n >> m;
     graph<ll> g(n);
@@ -1252,7 +1408,7 @@ int main()
     {
         ll u, v;
         cin >> v >> u;
-        g.add_edge(u, v, 1);
+        g.add_edge(u, v);
     }
 
     vector<ll> ord(n, 0), lev(n, 0), par(n, 0);
@@ -1270,23 +1426,26 @@ int main()
     // oks(par);
     // oks(vis);
 
-    g.dijkstra(3, ord, par);
-    for (ll i = 0; i < g.n; i++)
-    {
-        cout << i << ":" << ord[i] << ", " << par[i] << "| ";
-    }
-    cout << endl;
+    // g.dijkstra(3, ord, par);
+    // for (ll i = 0; i < g.n; i++)
+    // {
+    //     cout << i << ":" << ord[i] << ", " << par[i] << "| ";
+    // }
+    // cout << endl;
 
     vector<ll> order(n), coloring(n), coloring2(n), partision(n);
 
-    cout << g.is_biparted(partision) << endl;
+    cout << "Is biparted : " << g.is_biparted(partision) << endl;
+
+    pair<ll, ll> pairvs;
+    cout << "Is eulerian : " << g.is_eulerian(pairvs) << endl;
 
     for (ll i = 0; i < n; i++)
     {
         order[i] = i;
     }
 
-    g.ordering_to_coloring(order,coloring);
+    g.ordering_to_coloring(order, coloring);
     for (ll i = 0; i < g.n; i++)
     {
         cout << i << ":" << coloring[i] << endl;
@@ -1297,6 +1456,13 @@ int main()
     {
         cout << i << ":" << coloring2[i] << endl;
     }
+
+    graph<ll> gc(n);
+
+    g.compliment_graph(gc);
+
+    gc.print_deg();
+    gc.print_adjl();
 
     return 0;
 }
