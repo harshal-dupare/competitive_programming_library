@@ -905,6 +905,8 @@ public:
         return GO;
     }
 
+    // need to complete section
+
     void operator+=(const graph<I> &O)
     {
         graph<I> GO;
@@ -932,8 +934,6 @@ public:
             }
         }
     }
-
-    // need to complete section
 
     void radius()
     {
@@ -1020,15 +1020,6 @@ public:
                     processed[y] = 0;
                 }
             }
-        }
-    }
-
-    void prims()
-    {
-        set<pair<I, I>> pq;
-        pq.insert(make_pair(0, 0));
-        for (I i = 1; i < this->n; i++)
-        {
         }
     }
 

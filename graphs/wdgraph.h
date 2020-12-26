@@ -1,6 +1,9 @@
 #pragma once
 #include <bits/stdc++.h>
 
+using namespace std;
+
+
 template <typename I, typename V>
 class wdgraph
 {
@@ -148,7 +151,7 @@ public:
                         snow.push(y);
                     }
                 }
-                        }
+            }
             c++;
             while (component[at] != -1 && at < this->n)
                 at++;
@@ -373,29 +376,30 @@ public:
     void print_adjl()
     {
         I i = 0;
-        cerr << "Out adj\n";
+        cerr << "\nOut adj\n";
         for (auto x : this->oadjl)
         {
             cout << i << ": ";
             for (auto y : x)
             {
-                cout << "[" << y << "," << edge_weight[x * n + y] << "], ";
+                cout << "[" << y << "," << edge_weight[i * n + y] << "], ";
             }
             cout << endl;
             i++;
         }
 
         i = 0;
-        cerr << "In adj\n";
+        cerr << "\nIn adj\n";
         for (auto x : this->iadjl)
         {
             cout << i << ": ";
             for (auto y : x)
             {
-                cout << "[" << y << "," << edge_weight[x * n + y] << "], ";
+                cout << "[" << y << "," << edge_weight[y * n + i] << "], ";
             }
             cout << endl;
             i++;
         }
     }
 };
+

@@ -402,43 +402,6 @@ public:
         return tweight;
     }
 
-    // need to complete
-    void bridges(vector<pair<I, I>> &bridges)
-    {
-        stack<I> st;
-        stack<I> back_vertex;
-        vector<I> processed(this->n, -1);
-        st.push(0);
-
-        while (!st.empty())
-        {
-            I x = st.top();
-            st.pop();
-            processed[x] = 1;
-            for (auto y : this->adj[x])
-            {
-                if (processed[y] == 1)
-                {
-                }
-                else if (processed[y] == 0)
-                {
-                }
-                else
-                {
-                    st.push(y);
-                    processed[y] = 0;
-                }
-            }
-        }
-    }
-
-    I dinics_algorithm()
-    {
-        I max_flow;
-
-        return max_flow;
-    }
-
     // calcultes the coloring which will be given by the greedy method with the given ordering
     void ordering_to_coloring(vector<I> &ordering, vector<I> &coloring)
     {
@@ -514,4 +477,42 @@ public:
             i++;
         }
     }
+
+    // need to complete
+    void bridges(vector<pair<I, I>> &bridges)
+    {
+        stack<I> st;
+        stack<I> back_vertex;
+        vector<I> processed(this->n, -1);
+        st.push(0);
+
+        while (!st.empty())
+        {
+            I x = st.top();
+            st.pop();
+            processed[x] = 1;
+            for (auto y : this->adj[x])
+            {
+                if (processed[y] == 1)
+                {
+                }
+                else if (processed[y] == 0)
+                {
+                }
+                else
+                {
+                    st.push(y);
+                    processed[y] = 0;
+                }
+            }
+        }
+    }
+
+    I dinics_algorithm()
+    {
+        I max_flow;
+
+        return max_flow;
+    }
+
 };

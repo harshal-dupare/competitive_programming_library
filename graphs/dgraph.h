@@ -1,6 +1,8 @@
 #pragma once
 #include <bits/stdc++.h>
 
+using namespace std;
+
 template <typename I>
 class dgraph
 {
@@ -93,6 +95,41 @@ public:
                 }
             }
         }
+    }
+
+    bool topological_sort(vector<I> &order)
+    {
+        vector<I> dct = this->ideg;
+
+        queue<I> nextv;
+        for(I i=0;i<n;i++)
+        {
+            if(dct[i]==0)
+            {
+                nextv.push(i);
+            }
+        }
+        I id=0;
+        while(!nextv.empty())
+        {
+            I v = *nextv.front();
+            nextv.pop();
+            order[id]=v;
+            id++;
+            for(I u: this->oadjl[v])
+            {
+                dct[u]--;
+                if(dct[u]==0)
+                {
+                    nextv.push(u);
+                }
+            }
+        }
+        if(id<n)
+        {
+            return false;
+        }
+        return true;
     }
 
     // need to complete section
@@ -199,10 +236,6 @@ public:
         }
 
         return c;
-    }
-
-    void topological_sort()
-    {
     }
 
     // utils
