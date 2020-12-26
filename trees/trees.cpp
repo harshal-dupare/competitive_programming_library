@@ -200,6 +200,7 @@ public:
 
     void climb_search(I i, vector<I> &ct)
     {
+        // Central and Bicentral Trees and the nodes can be identified
         if (this->parent[i] == i)
         {
             return;
