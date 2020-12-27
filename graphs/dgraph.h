@@ -2,7 +2,6 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-
 template <typename I>
 class dgraph
 {
@@ -26,6 +25,7 @@ public:
     vector<vector<I>> iadjl;
     vector<I> odeg;
     vector<I> ideg;
+    vector<vector<I>> adjm, min_distance;
 
     dgraph(I n)
     {
@@ -42,6 +42,19 @@ public:
         this->iadjl[y].push_back(x);
         this->odeg[x]++;
         this->ideg[y]++;
+    }
+
+    void set_adjM()
+    {
+        this->adjm.assign(n, vector<I>(n, this->inf));
+        for (I i = 0; i < n; i++)
+        {
+            adjm[i][i] = this->null_value;
+            for (auto j : this->adjl[i])
+            {
+                adjm[i][j] = 1;
+            }
+        }
     }
 
     void bfs(I x, vector<I> &level, vector<bool> &visted)
@@ -97,6 +110,50 @@ public:
         }
     }
 
+    I underlining_connected_components(vector<I> &component)
+    {
+        component.assign(this->n, -1);
+
+        I c = 0;
+        I at = 0;
+
+        while (at < this->n)
+        {
+            // do bfs for each vertex and get the component indexed
+            queue<I> snow;
+            snow.push(at);
+
+            while (!snow.empty())
+            {
+                auto t = snow.front();
+                component[t] = c;
+                snow.pop();
+                for (auto y : oadjl[t])
+                {
+                    if (component[y] == -1)
+                    {
+                        component[y] = c;
+                        snow.push(y);
+                    }
+                }
+
+                for (auto y : iadjl[t])
+                {
+                    if (component[y] == -1)
+                    {
+                        component[y] = c;
+                        snow.push(y);
+                    }
+                }
+            }
+            c++;
+            while (component[at] != -1 && at < this->n)
+                at++;
+        }
+
+        return c;
+    }
+
     bool topological_sort(vector<I> &order)
     {
         vector<I> dct = this->ideg;
@@ -132,24 +189,38 @@ public:
         return true;
     }
 
+    void invert_edges()
+    {
+        swap(this->oadjl, this->iadjl);
+        swap(this->odeg, this->ideg);
+    }
+
     // need to complete section
 
     I tuckers_algorithm()
     {
     }
 
-    void floyd_warshall(vector<vector<I>> &d)
+    // O(V^3)
+    void floyd_warshall()
     {
-        d = this->adjm;
+        this->min_distance = this->adjm;
+        vector<vector<I>> dd = this->min_distance;
         for (I k = 0; k < n; k++)
         {
             for (I i = 0; i < n; i++)
             {
+                if(this->min_distance[i][k]==this->inf)
+                {
+                    continue;
+                }
+
                 for (I j = 0; j < n; j++)
                 {
-                    d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+                    dd[i][j] = min(this->min_distance[i][j], this->min_distance[i][k] + this->min_distance[k][j]);
                 }
             }
+            this->min_distance = dd;
         }
     }
 
@@ -221,7 +292,7 @@ public:
                 auto t = snow.front();
                 component[t] = c;
                 snow.pop();
-                for (auto y : adjl[t])
+                for (auto y : oadjl[t])
                 {
                     if (component[y] == -1)
                     {

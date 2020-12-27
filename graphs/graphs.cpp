@@ -1,9 +1,10 @@
 #include <bits/stdc++.h>
-// #include "../utils/timer.h"
-// #include "graph.h"
-// #include "dgraph.h"
+#include "../utils/timer.h"
+#include "graph.h"
+#include "dgraph.h"
 #include "wgraph.h"
-// #include "wdgraph.h"
+#include "wdgraph.h"
+#include "generator.h"
 
 using namespace std;
 
@@ -167,15 +168,38 @@ void normal_graph()
     // gc.print_adjl();
 }
 
+void test_dist()
+{
+    generator<ll> GR;
+    ll n;
+    cin>>n;
+    graph<ll> g;
+    GR.perterson(g);
+    g.set_adjM();
+    g.floyd_warshall();
+    okvv(g.min_distance);
+
+    GR.hypercube(3,g);
+    g.set_adjM();
+    g.floyd_warshall();
+    okvv(g.min_distance);
+
+    GR.cycle(9,g);
+    g.set_adjM();
+    g.floyd_warshall();
+    okvv(g.min_distance);
+}
+
 int main()
 {
-    ll t;
-    // cin>>t;
-    t=1;
-    while(t--)
-    {
-        weighted_graph();
-    }
+    // ll t;
+    // // cin>>t;
+    // t=1;
+    // while(t--)
+    // {
+    //     weighted_graph();
+    // }
+    test_dist();
     return 0;
 }
 /*

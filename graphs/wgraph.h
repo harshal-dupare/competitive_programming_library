@@ -33,7 +33,7 @@ public:
     vector<I> deg;
     V inf = 1e+12;
     V null_value = 0;
-    vector<vector<V>> adjm;
+    vector<vector<I>> adjm, min_distance;
     unordered_map<I, I> edge_weight;
 
     wgraph(I n)
@@ -205,14 +205,12 @@ public:
         // value and index
         set<pair<V, I>> q;
         q.insert(make_pair((V)0, x));
-        okp(q);
 
         while (!q.empty())
         {
             auto vw = q.begin();
             I v = vw->second;
             V w = vw->first;
-            ok(v);
             q.erase(vw);
             relaxed[v] = true;
 
@@ -331,20 +329,25 @@ public:
     }
 
     // O(V^3)
-    void floyd_warshall(vector<vector<I>> &d)
+    void floyd_warshall()
     {
-        d = this->adjm;
-        vector<vector<I>> dd = d;
+        this->min_distance = this->adjm;
+        vector<vector<I>> dd = this->min_distance;
         for (I k = 0; k < n; k++)
         {
             for (I i = 0; i < n; i++)
             {
+                if(this->min_distance[i][k]==this->inf)
+                {
+                    continue;
+                }
+
                 for (I j = 0; j < n; j++)
                 {
-                    dd[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+                    dd[i][j] = min(this->min_distance[i][j], this->min_distance[i][k] + this->min_distance[k][j]);
                 }
             }
-            d = dd;
+            this->min_distance = dd;
         }
     }
 
@@ -373,10 +376,10 @@ public:
             I a = itr.second / n;
             I b = itr.second % n;
             I ida = a, idb = b;
-            while (ida != dsu[ida])
-                ida = dsu[ida];
-            while (idb != dsu[idb])
-                idb = dsu[idb];
+            while (ida != dsu[dsu[ida]])
+                ida = dsu[dsu[ida]];
+            while (idb != dsu[dsu[idb]])
+                idb = dsu[dsu[idb]];
 
             if (ida != idb)
             {

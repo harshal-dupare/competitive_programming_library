@@ -8,6 +8,7 @@ class generator
 public:
     void erdos_renyi(I n, I m, graph<I> &G)
     {
+        
     }
 
     void line(I n, graph<I> &G)

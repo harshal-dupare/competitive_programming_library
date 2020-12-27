@@ -3,7 +3,6 @@
 
 using namespace std;
 
-
 template <typename I, typename V>
 class wdgraph
 {
@@ -29,8 +28,8 @@ public:
     vector<I> ideg;
     V inf = 1e+12;
     V null_value = 0;
-    vector<vector<V>> adjm;
-    unordered_map<I, I> edge_weight;
+    vector<vector<I>> adjm, min_distance;
+    unordered_map<I, V> edge_weight;
 
     wdgraph(I n)
     {
@@ -158,6 +157,53 @@ public:
         }
 
         return c;
+    }
+
+    bool topological_sort(vector<I> &order)
+    {
+        vector<I> dct = this->ideg;
+
+        queue<I> nextv;
+        for (I i = 0; i < n; i++)
+        {
+            if (dct[i] == 0)
+            {
+                nextv.push(i);
+            }
+        }
+        I id = 0;
+        while (!nextv.empty())
+        {
+            I v = *nextv.front();
+            nextv.pop();
+            order[id] = v;
+            id++;
+            for (I u : this->oadjl[v])
+            {
+                dct[u]--;
+                if (dct[u] == 0)
+                {
+                    nextv.push(u);
+                }
+            }
+        }
+        if (id < n)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    void invert_edges()
+    {
+        swap(this->oadjl, this->iadjl);
+        swap(this->odeg, this->ideg);
+        unordered_map<I, V> tedw;
+        for (auto x : this->edge_weight)
+        {
+            tedw[((x.first) % n) * n + ((x.first) / n)] = x.second;
+        }
+        this->edge_weight = tedw;
     }
 
     // O(Elog(E)+V)
@@ -293,20 +339,25 @@ public:
     }
 
     // O(V^3)
-    void floyd_warshall(vector<vector<I>> &d)
+    void floyd_warshall()
     {
-        d = this->adjm;
-        vector<vector<I>> dd = d;
+        this->min_distance = this->adjm;
+        vector<vector<I>> dd = this->min_distance;
         for (I k = 0; k < n; k++)
         {
             for (I i = 0; i < n; i++)
             {
+                if(this->min_distance[i][k]==this->inf)
+                {
+                    continue;
+                }
+
                 for (I j = 0; j < n; j++)
                 {
-                    dd[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+                    dd[i][j] = min(this->min_distance[i][j], this->min_distance[i][k] + this->min_distance[k][j]);
                 }
             }
-            d = dd;
+            this->min_distance = dd;
         }
     }
 
@@ -363,6 +414,11 @@ public:
         return tweight;
     }
 
+    void bellman_ford()
+    {
+
+    }
+    
     // utils
     void print_deg()
     {
@@ -402,4 +458,3 @@ public:
         }
     }
 };
-
