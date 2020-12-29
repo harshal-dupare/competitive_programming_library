@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "../utils/timer.h"
+#include "../utils/debugger.h"
 #include "graph.h"
 #include "dgraph.h"
 #include "wgraph.h"
@@ -7,36 +8,6 @@
 #include "generator.h"
 
 using namespace std;
-
-#define ok(vari) cerr << #vari << " = " << (vari) << "\n";
-#define oka(a, L, R)              \
-    cerr << #a << " : \n[ ";      \
-    for (int64 i = L; i < R; i++) \
-        cerr << a[i] << " ";      \
-    cerr << "]\n";
-#define oks(s)               \
-    cerr << #s << " : \n{ "; \
-    for (auto x : s)         \
-        cerr << x << " ";    \
-    cerr << "}\n";
-#define okp(ps)                                         \
-    cerr << #ps << " : \n";                             \
-    for (auto x : ps)                                   \
-        cerr << (x.first) << ":" << (x.second) << ", "; \
-    cerr << "\n";
-#define okvv(vv)              \
-    cerr << #vv << " : \n";   \
-    for (auto x : vv)         \
-    {                         \
-        cerr << "[ ";         \
-        for (auto y : x)      \
-            cerr << y << " "; \
-        cerr << "]\n";        \
-    }
-
-#define reply(a) cout << a << "\n";
-#define replyf(a, i) cout << fixed << setprecision(i) << a << "\n";
-
 
 #define ll long long
 
@@ -50,14 +21,18 @@ void weighted_graph()
     {
         ll u, v, w;
         cin >> u >> v >> w;
-        --v;
-        --u;
+        // --v;
+        // --u;
         wg.add_edge(u, v, w);
     }
-    ll a,b;
-    cin>>a>>b;
-    --a,--b;
+    // ll a,b;
+    // cin>>a>>b;
+    // --a,--b;
 
+    vector<pair<ll, ll>> elist(n - 1);
+    ll we = wg.krushal_wrange(elist,10);
+    ok(we);
+    okp(elist);
 
     // vector<pair<ll, ll>> elist(n - 1);
     // ll we = wg.krushal(elist);
@@ -75,19 +50,19 @@ void weighted_graph()
     // wg.floyd_warshall(d);
     // okvv(d);
 
-    vector<ll> parents(n), dist(n, wg.inf);
-    wg.dijkstra(a, dist, parents);
+    // vector<ll> parents(n), dist(n, wg.inf);
+    // wg.dijkstra(a, dist, parents);
     // wg.print_adjl();
     // oks(dist);
     // oks(parents);
-    if(dist[b]!=wg.inf)
-    {
-        reply(dist[b]);
-    }
-    else
-    {
-        reply("NO");
-    }
+    // if(dist[b]!=wg.inf)
+    // {
+    //     reply(dist[b]);
+    // }
+    // else
+    // {
+    //     reply("NO");
+    // }
     // oks(dist);
     // oks(parents);
 }
@@ -199,7 +174,8 @@ int main()
     // {
     //     weighted_graph();
     // }
-    test_dist();
+    // test_dist();
+    weighted_graph();
     return 0;
 }
 /*

@@ -1,6 +1,6 @@
-
 #pragma once
 #include <bits/stdc++.h>
+#include "../utils/debugger.h"
 
 template <typename I, typename V>
 class wgraph
@@ -216,7 +216,7 @@ public:
 
             for (auto nbr : this->adjl[v])
             {
-                if(relaxed[nbr])
+                if (relaxed[nbr])
                 {
                     continue;
                 }
@@ -225,7 +225,7 @@ public:
                 if (egw + w < dist[nbr])
                 {
                     auto itr = q.find({dist[nbr], nbr});
-                    if(itr!=q.end())
+                    if (itr != q.end())
                     {
                         q.erase(itr);
                     }
@@ -337,7 +337,7 @@ public:
         {
             for (I i = 0; i < n; i++)
             {
-                if(this->min_distance[i][k]==this->inf)
+                if (this->min_distance[i][k] == this->inf)
                 {
                     continue;
                 }
@@ -370,7 +370,7 @@ public:
         }
 
         I idx = 0;
-        while (!epq.empty())
+        while ((idx < n-1) && !epq.empty())
         {
             pair<V, I> itr = epq.top();
             I a = itr.second / n;
@@ -400,6 +400,80 @@ public:
                 idx++;
             }
             epq.pop();
+        }
+
+        return tweight;
+    }
+
+    // O(E*W+V)
+    V krushal_wrange(vector<pair<I, I>> &elist, V W_max)
+    {
+        vector<vector<pair<I, I>>> weight_buckets(W_max + 1);
+        vector<I> dsu(n), sz(n);
+        V tweight = this->null_value;
+
+        for (I i = 0; i < n; i++)
+        {
+            dsu[i] = i;
+            sz[i] = 1;
+            for (auto j : adjl[i])
+            {
+                if (j > i)
+                {
+                    weight_buckets[edge_weight[i * n + j]].push_back({i,j});
+                }
+            }
+        }
+        // weight_buckets.shrink_to_fit();
+        
+        I idx = 0;
+        I W = 0, id = 0;
+        I weight;
+        pair<I, I> itr;
+        while (idx < n-1)
+        {
+            while(W <= W_max)
+            {
+                if(id>=weight_buckets[W].size())
+                {
+                    W++;
+                    id=0;
+                }
+                else
+                {
+                    weight=W;
+                    itr = weight_buckets[W][id];
+                    id++;
+                    break;
+                }
+            }
+
+            I a = itr.first;
+            I b = itr.second;
+            I ida = a, idb = b;
+            while (ida != dsu[dsu[ida]])
+                ida = dsu[dsu[ida]];
+            while (idb != dsu[dsu[idb]])
+                idb = dsu[dsu[idb]];
+
+            if (ida != idb)
+            {
+                if (sz[ida] >= sz[idb])
+                {
+                    sz[ida] += sz[idb];
+                    dsu[idb] = ida;
+                }
+                else
+                {
+                    sz[idb] += sz[ida];
+                    dsu[ida] = idb;
+                }
+
+                tweight += weight;
+                elist[idx].first = a;
+                elist[idx].second = b;
+                idx++;
+            }
         }
 
         return tweight;
@@ -517,5 +591,5 @@ public:
 
         return max_flow;
     }
-
 };
+

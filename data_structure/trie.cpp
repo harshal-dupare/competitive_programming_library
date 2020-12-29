@@ -2,51 +2,129 @@
 
 using namespace std;
 
+template <typename I>
 class trie
 {
 public:
-    struct Vertex
-    {
-        bool leaf = false;
-        const int K = 26;
-        vector<int> next;
-        int p;
-        char ch;
+    char top_char = '$';
+    char start_char = 'a';
+    char end_char = 'z';
+    I char_count = 26;
+    I word_ct = 0;
 
-        Vertex(int p = -1, char ch = '$')
+    struct node
+    {
+        bool word_end = false;
+        char c;
+        I parent;
+        vector<I> next;
+
+        node(char c = '$', I par = -1, I c_count = 26)
         {
-            this->next = vector<int>(this->K);
-            this->p = p;
-            this->ch = ch;
+            this->c = c;
+            this->parent = par;
+            this->next = vector<I>(c_count, -1);
+        }
+
+        friend ostream &operator<<(ostream &os, const node &n)
+        {
+            os << "[" << n.c << ',' << n.parent << "," << n.word_end << "] : {";
+            for (auto x : n.next)
+            {
+                if (x != -1)
+                {
+                    os << x << ", ";
+                }
+            }
+            os << "}\n";
+            return os;
         }
     };
-    
-    const int K = 26;
-    vector<Vertex> t;
 
-    trie()
+    vector<node> nodes;
+
+    // start and end both inclusive
+    trie(char start_c = 'a', char end_c = 'z')
     {
-        this->t = vector<Vertex>(1);
+        this->start_char = start_c;
+        this->end_char = end_c;
+        this->char_count = end_c - start_c + 1;
+        this->nodes = vector<node>(1, node(this->top_char, -1, this->char_count));
+        this->word_ct = 0;
     }
 
-    void add_string(string const &s)
+    void insert(string const &s)
     {
-        int v = 0;
-        for (char ch : s)
+        I node_id = 0;
+        for (char c : s)
         {
-            int c = ch - 'a';
-            if (this->t[v].next[c] == -1)
+            I c_id = c - this->start_char;
+
+            if (this->nodes[node_id].next[c_id] == -1)
             {
-                this->t[v].next[c] = this->t.size();
-                this->t.emplace_back(v, ch);
+                this->nodes[node_id].next[c_id] = this->nodes.size();
+                this->nodes.push_back(node(c, node_id, this->char_count));
             }
-            v = this->t[v].next[c];
+            node_id = this->nodes[node_id].next[c_id];
         }
-        t[v].leaf = true;
+        this->nodes[node_id].word_end = true;
+        word_ct++;
+    }
+
+    void construct(vector<string> const &vs)
+    {
+        for (auto s : vs)
+        {
+            this->insert(s);
+        }
+    }
+
+    void sorted_print(I id, string &s)
+    {
+        if (id != 0)
+            s += this->nodes[id].c;
+
+        if (this->nodes[id].word_end)
+        {
+            cerr << s << endl;
+        }
+
+        for (auto x : this->nodes[id].next)
+        {
+            if (x != -1)
+                sorted_print(x, s);
+        }
+
+        s.pop_back();
+    }
+
+    void print()
+    {
+        I i = 0;
+        for (I i = 0; i < this->nodes.size(); i++)
+        {
+            cerr << i << " : " << nodes[i];
+        }
+        cerr << "\n";
     }
 };
 
+typedef long long ll;
+
 int main()
 {
+    ll n;
+    cin >> n;
+    vector<string> vs(n);
+    for (ll i = 0; i < n; i++)
+    {
+        cin >> vs[i];
+    }
+    trie<ll> tr;
+    tr.construct(vs);
+    tr.print();
+    string s;
+    tr.sorted_print(0,s);
+
     return 0;
 }

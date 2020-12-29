@@ -19,7 +19,7 @@ public:
         this->t.assign(n, this->nullvalue);
     }
 
-    void construct(vector<I> arr)
+    void construct(vector<I> &arr)
     {
         for (I i = 0; i < this->n; i++)
         {

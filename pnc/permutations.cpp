@@ -1,31 +1,6 @@
 #include <bits/stdc++.h>
 #include "../utils/timer.h"
-
-#define ok(vari) cerr << #vari << " = " << (vari) << "\n";
-#define oka(a, L, R)              \
-    cerr << #a << " : \n[ ";      \
-    for (int64 i = L; i < R; i++) \
-        cerr << a[i] << " ";      \
-    cerr << "]\n";
-#define oks(s)               \
-    cerr << #s << " : \n{ "; \
-    for (auto x : s)         \
-        cerr << x << " ";    \
-    cerr << "}\n";
-#define okp(ps)                                         \
-    cerr << #ps << " : \n";                             \
-    for (auto x : ps)                                   \
-        cerr << (x.first) << ":" << (x.second) << ", "; \
-    cerr << "\n";
-#define okvv(vv)              \
-    cerr << #vv << " : \n";   \
-    for (auto x : vv)         \
-    {                         \
-        cerr << "[ ";         \
-        for (auto y : x)      \
-            cerr << y << " "; \
-        cerr << "]\n";        \
-    }
+#include "../utils/debugger.h"
 
 using namespace std;
 
@@ -53,11 +28,7 @@ public:
     permutation(vector<I> &a)
     {
         this->n = a.size();
-        this->p.assign(n, 0);
-        for (I i = 0; i < n; i++)
-        {
-            this->p[i] = a[i];
-        }
+        this->p = a;
     }
 
     permutation<I> operator*(const permutation<I> &o)
@@ -157,7 +128,7 @@ public:
 
     void swap(I i, I j)
     {
-        if(i==j)
+        if (i == j)
         {
             return;
         }
@@ -170,14 +141,14 @@ public:
     {
         vector<bool> done(n, false);
         I id = 0;
-        I transposition_ct = 0;
+        I transposition_ct = n;
         for (I i = 0; i < n; i++)
         {
             if (!done[i])
             {
                 I start = i;
                 cycle.push_back(vector<I>(1, this->p[start]));
-                done[start]=true;
+                done[start] = true;
 
                 while (true)
                 {
@@ -185,26 +156,25 @@ public:
                     if (start == i)
                     {
                         cycle[id].shrink_to_fit();
-                        if(cycle[id].size()==2) transposition_ct++;
-                        
                         id++;
                         break;
                     }
                     cycle[id].push_back(this->p[start]);
-                    done[start]=true;
+                    done[start] = true;
                 }
             }
         }
         cycle.shrink_to_fit();
+        transposition_ct -= cycle.size();
         return transposition_ct;
     }
 
     void randomize()
     {
-        for(I i=n;i>1;i--)
+        for (I i = n; i > 1; i--)
         {
-            I j = abs(rand())%i;
-            this->swap(i-1,j);
+            I j = abs(rand()) % i;
+            this->swap(i - 1, j);
         }
     }
 
@@ -217,7 +187,6 @@ public:
         }
         cerr << "]\n";
     }
-
 };
 
 int main()
@@ -232,7 +201,7 @@ int main()
     a.print();
     b = a ^ 10;
     b.print();
-    b.swap(0, n-1);
+    b.swap(0, n - 1);
     b.print();
     c = ~b;
     c.print();

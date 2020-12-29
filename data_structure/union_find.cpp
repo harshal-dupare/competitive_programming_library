@@ -84,7 +84,6 @@ int main()
 
     int t;
     cin >> t;
-    OK(t)
     while ((t--) > 0)
     {
         int c;
