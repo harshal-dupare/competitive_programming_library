@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "../utils/timer.h"
+#include "../utils/debugger.h"
 
 using namespace std;
 
@@ -110,9 +111,190 @@ public:
     }
 };
 
-#define ll long long
+template <typename I, int MMOD>
+class modular
+{
+public:
+    I n;
+    I mod = (I)MMOD;
 
-int main()
+    modular()
+    {
+        this->n = 0;
+    }
+
+    modular(I _n)
+    {
+        this->n = (_n % mod + mod) % mod;
+    }
+
+    void operator=(const modular<I, MMOD> &o)
+    {
+        this->n = o.n;
+    }
+
+    void operator=(I n)
+    {
+        this->n = n % mod;
+    }
+
+    bool operator>(const modular<I, MMOD> &o)
+    {
+        return this->n > o.n;
+    }
+
+    bool operator<(const modular<I, MMOD> &o)
+    {
+        return this->n < o.n;
+    }
+
+    bool operator>=(const modular<I, MMOD> &o)
+    {
+        return this->n >= o.n;
+    }
+
+    bool operator<=(const modular<I, MMOD> &o)
+    {
+        return this->n <= o.n;
+    }
+
+    bool operator==(const modular<I, MMOD> &o)
+    {
+        return this->n == o.n;
+    }
+
+    void operator++()
+    {
+        if (this->n < mod - 1)
+        {
+            this->n = ((I)1 + this->n);
+            return;
+        }
+
+        this->n = 0;
+    }
+
+    void operator--()
+    {
+        if (this->n > 0)
+        {
+            this->n = (this->n - (I)1);
+            return;
+        }
+
+        this->n = mod - 1;
+    }
+
+    modular<I, MMOD> operator*(const modular<I, MMOD> &o)
+    {
+        modular<I, MMOD> ans;
+        ans.n = (this->n * o.n) % mod;
+        return ans;
+    }
+
+    void operator*=(const modular<I, MMOD> &o)
+    {
+        this->n = (this->n * o.n) % mod;
+    }
+
+    modular<I, MMOD> operator+(const modular<I, MMOD> &o)
+    {
+        modular<I, MMOD> ans;
+        ans.n = (this->n + o.n) % mod;
+        return ans;
+    }
+
+    void operator+=(const modular<I, MMOD> &o)
+    {
+        this->n = (this->n + o.n) % mod;
+    }
+
+    modular<I, MMOD> operator-(const modular<I, MMOD> &o)
+    {
+        modular<I, MMOD> ans;
+        ans.n = (this->n + (mod - o.n)) % mod;
+        return ans;
+    }
+
+    void operator-=(const modular<I, MMOD> &o)
+    {
+        this->n = (this->n + (mod - o.n)) % mod;
+        ;
+    }
+
+    void operator>>=(I k)
+    {
+        this->n >>= k;
+    }
+
+    void operator<<=(I k)
+    {
+        this->n = (this->n << k) % mod;
+    }
+
+    modular<I, MMOD> power(I m)
+    {
+        modular<I, MMOD> pr(1), bpr(this->n);
+        while (m > 0)
+        {
+            if (m & 1)
+            {
+                pr *= bpr;
+            }
+            m >>= 1;
+            bpr *= bpr;
+        }
+
+        return pr;
+    }
+
+    modular<I, MMOD> inverse()
+    {
+        I m = mod - 2;
+        modular<I, MMOD> pr(1), bpr(this->n);
+        while (m > 0)
+        {
+            if (m & 1)
+            {
+                pr *= bpr;
+            }
+            m >>= 1;
+            bpr *= bpr;
+        }
+
+        return pr;
+    }
+
+    modular<I, MMOD> nooverflow(I a, I b)
+    {
+        I res = 0;
+        a = a % mod;
+        while (b > 0)
+        {
+            if (b & 1)
+                res = (res + a) % mod;
+
+            a = (a << 1) % mod;
+
+            b >>= 1;
+        }
+
+        return res % mod;
+    }
+
+    friend ostream &operator<<(ostream &os, const modular<I, MMOD> &r)
+    {
+        os << r.n;
+        return os;
+    }
+};
+
+#define inMOD 7
+typedef long long ll;
+typedef unsigned long long ull;
+typedef modular<ull, (inMOD)> mint;
+
+void test1()
 {
     ll prm = 1e9 + 7;
     modop<ll> mo(prm);
@@ -169,6 +351,55 @@ int main()
     cout << mn / lmn << endl;
     cout << ml / lml << endl;
     cout << dv / ldv << endl;
+}
 
+void test2()
+{
+    ull delta = 1000000;
+    ull start = 1000000000;
+    ull ct = 0, ct1 = 0, ct2 = 0;
+    for (ull i = start; i < start + delta; ++i)
+    {
+        // ok(mint(i));
+        for (ull j = 0; j < inMOD; ++j)
+        {
+            ct1++;
+            if (mint(i * j) == mint(i) * mint(j))
+            {
+                ct2++;
+                if ((((i * j) % inMOD) + inMOD) % inMOD == mint(i * j).n)
+                    ct++;
+            }
+        }
+    }
+
+    ok(delta * inMOD);
+    ok(ct);
+    ok(ct1);
+    ok(ct2);
+}
+
+void test3()
+{
+    mint x(5), y(6);
+    ok(x);
+    ok(y);
+    mint z = x - y;
+    mint w = x + y;
+    mint p = x * y;
+    mint q = w * w.inverse();
+    auto j = w.inverse();
+
+    ok(z);
+    ok(w);
+    ok(p);
+    ok(j);
+    ok(q);
+
+}
+
+int main()
+{
+    test3();
     return 0;
 }

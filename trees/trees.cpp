@@ -236,9 +236,9 @@ public:
             auto v = *S.begin();
             S.erase(v);
 
-            pruf[id]=v.second;
+            pruf[id] = v.second;
             id++;
-            if(id==n-2)
+            if (id == n - 2)
             {
                 break;
             }
@@ -248,15 +248,106 @@ public:
             {
                 for (I i = 0; i < this->nodes[v.second].adjl.size(); i++)
                 {
-                    if(de[this->nodes[v.second].adjl[i]] + 1 < this->nodes[this->nodes[v.second].adjl[i]].deg)
+                    if (de[this->nodes[v.second].adjl[i]] + 1 < this->nodes[this->nodes[v.second].adjl[i]].deg)
                     {
-                        S.insert(make_pair(v.second,this->nodes[v.second].adjl[i]));
+                        S.insert(make_pair(v.second, this->nodes[v.second].adjl[i]));
                         de[v.second]++;
                     }
                 }
             }
         }
+    }
 
+    void rec_euler_seq(I root, vector<bool> &vis, vector<I> &eseq)
+    {
+        vis[root] = true;
+        eseq.push_back(root);
+        for (auto x : nodes[root].adjl)
+        {
+            if (!vis[x])
+            {
+                rec_euler_seq(x, vis, eseq);
+                eseq.push_back(root);
+            }
+        }
+    }
+
+    void euler_seq(I root, vector<I> &eseq)
+    {
+        eseq.clear();
+
+        stack<I> S;
+        vector<bool> vis(this->n, false);
+        S.push(root);
+
+        while (!S.empty())
+        {
+            I u = S.top();
+            S.pop();
+            if (vis[u])
+            {
+                eseq.push_back(u);
+                continue;
+            }
+
+            vis[u] = true;
+            eseq.push_back(u);
+
+            for (auto x : this->nodes[u].adjl)
+            {
+                if (!vis[x])
+                {
+                    S.push(u);
+                    S.push(x);
+                }
+            }
+        }
+    }
+
+    void lca_euler_seq(I root, vector<I> &eseq, vector<I> &heightseq, vector<I> &fstoccr)
+    {
+        eseq.clear();
+
+        stack<I> S;
+        vector<bool> vis(this->n, false);
+        S.push(root);
+        vector<I> height(this->n);
+        height[root] = 0;
+        while (!S.empty())
+        {
+            I u = S.top();
+            S.pop();
+            if (vis[u])
+            {
+                eseq.push_back(u);
+                continue;
+            }
+
+            vis[u] = true;
+            eseq.push_back(u);
+
+            for (auto x : this->nodes[u].adjl)
+            {
+                if (!vis[x])
+                {
+                    height[x] = 1 + height[u];
+                    S.push(u);
+                    S.push(x);
+                }
+            }
+        }
+
+        eseq.shrink_to_fit();
+        fstoccr.assign(this->n, -1);
+        heightseq.resize(eseq.size());
+        for (I i = 0; i < eseq.size(); i++)
+        {
+            heightseq[i] = height[eseq[i]];
+            if (fstoccr[eseq[i]] == -1)
+            {
+                fstoccr[eseq[i]] = i;
+            }
+        }
     }
 
     void print()
@@ -289,7 +380,7 @@ public:
 
 };
 
-int main()
+void test()
 {
     ll n, m;
     cin >> n >> m;
@@ -315,7 +406,7 @@ int main()
             tr.climb_search(i, ct);
         }
     }
-    vector<ll> level(n), intime(n), outtime(n), pruf(n-2);
+    vector<ll> level(n), intime(n), outtime(n), pruf(n - 2);
 
     tr.bfs(1, level);
     tr.dfs(1, intime, outtime);
@@ -325,8 +416,32 @@ int main()
     oks(intime);
     oks(outtime);
     oks(pruf)
+}
 
-        return 0;
+void testes()
+{
+    ll n, m;
+    cin >> n >> m;
+    tree<ll, ll> tr(n);
+
+    for (ll i = 0; i < m; i++)
+    {
+        ll x, y;
+        cin >> x >> y;
+        tr.add_edge(x, y);
+    }
+    vector<ll> es, esr;
+    vector<bool> vis(n, false);
+    tr.euler_seq(0, es);
+    oks(es);
+    tr.rec_euler_seq(0, vis, esr);
+    oks(esr);
+}
+
+int main()
+{
+    testes();
+    return 0;
 }
 
 /*
