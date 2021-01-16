@@ -33,6 +33,7 @@ public:
     I edge_count = 0;
     vector<vector<I>> adjl;
     vector<I> deg;
+    I mytimer = 0;
 
     // secondary data
     I inf = 1e+12;
@@ -146,6 +147,21 @@ public:
                 }
             }
         }
+    }
+
+    void dfs_rec(I x, vector<I> &intime, vector<I> &otime, vector<I> &parent, vector<bool> &visited)
+    {
+        intime[x] = mytimer++;
+        visited[x] = true;
+        for (auto y : this->adjl[x])
+        {
+            if (!visited[y])
+            {
+                parent[y]=x;
+                dfs_rec(y, intime, otime, parent, visited);
+            }
+        }
+        otime[x] = mytimer++;
     }
 
     I connected_components(vector<I> &component)
@@ -465,7 +481,7 @@ public:
         {
             for (I i = 0; i < n; i++)
             {
-                if(this->min_distance[i][k]==this->inf)
+                if (this->min_distance[i][k] == this->inf)
                 {
                     continue;
                 }

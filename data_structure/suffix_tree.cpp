@@ -5,7 +5,7 @@
 using namespace std;
 
 template <typename I>
-class suffix_tree
+class tree
 {
 public:
     struct node
@@ -59,7 +59,7 @@ public:
     char max_char = 'z';
     I char_size = max_char - min_char + 1;
 
-    suffix_tree(char _min_char = 'a', char _max_char = 'z')
+    tree(char _min_char = 'a', char _max_char = 'z')
     {
         this->min_char = _min_char;
         this->max_char = _max_char;
@@ -71,7 +71,7 @@ public:
         s = string("$") + s;
         if (nodes.size() == 0)
         {
-            nodes.push_back(node(s));
+            nodes.push_back(node(s,0));
             return;
         }
 
@@ -100,7 +100,7 @@ public:
                 {
                     nodes[id].next[s[i] - min_char] = nodes.size();
                     string ss = s.substr(i);
-                    nodes.push_back(node(ss));
+                    nodes.push_back(node(ss,id));
                     return;
                 }
                 else
@@ -112,8 +112,13 @@ public:
             else
             {
                 string ss = nodes[id].str.substr(j);
-                nodes.push_back(node(ss));
-                nodes[nodes.size() - 1].next = nodes[id].next;
+                nodes.push_back(node(ss,id));
+                for(I k = 0;k<char_size;k++)
+                {
+                     nodes[nodes.size() - 1].next[k] = nodes[id].next[k];
+                     if(nodes[id].next[k]!=-1) nodes[nodes[id].next[k]].parent = nodes.size() - 1;
+                }
+                // nodes[nodes.size() - 1].next = nodes[id].next;
 
                 nodes[id].next.assign(char_size, -1);
                 nodes[id].next[nodes[id].str[j] - min_char] = nodes.size() - 1;
@@ -121,7 +126,7 @@ public:
                 nodes[id].str = nodes[id].str.substr(0, j);
 
                 ss = s.substr(i);
-                nodes.push_back(node(ss));
+                nodes.push_back(node(ss,id));
                 nodes[id].next[s[i] - min_char] = nodes.size() - 1;
                 return;
             }
@@ -155,7 +160,7 @@ typedef long long ll;
 
 int main()
 {
-    suffix_tree<ll> sft;
+    tree<ll> sft;
 
     ll n;
     cin >> n;

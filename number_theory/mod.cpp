@@ -111,12 +111,11 @@ public:
     }
 };
 
-template <typename I, int MMOD>
+template <typename I, I mod>
 class modular
 {
 public:
     I n;
-    I mod = (I)MMOD;
 
     modular()
     {
@@ -128,37 +127,37 @@ public:
         this->n = (_n % mod + mod) % mod;
     }
 
-    void operator=(const modular<I, MMOD> &o)
+    void operator=(const modular<I, mod> &o)
     {
         this->n = o.n;
     }
 
-    void operator=(I n)
+    void operator=(I _n)
     {
-        this->n = n % mod;
+        this->n = (_n % mod + mod) % mod;
     }
 
-    bool operator>(const modular<I, MMOD> &o)
+    bool operator>(const modular<I, mod> &o)
     {
         return this->n > o.n;
     }
 
-    bool operator<(const modular<I, MMOD> &o)
+    bool operator<(const modular<I, mod> &o)
     {
         return this->n < o.n;
     }
 
-    bool operator>=(const modular<I, MMOD> &o)
+    bool operator>=(const modular<I, mod> &o)
     {
         return this->n >= o.n;
     }
 
-    bool operator<=(const modular<I, MMOD> &o)
+    bool operator<=(const modular<I, mod> &o)
     {
         return this->n <= o.n;
     }
 
-    bool operator==(const modular<I, MMOD> &o)
+    bool operator==(const modular<I, mod> &o)
     {
         return this->n == o.n;
     }
@@ -185,41 +184,52 @@ public:
         this->n = mod - 1;
     }
 
-    modular<I, MMOD> operator*(const modular<I, MMOD> &o)
+    modular<I, mod> operator*(const modular<I, mod> &o)
     {
-        modular<I, MMOD> ans;
+        modular<I, mod> ans;
         ans.n = (this->n * o.n) % mod;
         return ans;
     }
 
-    void operator*=(const modular<I, MMOD> &o)
+    void operator*=(const modular<I, mod> &o)
     {
         this->n = (this->n * o.n) % mod;
     }
 
-    modular<I, MMOD> operator+(const modular<I, MMOD> &o)
+    modular<I, mod> operator/(const modular<I, mod> &o)
     {
-        modular<I, MMOD> ans;
+        modular<I, mod> ans;
+        ans.n = (this->n * o.inverse()) % mod;
+        return ans;
+    }
+
+    void operator/=(const modular<I, mod> &o)
+    {
+        this->n = (this->n * o.inverse()) % mod;
+    }
+
+    modular<I, mod> operator+(const modular<I, mod> &o)
+    {
+        modular<I, mod> ans;
         ans.n = (this->n + o.n) % mod;
         return ans;
     }
 
-    void operator+=(const modular<I, MMOD> &o)
+    void operator+=(const modular<I, mod> &o)
     {
         this->n = (this->n + o.n) % mod;
     }
 
-    modular<I, MMOD> operator-(const modular<I, MMOD> &o)
+    modular<I, mod> operator-(const modular<I, mod> &o)
     {
-        modular<I, MMOD> ans;
+        modular<I, mod> ans;
         ans.n = (this->n + (mod - o.n)) % mod;
         return ans;
     }
 
-    void operator-=(const modular<I, MMOD> &o)
+    void operator-=(const modular<I, mod> &o)
     {
         this->n = (this->n + (mod - o.n)) % mod;
-        ;
     }
 
     void operator>>=(I k)
@@ -232,9 +242,9 @@ public:
         this->n = (this->n << k) % mod;
     }
 
-    modular<I, MMOD> power(I m)
+    modular<I, mod> power(I m)
     {
-        modular<I, MMOD> pr(1), bpr(this->n);
+        modular<I, mod> pr(1), bpr(this->n);
         while (m > 0)
         {
             if (m & 1)
@@ -248,10 +258,10 @@ public:
         return pr;
     }
 
-    modular<I, MMOD> inverse()
+    modular<I, mod> inverse()
     {
         I m = mod - 2;
-        modular<I, MMOD> pr(1), bpr(this->n);
+        modular<I, mod> pr(1), bpr(this->n);
         while (m > 0)
         {
             if (m & 1)
@@ -265,7 +275,7 @@ public:
         return pr;
     }
 
-    modular<I, MMOD> nooverflow(I a, I b)
+    modular<I, mod> nooverflow(I a, I b)
     {
         I res = 0;
         a = a % mod;
@@ -282,17 +292,17 @@ public:
         return res % mod;
     }
 
-    friend ostream &operator<<(ostream &os, const modular<I, MMOD> &r)
+    friend ostream &operator<<(ostream &os, const modular<I, mod> &r)
     {
         os << r.n;
         return os;
     }
 };
 
-#define inMOD 7
+#define MOD 7
 typedef long long ll;
 typedef unsigned long long ull;
-typedef modular<ull, (inMOD)> mint;
+typedef modular<ll, (MOD)> mint;
 
 void test1()
 {
@@ -395,7 +405,6 @@ void test3()
     ok(p);
     ok(j);
     ok(q);
-
 }
 
 int main()

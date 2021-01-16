@@ -10,6 +10,7 @@ public:
     char min_char;
     char max_char;
     char out_char;
+    I char_size;
     I base;
     I mod = 1e9 + 7;
     vector<I> pi;
@@ -19,6 +20,7 @@ public:
         this->min_char = _min_char;
         this->max_char = _max_char;
         this->out_char = _out_char;
+        this->char_size = _max_char - _min_char + 1;
         this->base = _base;
     }
 
@@ -160,6 +162,55 @@ public:
         pattern.pop_back();
         return match_id;
     }
+
+    // O(|w|*|s|)
+    void automaton(string &s, vector<vector<I>> &aut)
+    {
+        s += "$";
+        aut.assign(s.size(), vector<I>(char_size, 0));
+        vector<I> prefx;
+        this->prefix_finction(s, prefx);
+
+        for (I i = 0; i < s.size(); i++)
+        {
+            for (I k = 0; k < char_size; k++)
+            {
+                if (i > 0 && min_char + k != s[i])
+                    aut[i][k] = aut[prefx[i - 1]][k];
+                else
+                    aut[i][k] = i + (min_char + k == s[i]);
+            }
+        }
+
+        s.pop_back();
+    }
+
+    // O(|s|)
+    void z_function(string &s, vector<I> &zf)
+    {
+        zf.resize(s.size(), 0);
+        I n = s.size();
+        zf[0] = 0;
+        for (I i = 1, l = 0, r = 0; i < n; i++)
+        {
+            if (r >= i)
+            {
+                zf[i] = min(r - i + 1, zf[i - l]);
+            }
+
+            while (i + zf[i] < n && s[zf[i] + i] == s[zf[i]])
+            {
+                zf[i]++;
+            }
+
+            if (i + zf[i] - 1 > r)
+            {
+                l = i;
+                r = i + zf[i] - 1;
+            }
+        }
+    }
+
 };
 
 typedef long long ll;
@@ -200,27 +251,32 @@ void test_kmp()
     }
 }
 
-void test_zfs()
+void test_zf()
 {
     string s, p;
     string_matching<ll> sm;
     cin >> s;
     // cin >> p;
-    vector<ll> pp, zf(s.size(), 0);
+    vector<ll> zf(s.size(), 0);
+    sm.z_function(s, zf);
+    oks(zf);
+}
+
+void test_aut()
+{
+    string s;
+    string_matching<ll> sm;
+    cin >> s;
+    vector<vector<ll>> aut;
+    sm.automaton(s, aut);
+    vector<ll> pp;
     sm.prefix_finction(s, pp);
     oks(pp);
-    for (ll i = s.size()-1; i >0; i--)
-    {
-        ok(i);
-        // ok(pp[i]);
-        zf[i - pp[i] + 1] = max(zf[i - pp[i] + 1], pp[i]);
-    }
-    oks(zf);
+    okvv(aut);
 }
 
 int main()
 {
-
-    test_zfs();
+    test_zf();
     return 0;
 }

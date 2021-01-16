@@ -7,7 +7,6 @@ using namespace std;
 // MACROS to include exclude starts
 #define using_rollup 1
 #define using_defines 1
-#define using_debug 1
 // #define using_pbds 1
 // MACROS to include exclude ends
 
@@ -17,48 +16,18 @@ using namespace std;
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
-
-typedef tree<int64, null_type, less<int64>, rb_tree_tag, tree_order_statistics_node_update> pbds_tree;
-
-/*
-template<
-	  typename Key, // Key type
-	  typename Mapped, // Mapped-policy
-	  typename Cmp_Fn = std::less<Key>, // Key comparison functor
-	  typename Tag = rb_tree_tag, // Specifies which underlying data structure to use
-	  template<
-	  typename Const_Node_Iterator,
-	  typename Node_Iterator,
-	  typename Cmp_Fn_,
-	  typename Allocator_>
-	  class Node_Update = null_node_update, // A policy for updating node invariants
-	  typename Allocator = std::allocator<char> > // An allocator type
-class tree;
-*/
+typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
 #endif
 
 // functional starts
 #ifdef using_defines
 
 #define REP(i, n) for (int64 i = 0; i < n; i++)
+#define IREP(i, a, b) for (int64 i = a; i < b; i++)
 #define RREP(i, n) for (int64 i = n - 1; i >= 0; i--)
+#define IRREP(i, a, b) for (int64 i = a - 1; i >= b; i--)
 #define FOREACH(it, l) for (auto it = l.begin(); it != l.end(); it++)
 #define inrange(i, a, b) ((i >= min(a, b)) && (i <= max(a, b)))
-#define IOS                           \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(NULL);                    \
-    cout.tie(NULL);
-#define LOOPTESTS(TesTcases) \
-    int64 tttt;              \
-    if (!TesTcases)          \
-        tttt = 1;            \
-    else                     \
-        cin >> tttt;         \
-    while (tttt--)
-
-#define FILEIO                        \
-    freopen("input.txt", "r", stdin); \
-    freopen("output.txt", "w", stdout);
 #define SCD(t) scanf("%d", &t)
 #define SCLD(t) scanf("%ld", &t)
 #define SCLLD(t) scanf("%lld", &t)
@@ -68,7 +37,7 @@ class tree;
 #define SCLF(t) scanf("%lf", &t)
 #define MEM(a, b) memset(a, (b), sizeof(a))
 #define all(cont) cont.begin(), cont.end()
-#define rall(cont) cont.end(), cont.begin()
+#define rall(cont) cont.rbegin(), cont.rend()
 // functional ends
 
 // types and values start
@@ -93,61 +62,60 @@ typedef vector<string> vs;
 typedef vector<pll> vpll;
 typedef vector<vl> vvl;
 
-template <typename T>
-T INF()
-{
-    return numeric_limits<T>::infinity();
-}
+// random number generators
+// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+// mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 #endif
 // functional ends
 
-// Debug starts
-#ifdef using_debug
-
-#define ok(vari) cerr << #vari << " = " << (vari) << "\n";
-#define oka(a, L, R)              \
-    cerr << #a << " : \n[ ";      \
-    for (int64 i = L; i < R; i++) \
-        cerr << a[i] << " ";      \
-    cerr << "]\n";
-#define oks(s)               \
-    cerr << #s << " : \n{ "; \
-    for (auto x : s)         \
-        cerr << x << " ";    \
-    cerr << "}\n";
-#define okp(ps)                                         \
-    cerr << #ps << " : \n";                             \
-    for (auto x : ps)                                   \
-        cerr << (x.first) << ":" << (x.second) << ", "; \
-    cerr << "\n";
-#define okvv(vv)              \
-    cerr << #vv << " : \n";   \
-    for (auto x : vv)         \
-    {                         \
-        cerr << "[ ";         \
-        for (auto y : x)      \
-            cerr << y << " "; \
-        cerr << "]\n";        \
-    }
-
-#define reply(a) cout << a << "\n";
-#define replyf(a, i) cout << fixed << setprecision(i) << a << "\n";
+#define ok(a) cout << a << "\n";
+#define okf(a) cout << a << endl;
+#define okp(a, i) cout << fixed << setprecision(i) << a << "\n";
 
 #endif
-// Debug ends
+
+#define FASTIO 1
+#define FILEIO 0
+#define TESTCASES 1
+// #define LOCAL
+
+#ifdef LOCAL
+#include "my_lib/utils/debug_out.h"
+#else
+#define debug(...)
 #endif
 
 typedef long long ll;
+typedef unsigned long long ull;
+
+void solve()
+{
+
+    return;
+}
 
 int main()
 {
-    IOS;
-    LOOPTESTS(false)
+    if (FASTIO)
     {
-        ll n;
-        cin >> n;
+        ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
     }
+    if (FILEIO)
+    {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+
+    int T = 1;
+    if (TESTCASES)
+        cin >> T;
+
+    while (T--)
+        solve();
+
     return 0;
 }
 
@@ -164,4 +132,25 @@ int main()
 3. No index overflow?
 4. Are the values initilized properly?
 5. Is every input read properly? is output format ok?
+
+• Do you understand all the words used in stating the problem?
+• What are you asked to find or show?
+• Can you restate the problem in your own words?
+• Can you think of a picture or diagram that might help you understand the
+problem?
+
+• Guess and check 
+• Look for a pattern
+• Make an orderly list 
+• Draw a picture
+• Eliminate possibilities 
+• Solve a simpler problem
+• Use symmetry 
+• Use a model
+• Consider special cases 
+• Work backwards
+• Use direct reasoning 
+• Use a formula
+• Solve an equation 
+• Be ingenious
 */
