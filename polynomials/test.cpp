@@ -4,7 +4,7 @@
 using namespace std;
 
 typedef long long ll;
-typedef polynomial<ll, 711111111ll> poly;
+typedef polynomial<ll, 998244353ll> poly;
 
 void test_basics()
 {
@@ -28,8 +28,8 @@ void test_basics()
     poly tp = p*q;
     cout<<tp;
 
-    poly tex=tp.exp(10);
-    cout<<tex;
+    // poly tex=tp.exp(10);
+    // cout<<tex;
 }
 
 int main()

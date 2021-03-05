@@ -91,42 +91,17 @@ class polynomial
 public:
     I n = -1;
     std::vector<I> a;
-
-    I power(I a, I b)
+    polynomial() {}
+    polynomial(I a0)
     {
-        a = (a) % mod;
-        if (a < 0)
-            a += mod;
-        I p = a;
-        a = (I)1;
-        while (b > 0)
-        {
-            if (b & 1)
-            {
-                a = (a * p) % mod;
-            }
-            p = (p * p) % mod;
-            b >>= 1;
-        }
-        return a;
+        this->n = 0;
+        a = {a0};
     }
-
-    polynomial()
-    {
-    }
-
-    polynomial(I _n)
-    {
-        this->n = _n;
-        a.assign(_n + 1, 0);
-    }
-
     polynomial(std::vector<I> &a)
     {
         this->n = a.size() - 1;
         this->a = a;
     }
-
     void input()
     {
         for (I i = 0; i <= n; i++)
@@ -138,28 +113,25 @@ public:
                 a[i] += mod;
         }
     }
-
     bool empty()
     {
         return n == -1;
     }
-
     I size()
     {
         return this->n + 1;
     }
-
-    polynomial<I, mod> operator+(polynomial<I, mod> &o)
+    friend polynomial<I, mod> operator+(polynomial<I, mod> &o, polynomial<I, mod> &self)
     {
-        polynomial<I, mod> ans(std::max(this->n, o.n));
-        I i, msz = std::min(this->n, o.n);
+        polynomial<I, mod> ans(std::max(self.n, o.n));
+        I i, msz = std::min(self.n, o.n);
         for (i = 0; i <= msz; i++)
         {
-            ans.a[i] = (this->a[i] + o.a[i]) % mod;
+            ans.a[i] = (self.a[i] + o.a[i]) % mod;
         }
-        for (; i <= this->n; i++)
+        for (; i <= self.n; i++)
         {
-            ans.a[i] = this->a[i];
+            ans.a[i] = self.a[i];
         }
         for (; i <= o.n; i++)
         {
@@ -167,7 +139,46 @@ public:
         }
         return ans;
     }
+    friend polynomial<I, mod> operator-(polynomial<I, mod> &self, polynomial<I, mod> &o)
+    {
+        polynomial<I, mod> ans(std::max(self.n, o.n));
+        I i, msz = std::min(self.n, o.n);
+        for (i = 0; i <= msz; i++)
+        {
+            ans.a[i] = (self.a[i] + (mod - o.a[i])) % mod;
+        }
+        for (; i <= self.n; i++)
+        {
+            ans.a[i] = self.a[i];
+        }
+        for (; i <= o.n; i++)
+        {
+            ans.a[i] = mod-o.a[i];
+        }
+        return ans;
+    }
+    friend polynomial<I, mod> operator+(std::pair<I, I> pr, polynomial<I, mod> p)
+    {
+        polynomial<I, mod> ans(std::max(p.n, pr.second));
 
+        ans.a = p.a;
+        pr.first = pr.first % mod;
+        if (pr.first < 0)
+            pr.first += mod;
+        ans.a[pr.second] = (ans.a[pr.second] + pr.first) % mod;
+        return ans;
+    }
+    friend polynomial<I, mod> operator-(std::pair<I, I> pr, polynomial<I, mod> p)
+    {
+        polynomial<I, mod> ans(std::max(p.n, pr.second));
+
+        ans.a = ((I)(-1))*p.a;
+        pr.first = pr.first % mod;
+        if (pr.first < 0)
+            pr.first += mod;
+        ans.a[pr.second] = (ans.a[pr.second] + pr.first) % mod;
+        return ans;
+    }
     void operator+=(polynomial<I, mod> &o)
     {
         this->a.resize(std::max(this->n, o.n) + (I)1);
@@ -181,26 +192,6 @@ public:
             this->a[i] = o.a[i];
         }
     }
-
-    polynomial<I, mod> operator-(polynomial<I, mod> &o)
-    {
-        polynomial<I, mod> ans(std::max(this->n, o.n));
-        I i, msz = std::min(this->n, o.n);
-        for (i = 0; i <= msz; i++)
-        {
-            ans.a[i] = (this->a[i] + (mod - o.a[i])) % mod;
-        }
-        for (; i <= this->n; i++)
-        {
-            ans.a[i] = this->a[i];
-        }
-        for (; i <= o.n; i++)
-        {
-            ans.a[i] = mod - o.a[i];
-        }
-        return ans;
-    }
-
     void operator-=(polynomial<I, mod> &o)
     {
         this->a.resize(std::max(this->n, o.n) + (I)1);
@@ -213,6 +204,22 @@ public:
         {
             this->a[i] = mod - o.a[i];
         }
+    }
+    void operator+=(std::pair<I, I> pr)
+    {
+        this->a.resize(std::max(pr.second, this->n) + (I)1, 0);
+        pr.first = pr.first % mod;
+        if (pr.first < 0)
+            pr.first += mod;
+        this->a[pr.second] = (this->a[pr.second] + pr.first) % mod;
+    }
+    void operator-=(std::pair<I, I> pr)
+    {
+        this->a.resize(std::max(pr.second, this->n) + (I)1, 0);
+        pr.first = pr.first % mod;
+        if (pr.first < 0)
+            pr.first += mod;
+        this->a[pr.second] = (this->a[pr.second] + (mod - pr.first))% mod;
     }
 
     polynomial<I, mod> operator*(I k)
@@ -228,7 +235,17 @@ public:
         }
         return ans;
     }
+    void operator*=(I k)
+    {
+        k = (k) % mod;
+        if (k < 0)
+            k += mod;
 
+        for (I i = 0; i <= this->n; i++)
+        {
+            this->a[i] = (k * this->a[i]) % mod;
+        }
+    }
     friend polynomial<I, mod> operator*(I k, polynomial<I, mod> &p)
     {
         polynomial<I, mod> ans(p.n);
@@ -243,54 +260,9 @@ public:
         return ans;
     }
 
-    void operator*=(I k)
+    friend polynomial<I, mod> operator*(polynomial<I, mod> a, polynomial<I, mod> b)
     {
-        k = (k) % mod;
-        if (k < 0)
-            k += mod;
-
-        for (I i = 0; i <= this->n; i++)
-        {
-            this->a[i] = (k * this->a[i]) % mod;
-        }
-    }
-
-    polynomial<I, mod> operator+(std::pair<I, I> pr)
-    {
-        polynomial<I, mod> ans(std::max(this->n, pr.second));
-
-        ans.a = this->a;
-        pr.first = pr.first % mod;
-        if (pr.first < 0)
-            pr.first += mod;
-        ans.a[pr.second] = (ans.a[pr.second] + pr.first) % mod;
-        return ans;
-    }
-
-    friend polynomial<I, mod> operator+(std::pair<I, I> pr, polynomial<I, mod> p)
-    {
-        polynomial<I, mod> ans(std::max(p.n, pr.second));
-
-        ans.a = p.a;
-        pr.first = pr.first % mod;
-        if (pr.first < 0)
-            pr.first += mod;
-        ans.a[pr.second] = (ans.a[pr.second] + pr.first) % mod;
-        return ans;
-    }
-
-    void operator+=(std::pair<I, I> pr)
-    {
-        this->a.resize(std::max(pr.second, this->n) + (I)1, 0);
-        pr.first = pr.first % mod;
-        if (pr.first < 0)
-            pr.first += mod;
-        this->a[pr.second] = (this->a[pr.second] + pr.first) % mod;
-    }
-
-    friend polynomial<I, mod> operatr_mult(polynomial<I, mod> a, polynomial<I, mod> b)
-    {
-        I sz = 1, tot = a.n + b.n - 1;
+        I sz = 1, tot = a.n + b.n;
         while (sz < tot)
             sz *= 2;
         a.a.resize(sz);
@@ -303,7 +275,7 @@ public:
         return polynomial<I, mod>(a.a);
     }
 
-    friend polynomial<I, mod> operator*(polynomial<I, mod> a, polynomial<I, mod> b)
+    friend polynomial<I, mod> operatr_mult(polynomial<I, mod> a, polynomial<I, mod> b)
     {
         polynomial<I, mod> ans(a.n + b.n);
 
@@ -349,9 +321,6 @@ public:
 
     polynomial<I, mod> mod_xk(I k)
     {
-        if (this->n == -1)
-            return polynomial<I, mod>();
-
         if (k > this->n)
             return polynomial<I, mod>(this->a);
         polynomial<I, mod> p(std::vector<I>(this->a.begin(), this->a.begin() + k));
@@ -401,7 +370,7 @@ public:
         return (this->derivative() * this->inverse(m)).integral().mod_xk(m);
     }
 
-    polynomial<I, mod> exp(I m) 
+    polynomial<I, mod> exp(I m)
     {
         polynomial<I, mod> x(0);
         x.a[0] = 1;
@@ -414,7 +383,7 @@ public:
         return x.mod_xk(m);
     }
 
-    polynomial<I, mod> sqrt(I m) 
+    polynomial<I, mod> sqrt(I m)
     {
         polynomial<I, mod> x(1);
         I k = 1;
@@ -426,7 +395,7 @@ public:
         return x.mod_xk(m);
     }
 
-    polynomial<I, mod> mulT(polynomial<I, mod> b) 
+    polynomial<I, mod> mulT(polynomial<I, mod> b)
     {
         if (b.size() == 0)
             return polynomial<I, mod>();
@@ -435,7 +404,7 @@ public:
         return ((*this) * b).div_xk(n - 1);
     }
 
-    std::vector<I> eval(std::vector<I> x) 
+    std::vector<I> eval(std::vector<I> x)
     {
         if (size() == 0)
             return std::vector<I>(x.size(), 0);
@@ -485,3 +454,27 @@ public:
         return os;
     }
 };
+
+// template <typename V, typename I, I mod>
+// class transforms
+// {
+// public:
+//     std::vector<I> roots
+//     I root;
+//     // 998244353
+//     // has w_{2^23} = 7*17
+//     transforms()
+//     {
+//         this->root=mod-1;
+//         while(this->root&1==0)
+//         {
+//             this->root>>=1;
+//         }
+//     }
+
+// };
+
+// void ntt(std::vector<I> &a)
+// {
+
+// }

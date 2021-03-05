@@ -156,7 +156,23 @@ template <std::size_t I = 0, typename... Tp>
 template <typename T>
 void Debug(set<T> s)
 {
-    cerr << ":" << s.size() << "\n{";
+    cerr << ":" << s.size() << ": {";
+    for (auto x : s)
+    {
+        debug_out(x);
+        cerr << ", ";
+    }
+    cerr << "}\n";
+    if (ONE_EXTRA_LINE)
+    {
+        cerr << "\n";
+    }
+}
+
+template <typename T>
+void Debug(multiset<T> s)
+{
+    cerr << ":" << s.size() << ": {";
     for (auto x : s)
     {
         debug_out(x);
@@ -172,7 +188,23 @@ void Debug(set<T> s)
 template <typename T>
 void Debug(vector<T> s)
 {
-    cerr << ":" << s.size() << "\n[";
+    cerr << ":" << s.size() << ": [";
+    for (auto x : s)
+    {
+        debug_out(x);
+        cerr << ", ";
+    }
+    cerr << "]\n";
+    if (ONE_EXTRA_LINE)
+    {
+        cerr << "\n";
+    }
+}
+
+template <typename T, int N>
+void Debug(array<T,N> s)
+{
+    cerr << ":" << s.size() << ": [";
     for (auto x : s)
     {
         debug_out(x);
@@ -188,11 +220,29 @@ void Debug(vector<T> s)
 template <typename K, typename D>
 void Debug(map<K, D> s)
 {
-    cerr << ":" << s.size() << "\n{";
+    cerr << ":" << s.size() << ": {";
     for (auto x : s)
+    {   
+        cerr<<x.first<<" :";
+        debug_out(x.second);
+        cerr << ",";
+    }
+    cerr << "}\n";
+    if (ONE_EXTRA_LINE)
     {
-        debug_out(x);
-        cerr << ", ";
+        cerr << "\n";
+    }
+}
+
+template <typename K, typename D>
+void Debug(unordered_map<K, D> s)
+{
+    cerr << ":" << s.size() << ": {";
+    for (auto x : s)
+    {   
+        cerr<<x.first<<" :";
+        debug_out(x.second);
+        cerr << ",";
     }
     cerr << "}\n";
     if (ONE_EXTRA_LINE)
@@ -204,7 +254,7 @@ void Debug(map<K, D> s)
 template <int N>
 void Debug(bitset<N> b)
 {
-    cerr << b << "\n";
+    cerr << b << " : ";
     if (ONE_EXTRA_LINE)
     {
         cerr << "\n";
@@ -239,6 +289,6 @@ void Debug(Head H, Tail... T)
     Debug(T...);
 }
 
-#define debug(...) cerr << #__VA_ARGS__ << " = ", Debug(__VA_ARGS__)
+#define debug(...) cerr << #__VA_ARGS__ << " =", Debug(__VA_ARGS__)
 
-#define mdebug(...) cerr << #__VA_ARGS__ << " = ", debug_out(__VA_ARGS__), cerr << "\n\n"
+#define mdebug(...) cerr << #__VA_ARGS__ << " =", debug_out(__VA_ARGS__), cerr << "\n"

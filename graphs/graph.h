@@ -403,6 +403,40 @@ public:
         return GO;
     }
 
+    // need to test section
+    
+    void A_star(I (*heuristic)(I),I source, I target,vector<I> &dist, vector<I> &parent)
+    {
+        priority_queue<pair<I,I>> pq;
+        vector<bool> vis(this->n,false);
+        dist.assign(this->n,this->inf);
+        parent.assign(this->n);
+        dist[source]=0;
+        parent[source]=source;
+        pq.push({(I)0,source});
+
+        while(!pq.empty())
+        {
+            auto min_state = pq.top();
+            pq.pop();
+            if(vis[min_state.second]) continue;
+
+            vis[min_state.second]=true;
+
+            for(auto u:this->adjl[min_state.second])
+            {
+                if(vis[u]) continue;
+                I h_val = heuristic(u);
+                if(dist[u]>dist[min_state.second]+h_val+1)
+                {
+                    parent[u]=min_state.second;
+                    dist[u]=dist[min_state.second]+h_val+1;
+                    pq.push({(-1)*dist[u],u});
+                }
+            }
+        }
+    }
+
     // need to complete section
 
     void operator+=(const graph<I> &O)
