@@ -1,9 +1,12 @@
 #include <bits/stdc++.h>
 #include "timer.h"
+#include "debug_out.h"
 
 using namespace std;
 
 typedef long long ll;
+
+void test()
 
 int main()
 {

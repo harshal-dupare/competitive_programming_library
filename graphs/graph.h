@@ -467,8 +467,17 @@ public:
         }
     }
 
-    void radius()
+    I radius()
     {
+        I mnmxlv=0;
+
+        vector<I> seq(this->n);
+        iota(seq.begin(),seq.end(),1);
+
+        
+        
+
+
     }
 
     void diameter()

@@ -4,121 +4,6 @@
 using namespace std;
 // namespaces ends
 
-// void debug_out()
-// {
-//     cerr << "\n";
-// }
-
-// template <typename T>
-// void debug_out(T x)
-// {
-//     cerr << x << ", ";
-// }
-
-// template <typename H, typename T>
-// void debug_out(pair<H, T> x)
-// {
-//     cerr << "{" << x.first << ":" << x.second << "}, ";
-// }
-
-// template <std::size_t I = 0, typename... Tp>
-// inline typename std::enable_if<I == sizeof...(Tp), void>::type
-// debug_out(std::tuple<Tp...> &t)
-// {
-//     cerr << ")\n";
-// }
-
-// template <std::size_t I = 0, typename... Tp>
-// inline typename std::enable_if < I<sizeof...(Tp), void>::type debug_out(std::tuple<Tp...> &t)
-// {
-//     if (I == 0)
-//     {
-//         cerr << "(";
-//     }
-//     debug_out(std::get<I>(t));
-//     debug_out<I + 1, Tp...>(t);
-// }
-
-// template <typename Head, typename... Tail>
-// void Debug(Head H, Tail... T)
-// {
-//     cerr << " " << to_string(H);
-//     Debug(T...);
-// }
-
-// template <typename T>
-// void Debug(T x)
-// {
-//     cerr << " = " << x << "\n";
-// }
-
-// template <typename F, typename S>
-// void Debug(pair<F, S> x)
-// {
-//     cerr << " = {" << x.first << ":" << x.second << "}\n";
-// }
-
-// template <std::size_t I = 0, typename... Tp>
-// inline typename std::enable_if<I == sizeof...(Tp), void>::type
-// Debug(std::tuple<Tp...> &t)
-// {
-//     cerr << ")\n";
-// }
-
-// template <std::size_t I = 0, typename... Tp>
-// inline typename std::enable_if < I<sizeof...(Tp), void>::type Debug(std::tuple<Tp...> &t)
-// {
-//     if (I == 0)
-//     {
-//         cerr << "(";
-//     }
-//     debug_out(std::get<I>(t));
-//     Debug<I + 1, Tp...>(t);
-// }
-
-// template <typename T>
-// void Debug(set<T> s)
-// {
-//     cerr << ":" << s.size() << "\n{";
-//     for (auto x : s)
-//         debug_out(x);
-//     cerr << "}\n";
-// }
-
-// template <typename T>
-// void Debug(vector<T> s)
-// {
-//     cerr << ":" << s.size() << "\n[";
-//     for (auto x : s)
-//         debug_out(x);
-//     cerr << "]\n";
-// }
-
-// template <typename K, typename D>
-// void Debug(map<K, D> s)
-// {
-//     cerr << ":" << s.size() << "\n{";
-//     for (auto x : s)
-//         debug_out(x);
-//     cerr << "}\n";
-// }
-
-// template <typename T>
-// void Debug(vector<vector<T>> vv)
-// {
-//     cerr << ":" << vv.size() << "\n";
-//     for (auto x : vv)
-//     {
-//         cerr << "[ ";
-//         for (auto y : x)
-//             debug_out(y);
-//         cerr << "]\n";
-//     }
-// }
-
-// #define debug(...) cerr << #__VA_ARGS__, Debug(__VA_ARGS__)
-
-
 #include "debug_out.h"
 
 int main()
@@ -131,6 +16,10 @@ int main()
     vector<tuple<pair<int, int>, int>> vt(10);
     vector<vector<pair<int, int>>> vvk(10, vector<pair<int, int>>(5));
     set<pair<string,int>> sp;
+    stack<int> st;
+    queue<int> qe;
+    deque<int> dqe;
+
     sp.insert({"fgd",87});
     sp.insert({"fd",7});
     sp.insert({"gd",8});
@@ -141,15 +30,37 @@ int main()
     mp[7]=0;
     mp[2]=0;
 
+    st.push(1);
+    st.push(1);
+    st.push(1);
+    st.push(1);
+    st.push(1);
+
+    qe.push(1);
+    qe.push(1);
+    qe.push(1);
+    qe.push(1);
+    qe.push(1);
+
+    dqe.push_front(1);
+    dqe.push_front(2);
+    dqe.push_front(3);
+    dqe.push_front(4);
+    dqe.push_front(5);
+
     debug(i);
     debug(x);
     debug(t);
-    debug(i,x,t);
+    mdebug(i,x,t);
     debug(ppp);
     debug(vk);
     debug(vt);
     debug(vvk);
     debug(mp);
     debug(sp);
+    debug(st);
+    debug(qe);
+    debug(dqe);
+
     return 0;
 }

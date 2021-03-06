@@ -29,7 +29,7 @@ template <std::size_t I = 0, typename... Tp>
 inline typename std::enable_if<I == sizeof...(Tp), void>::type
 debug_out(std::tuple<Tp...> &t)
 {
-    cerr << ")";
+    debug_out(")");
 }
 
 template <std::size_t I = 0, typename... Tp>
@@ -37,70 +37,70 @@ template <std::size_t I = 0, typename... Tp>
 {
     if (I == 0)
     {
-        cerr << "(";
+        debug_out("(");
     }
     debug_out(std::get<I>(t));
-    cerr << ", ";
+    debug_out(", ");
     debug_out<I + 1, Tp...>(t);
 }
 
 template <typename H, typename T>
 void debug_out(pair<H, T> x)
 {
-    cerr << "{";
+    debug_out("{");
     debug_out(x.first);
-    cerr << ", ";
+    debug_out(", ");
     debug_out(x.second);
-    cerr << "}";
+    debug_out("}");
 }
 
 template <typename T>
 void debug_out(vector<T> x)
 {
-    cerr << "[";
+    debug_out("[");
     for (auto y : x)
     {
         debug_out(y);
-        cerr << ", ";
+        debug_out(", ");
     }
-    cerr << "]";
+    debug_out("]");
 }
 
 template <typename T>
 void debug_out(set<T> x)
 {
-    cerr << "{";
+    debug_out("{");
     for (auto y : x)
     {
         debug_out(y);
-        cerr << ", ";
+        debug_out(", ");
     }
-    cerr << "}";
+    debug_out("}");
 }
 
 template <typename T>
 void debug_out(T x[], int n)
 {
-    cerr << "[";
+    debug_out("[");
     for (int i = 0; i < n; i++)
     {
         debug_out(x[i]);
-        cerr << ", ";
+        debug_out(", ");
     }
-    cerr << "]";
+    debug_out("]");
 }
 
 template <int N>
 void debug_out(bitset<N> b)
 {
-    cerr << b;
+    debug_out( b);
 }
 
 template <typename Head, typename... Tail>
 void debug_out(Head H, Tail... T)
 {
     debug_out(H);
-    cerr << ", ";
+    debug_out(", ");
     debug_out(T...);
 }
 
@@ -109,10 +109,11 @@ void debug_out(Head H, Tail... T)
 template <typename T>
 void Debug(T x)
 {
-    cerr << x << "\n";
+    debug_out(x);
+    debug_out("\n");
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out( "\n");
     }
 }
 
@@ -120,24 +121,24 @@ template <std::size_t I = 0, typename... Tp>
 inline typename std::enable_if<I == sizeof...(Tp), void>::type
 Debug(std::tuple<Tp...> &t)
 {
-    cerr << ")\n";
+    debug_out(")\n");
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out("\n");
     }
 }
 
 template <typename F, typename S>
 void Debug(pair<F, S> x)
 {
-    cerr << "{";
+    debug_out("{");
     debug_out(x.first);
-    cerr << ", ";
+    debug_out(", ");
     debug_out(x.second);
-    cerr << "}\n";
+    debug_out("}\n");
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out("\n");
     }
 }
 
@@ -146,146 +147,224 @@ template <std::size_t I = 0, typename... Tp>
 {
     if (I == 0)
     {
-        cerr << "(";
+        debug_out("(");
     }
     debug_out(std::get<I>(t));
-    cerr << ", ";
+    debug_out( ", ");
     Debug<I + 1, Tp...>(t);
 }
 
 template <typename T>
 void Debug(set<T> s)
 {
-    cerr << ":" << s.size() << ": {";
+    debug_out(":");
+    debug_out(s.size());
+    debug_out(": {");
     for (auto x : s)
     {
         debug_out(x);
-        cerr << ", ";
+        debug_out(", ");
     }
-    cerr << "}\n";
+    debug_out("}\n");
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out("\n");
     }
 }
 
 template <typename T>
 void Debug(multiset<T> s)
 {
-    cerr << ":" << s.size() << ": {";
+    debug_out(":");
+    debug_out(s.size());
+    debug_out(": {");
     for (auto x : s)
     {
         debug_out(x);
-        cerr << ", ";
+        debug_out(", ");
     }
-    cerr << "}\n";
+    debug_out("}\n");
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out("\n");
     }
 }
 
 template <typename T>
 void Debug(vector<T> s)
 {
-    cerr << ":" << s.size() << ": [";
+    debug_out(":");
+    debug_out(s.size());
+    debug_out(": [");
     for (auto x : s)
     {
         debug_out(x);
-        cerr << ", ";
+        debug_out(", ");
     }
-    cerr << "]\n";
+    debug_out("]\n");
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out("\n");
     }
 }
 
 template <typename T, int N>
-void Debug(array<T,N> s)
+void Debug(array<T, N> s)
 {
-    cerr << ":" << s.size() << ": [";
+    debug_out(":");
+    debug_out(s.size());
+    debug_out(": [");
     for (auto x : s)
     {
         debug_out(x);
-        cerr << ", ";
+        debug_out(", ");
     }
-    cerr << "]\n";
+    debug_out("]\n");
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out("\n");
     }
 }
 
 template <typename K, typename D>
 void Debug(map<K, D> s)
 {
-    cerr << ":" << s.size() << ": {";
+    debug_out(":");
+    debug_out(s.size());
+    debug_out(": {");
     for (auto x : s)
-    {   
-        cerr<<x.first<<" :";
+    {
+        debug_out(x.first);
+        debug_out(" :");
         debug_out(x.second);
-        cerr << ",";
+        debug_out(",");
     }
-    cerr << "}\n";
+    debug_out("}\n");
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out("\n");
     }
 }
 
 template <typename K, typename D>
 void Debug(unordered_map<K, D> s)
 {
-    cerr << ":" << s.size() << ": {";
+    debug_out(":");
+    debug_out(s.size());
+    debug_out("\n{");
     for (auto x : s)
-    {   
-        cerr<<x.first<<" :";
+    {
+        debug_out(x.first);
+        debug_out(" :");
         debug_out(x.second);
-        cerr << ",";
+        debug_out(",");
     }
-    cerr << "}\n";
+    debug_out("}\n");
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out("\n");
     }
 }
 
 template <int N>
 void Debug(bitset<N> b)
 {
-    cerr << b << " : ";
+    debug_out(b);
+    debug_out(" : ");
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out("\n");
     }
 }
 
 template <typename T>
 void Debug(vector<vector<T>> vv)
 {
-    cerr << ":" << vv.size() << "\n";
+
+    debug_out(":");
+    debug_out(vv.size());
+    debug_out("\n");
     for (auto x : vv)
     {
-        cerr << "[ ";
+        debug_out("[ ");
         for (auto y : x)
         {
             debug_out(y);
-            cerr << ", ";
+            debug_out(", ");
         }
-        cerr << "]\n";
+        debug_out("]\n");
     }
     if (ONE_EXTRA_LINE)
     {
-        cerr << "\n";
+        debug_out("\n");
     }
+}
+
+template <typename T>
+void Debug(stack<T> S)
+{
+    debug_out(S.size());
+    debug_out("\n *");
+    while (!S.empty())
+    {
+        T x = S.top();
+        S.pop();
+        debug_out(x);
+        debug_out(", ");
+    }
+    debug_out("\n");
+}
+
+template <typename T>
+void Debug(queue<T> S)
+{
+    debug_out(S.size());
+    debug_out("\n *");
+    while (!S.empty())
+    {
+        T x = S.front();
+        S.pop();
+        debug_out(x);
+        debug_out(", ");
+    }
+    debug_out("\n");
+}
+
+template <typename T>
+void Debug(deque<T> S)
+{
+    debug_out(S.size());
+    debug_out("\n *");
+    while (!S.empty())
+    {
+        T x = S.front();
+        S.pop_front();
+        debug_out(x);
+        debug_out(", ");
+    }
+    debug_out("-\n");
+}
+
+template <typename T>
+void Debug(priority_queue<T> S)
+{
+    debug_out(S.size());
+    debug_out("\n *");
+    while (!S.empty())
+    {
+        T x = S.top();
+        S.pop();
+        debug_out(x);
+        debug_out(", ");
+    }
+    debug_out("-\n");
 }
 
 template <typename Head, typename... Tail>
 void Debug(Head H, Tail... T)
 {
     Debug(H);
-    cerr << ", ";
+    debug_out(", ");
     Debug(T...);
 }
 
