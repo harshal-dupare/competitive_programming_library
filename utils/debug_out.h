@@ -93,7 +93,7 @@ void debug_out(T x[], int n)
 template <int N>
 void debug_out(bitset<N> b)
 {
-    debug_out( b);
+    debug_out(b);
 }
 
 template <typename Head, typename... Tail>
@@ -113,7 +113,7 @@ void Debug(T x)
     debug_out("\n");
     if (ONE_EXTRA_LINE)
     {
-        debug_out( "\n");
+        debug_out("\n");
     }
 }
 
@@ -150,7 +150,7 @@ template <std::size_t I = 0, typename... Tp>
         debug_out("(");
     }
     debug_out(std::get<I>(t));
-    debug_out( ", ");
+    debug_out(", ");
     Debug<I + 1, Tp...>(t);
 }
 
@@ -159,7 +159,7 @@ void Debug(set<T> s)
 {
     debug_out(":");
     debug_out(s.size());
-    debug_out(": {");
+    debug_out("\n{");
     for (auto x : s)
     {
         debug_out(x);
@@ -177,7 +177,7 @@ void Debug(multiset<T> s)
 {
     debug_out(":");
     debug_out(s.size());
-    debug_out(": {");
+    debug_out("\n{");
     for (auto x : s)
     {
         debug_out(x);
@@ -195,7 +195,7 @@ void Debug(vector<T> s)
 {
     debug_out(":");
     debug_out(s.size());
-    debug_out(": [");
+    debug_out("\n[");
     for (auto x : s)
     {
         debug_out(x);
@@ -213,7 +213,7 @@ void Debug(array<T, N> s)
 {
     debug_out(":");
     debug_out(s.size());
-    debug_out(": [");
+    debug_out("\n[");
     for (auto x : s)
     {
         debug_out(x);
@@ -231,13 +231,13 @@ void Debug(map<K, D> s)
 {
     debug_out(":");
     debug_out(s.size());
-    debug_out(": {");
+    debug_out("\n{");
     for (auto x : s)
     {
         debug_out(x.first);
-        debug_out(" :");
+        debug_out(":");
         debug_out(x.second);
-        debug_out(",");
+        debug_out(", ");
     }
     debug_out("}\n");
     if (ONE_EXTRA_LINE)
@@ -255,9 +255,9 @@ void Debug(unordered_map<K, D> s)
     for (auto x : s)
     {
         debug_out(x.first);
-        debug_out(" :");
+        debug_out(":");
         debug_out(x.second);
-        debug_out(",");
+        debug_out(", ");
     }
     debug_out("}\n");
     if (ONE_EXTRA_LINE)
@@ -269,8 +269,9 @@ void Debug(unordered_map<K, D> s)
 template <int N>
 void Debug(bitset<N> b)
 {
+    debug_out(b.size());
+    debug_out("\n");
     debug_out(b);
-    debug_out(" : ");
     if (ONE_EXTRA_LINE)
     {
         debug_out("\n");
@@ -282,8 +283,11 @@ void Debug(vector<vector<T>> vv)
 {
 
     debug_out(":");
+    debug_out("(");
     debug_out(vv.size());
-    debug_out("\n");
+    debug_out(", ");
+    debug_out(vv.size());
+    debug_out(")\n");
     for (auto x : vv)
     {
         debug_out("[ ");
@@ -304,7 +308,7 @@ template <typename T>
 void Debug(stack<T> S)
 {
     debug_out(S.size());
-    debug_out("\n *");
+    debug_out("\n*");
     while (!S.empty())
     {
         T x = S.top();
@@ -313,13 +317,17 @@ void Debug(stack<T> S)
         debug_out(", ");
     }
     debug_out("\n");
+    if (ONE_EXTRA_LINE)
+    {
+        debug_out("\n");
+    }
 }
 
 template <typename T>
 void Debug(queue<T> S)
 {
     debug_out(S.size());
-    debug_out("\n *");
+    debug_out("\n*");
     while (!S.empty())
     {
         T x = S.front();
@@ -328,13 +336,17 @@ void Debug(queue<T> S)
         debug_out(", ");
     }
     debug_out("\n");
+    if (ONE_EXTRA_LINE)
+    {
+        debug_out("\n");
+    }
 }
 
 template <typename T>
 void Debug(deque<T> S)
 {
     debug_out(S.size());
-    debug_out("\n *");
+    debug_out("\n*");
     while (!S.empty())
     {
         T x = S.front();
@@ -343,13 +355,17 @@ void Debug(deque<T> S)
         debug_out(", ");
     }
     debug_out("-\n");
+    if (ONE_EXTRA_LINE)
+    {
+        debug_out("\n");
+    }
 }
 
 template <typename T>
 void Debug(priority_queue<T> S)
 {
     debug_out(S.size());
-    debug_out("\n *");
+    debug_out("\n*");
     while (!S.empty())
     {
         T x = S.top();
@@ -358,6 +374,10 @@ void Debug(priority_queue<T> S)
         debug_out(", ");
     }
     debug_out("-\n");
+    if (ONE_EXTRA_LINE)
+    {
+        debug_out("\n");
+    }
 }
 
 template <typename Head, typename... Tail>
@@ -368,6 +388,6 @@ void Debug(Head H, Tail... T)
     Debug(T...);
 }
 
-#define debug(...) cerr << #__VA_ARGS__ << " =", Debug(__VA_ARGS__)
+#define debug(...) cerr <<  #__VA_ARGS__ << " =", Debug(__VA_ARGS__)
 
 #define mdebug(...) cerr << #__VA_ARGS__ << " =", debug_out(__VA_ARGS__), cerr << "\n"
