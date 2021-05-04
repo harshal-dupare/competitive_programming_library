@@ -1,17 +1,16 @@
 #include <bits/stdc++.h>
-
-// namespaces starts
 using namespace std;
-// namespaces ends
 
-// MACROS to include exclude starts
-#define using_rollup 1
+#define using_rollup  1
 #define using_defines 1
 // #define using_pbds 1
-// MACROS to include exclude ends
+// #define LOCAL         1
+#define FAST_IO       1
+#define FILE_INPUT    0
+#define FILE_OUTPUT   0
+#define TESTCASES     1
 
 #ifdef using_rollup
-
 #ifdef using_pbds
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -19,14 +18,19 @@ using namespace __gnu_pbds;
 typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
 #endif
 
-// functional starts
-#ifdef using_defines
+#ifdef LOCAL
+#include "my_lib/utils/debug_out.h"
+#else
+#define debug(...)
+#define mdebug(...)
+#endif
 
+#define ok(a) cout << a << endl;
+#define okp(a, i) cout << fixed << setprecision(i) << a << endl;
+
+#ifdef using_defines
 #define REP(i, n) for (int64 i = 0; i < n; i++)
-#define IREP(i, a, b) for (int64 i = a; i < b; i++)
-#define RREP(i, n) for (int64 i = n - 1; i >= 0; i--)
-#define IRREP(i, a, b) for (int64 i = a - 1; i >= b; i--)
-#define FOREACH(it, l) for (auto it = l.begin(); it != l.end(); it++)
+#define rep(i, start, end, incr) for (__typeof(end) i = (start); i <= (end); i += (incr))
 #define inrange(i, a, b) ((i >= min(a, b)) && (i <= max(a, b)))
 #define SCD(t) scanf("%d", &t)
 #define SCLD(t) scanf("%ld", &t)
@@ -38,11 +42,9 @@ typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_
 #define MEM(a, b) memset(a, (b), sizeof(a))
 #define all(cont) cont.begin(), cont.end()
 #define rall(cont) cont.rbegin(), cont.rend()
-// functional ends
 
-// types and values start
-#define MOD 1000000007
-#define PI 3.1415926535897932384626433832795
+constexpr double PI = 3.1415926535897932384626433832795;
+constexpr long long MOD = 1000000007;
 
 typedef short int int16;               // +- 32,767
 typedef unsigned short int uint16;     // 0 to 65,535
@@ -67,27 +69,12 @@ typedef vector<vl> vvl;
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 #endif
-// functional ends
-
-#define ok(a) cout << a << "\n";
-#define okf(a) cout << a << endl;
-#define okp(a, i) cout << fixed << setprecision(i) << a << "\n";
-
-#endif
-
-#define FASTIO 1
-#define FILEIO 0
-#define TESTCASES 1
-// #define LOCAL
-
-#ifdef LOCAL
-#include "my_lib/utils/debug_out.h"
-#else
-#define debug(...)
 #endif
 
 typedef long long ll;
 typedef unsigned long long ull;
+
+ll TestCaseCount = 0;
 
 void solve()
 {
@@ -97,15 +84,18 @@ void solve()
 
 int main()
 {
-    if (FASTIO)
+    if (FAST_IO)
     {
         ios_base::sync_with_stdio(false);
         cin.tie(NULL);
         cout.tie(NULL);
     }
-    if (FILEIO)
+    if (FILE_INPUT)
     {
         freopen("input.txt", "r", stdin);
+    }
+    if (FILE_OUTPUT)
+    {
         freopen("output.txt", "w", stdout);
     }
 
@@ -114,43 +104,10 @@ int main()
         cin >> T;
 
     while (T--)
+    {
+        TestCaseCount++;
         solve();
+    }
 
     return 0;
 }
-
-/*
-1. Check edge cases?
-2. Try few simple examples to test hypothesis and observe property
-3. Greedy or DP?
-4. Write in more mathematical way
-5. Maybe generalization can help?
-6. Is their some speical object that satisfies this property always?
-
-1. Is implimentation ok?
-2. No Datatype overflow?
-3. No index overflow?
-4. Are the values initilized properly?
-5. Is every input read properly? is output format ok?
-
-• Do you understand all the words used in stating the problem?
-• What are you asked to find or show?
-• Can you restate the problem in your own words?
-• Can you think of a picture or diagram that might help you understand the
-problem?
-
-• Guess and check 
-• Look for a pattern
-• Make an orderly list 
-• Draw a picture
-• Eliminate possibilities 
-• Solve a simpler problem
-• Use symmetry 
-• Use a model
-• Consider special cases 
-• Work backwards
-• Use direct reasoning 
-• Use a formula
-• Solve an equation 
-• Be ingenious
-*/

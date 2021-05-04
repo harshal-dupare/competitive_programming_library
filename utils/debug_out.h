@@ -388,6 +388,7 @@ void Debug(Head H, Tail... T)
     Debug(T...);
 }
 
+
 #define debug(...) cerr <<  #__VA_ARGS__ << " =", Debug(__VA_ARGS__)
 
 #define mdebug(...) cerr << #__VA_ARGS__ << " =", debug_out(__VA_ARGS__), cerr << "\n"

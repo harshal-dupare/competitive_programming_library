@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
+#include "../utils/debug_out.h"
 
 // namespaces starts
 using namespace std;
 // namespaces ends
+typedef long long int ll;
 
 template <typename I, typename R>
 class algebra
@@ -11,11 +13,27 @@ public:
     R EPS = 1e-6;
     I itr = 50;
 
+    I power(I a, I n)
+    {
+        I t = 1;
+        while (n > 0)
+        {
+            if (n & 1 > 0)
+            {
+                t *= a;
+            }
+            n >>= 1;
+            a *= a;
+        }
+        return t;
+    }
+
     algebra(R EPS = 1e-6)
     {
         this->EPS = EPS;
     }
 
+    // return a^(1/r) if its an integer O(log(a)*POW(r))
     R nroot(R a, R r)
     {
         if (abs(a) < this->EPS)
@@ -33,6 +51,23 @@ public:
         }
 
         return xr;
+    }
+
+    // return a^(1/n) if its an integer O(2err*long(n)+)
+    I inroot(I a, I n, I err = 3)
+    {
+        R ra = (R)a, rn = (R)n;
+        I est = I(this->nroot(ra, rn));
+        
+        for (I k = est-err; k < est+err + 1; k++)
+        {
+            if (a == this->power(k, n))
+            {
+                return k;
+            }
+        }
+
+        return 0;
     }
 
     I sqt(I n)
@@ -56,11 +91,23 @@ public:
 
         return dl;
     }
+
+    
 };
+
+void test_iroot()
+{
+    algebra<ll, double> a;
+    ll lim = 1000;
+    for (ll i = -lim ; i < lim+1; i++)
+    {
+        if(a.inroot(i,2)!=0)
+            cout << i << ": " << a.inroot(i,2) << endl;
+    }
+}
 
 int main()
 {
-
+    test_iroot();
     return 0;
 }
-
