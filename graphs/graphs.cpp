@@ -1,70 +1,25 @@
 #include <bits/stdc++.h>
-#include "../utils/timer.h"
-#include "../utils/debugger.h"
-#include "graph.h"
-#include "dgraph.h"
-#include "wgraph.h"
-#include "wdgraph.h"
-#include "generator.h"
+#include <fstream>
+#include "../utils/timer.hpp"
+#include "../utils/debugger.hpp"
+#include "graph.hpp"
+#include "dgraph.hpp"
+#include "wgraph.hpp"
+// #include "wdgraph.hpp"
+// #include "generator.hpp"
 
 using namespace std;
 
-#define ll long long
+typedef long long ll;
+typedef double R;
 
 void weighted_graph()
 {
+    wgraph<ll,R> wg;
 
-    ll n, m;
-    cin >> n >> m;
-    wgraph<ll, ll> wg(n);
-    while (m--)
-    {
-        ll u, v, w;
-        cin >> u >> v >> w;
-        // --v;
-        // --u;
-        wg.add_edge(u, v, w);
-    }
-    // ll a,b;
-    // cin>>a>>b;
-    // --a,--b;
-
-    vector<pair<ll, ll>> elist(n - 1);
-    ll we = wg.krushal_wrange(elist,10);
-    ok(we);
-    okp(elist);
-
-    // vector<pair<ll, ll>> elist(n - 1);
-    // ll we = wg.krushal(elist);
-    // ok(we);
-    // okp(elist);
-
-    // vector<ll> parents(n);
-    // ll we = wg.prims(parents);
-    // wg.print_adjl();
-    // oks(parents);
-    // ok(we);
-
-    // vector<vector<ll>> d;
-    // wg.set_adjWM();
-    // wg.floyd_warshall(d);
-    // okvv(d);
-
-    // vector<ll> parents(n), dist(n, wg.inf);
-    // wg.dijkstra(a, dist, parents);
-    // wg.print_adjl();
-    // oks(dist);
-    // oks(parents);
-    // if(dist[b]!=wg.inf)
-    // {
-    //     reply(dist[b]);
-    // }
-    // else
-    // {
-    //     reply("NO");
-    // }
-    // oks(dist);
-    // oks(parents);
+    wg.input();
+    vector<ll> parent;
+    R tw = krushal(wg,parent);
 }
 
 void normal_graph()
@@ -145,36 +100,28 @@ void normal_graph()
 
 void test_dist()
 {
-    generator<ll> GR;
-    ll n;
-    cin>>n;
-    graph<ll> g;
-    GR.perterson(g);
-    g.set_adjM();
-    g.floyd_warshall();
-    okvv(g.min_distance);
+    // generator<ll> GR;
+    // ll n;
+    // cin>>n;
+    // graph<ll> g;
+    // GR.perterson(g);
+    // g.set_adjM();
+    // g.floyd_warshall();
+    // okvv(g.min_distance);
 
-    GR.hypercube(3,g);
-    g.set_adjM();
-    g.floyd_warshall();
-    okvv(g.min_distance);
+    // GR.hypercube(3,g);
+    // g.set_adjM();
+    // g.floyd_warshall();
+    // okvv(g.min_distance);
 
-    GR.cycle(9,g);
-    g.set_adjM();
-    g.floyd_warshall();
-    okvv(g.min_distance);
+    // GR.cycle(9,g);
+    // g.set_adjM();
+    // g.floyd_warshall();
 }
 
 int main()
 {
-    // ll t;
-    // // cin>>t;
-    // t=1;
-    // while(t--)
-    // {
-    //     weighted_graph();
-    // }
-    // test_dist();
+    freopen("../../input.txt","r",stdin);
     weighted_graph();
     return 0;
 }

@@ -19,7 +19,7 @@ typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_
 #endif
 
 #ifdef LOCAL
-#include "my_lib/utils/debug_out.h"
+#include "my_lib/utils/debug_out.hpp"
 #else
 #define debug(...)
 #define mdebug(...)

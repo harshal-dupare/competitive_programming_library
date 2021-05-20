@@ -4,7 +4,7 @@
 using namespace std;
 // namespaces ends
 
-#include "debug_out.h"
+#include "debug_out.hpp"
 
 int main()
 {

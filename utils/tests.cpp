@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
-#include "timer.h"
-#include "debug_out.h"
+#include "timer.hpp"
+#include "debug_out.hpp"
 
 using namespace std;
 

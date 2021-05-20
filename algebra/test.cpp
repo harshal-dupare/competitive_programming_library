@@ -1,5 +1,34 @@
-#include "group.h"
-#include "../utils/debug_out.h"
+#include <bits/stdc++.h>
+#include "../utils/debug_out.hpp"
+
+#include "group.hpp"
+#include "roots.hpp"
+
+using namespace std;
+typedef long long int ll;
+
+void test_poly_root()
+{
+    vector<double> ans;
+    roots<ll, double> al;
+
+    // ans = al.quadratic_roots(1.0, 2.0, 1.0);
+    // ans = al.quadratic_roots(10.0, -2.0, 1.0);
+    // ans = al.cubic_roots(10.0, -2.0, 1.0, 2.0);
+    ans = al.quartic_roots(3,-8,3,20,10);
+    debug(ans);
+}
+
+void test_iroot()
+{
+    roots<ll, double> a;
+    ll lim = 1000;
+    for (ll i = -lim; i < lim + 1; i++)
+    {
+        if (a.inroot(i, 2) != 0)
+            cout << i << ": " << a.inroot(i, 2) << endl;
+    }
+}
 
 void test_subg_S3()
 {
@@ -37,21 +66,6 @@ void test_subg_D4()
 
 int main()
 {
-    // test_subg_D4();
-    // cout << (5 / 3) << endl;
-    // cout << (15 / 5) << endl;
-    // cout << (2 / 2) << endl;
-    // cout << (7 / 2) << endl;
-    // cout << (-7 / 2) << endl;
-    // cout << (7 / -2) << endl;
-
-    // cout << (5 % 3) << endl;
-    // cout << (15 % 5) << endl;
-    // cout << (2 % 2) << endl;
-    // cout << (7 % 2) << endl;
-    // cout << (-7 % 7) << endl;
-    // cout << (7 % -7) << endl;
-
     return 0;
 }
 
