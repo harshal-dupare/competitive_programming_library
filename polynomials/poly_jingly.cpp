@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 
+using namespace std;
 using i64 = long long;
 using u64 = unsigned long long;
 using u32 = unsigned;
@@ -231,7 +232,8 @@ struct Poly
         std::vector<Poly> q(4 * n);
         std::vector<int> ans(x.size());
         x.resize(n);
-        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
+        std::function<void(int, int, int)> build = [&](int p, int l, int r)
+        {
             if (r - l == 1)
             {
                 q[p] = std::vector<int>{1, (P - x[l]) % P};
@@ -245,7 +247,8 @@ struct Poly
             }
         };
         build(1, 0, n);
-        std::function<void(int, int, int, const Poly &)> work = [&](int p, int l, int r, const Poly &num) {
+        std::function<void(int, int, int, const Poly &)> work = [&](int p, int l, int r, const Poly &num)
+        {
             if (r - l == 1)
             {
                 if (l < int(ans.size()))
@@ -273,8 +276,20 @@ struct Poly
     }
 };
 
+void test()
+{
+    Poly p ({1,2,3});
+    Poly q ({4,5,6});
+
+    cout<<p<<q;
+    Poly qp = p*q;
+    cout<<qp;
+}
+
 int main()
 {
+
+    test();
     Poly x({2, 3, 4}), y({5, 4, 1, 6});
     std::cout << x;
     std::cout << y;

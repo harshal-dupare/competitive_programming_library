@@ -25,6 +25,15 @@ public:
         this->ideg = vector<I>(n, 0);
     }
 
+    void resize(I n)
+    {
+        this->n = n;
+        this->oadjl = vector<vector<I>>(n, vector<I>(0));
+        this->iadjl = vector<vector<I>>(n, vector<I>(0));
+        this->odeg = vector<I>(n, 0);
+        this->ideg = vector<I>(n, 0);
+    }
+
     void add_edge(I x, I y, V w)
     {
         this->oadjl[x].push_back(y);

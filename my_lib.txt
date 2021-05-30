@@ -31,6 +31,7 @@ my_lib/number_theory/number_properties.hpp
 my_lib/number_theory/primality_tests.hpp
 my_lib/number_theory/primes.hpp
 my_lib/number_theory/rational.hpp
+my_lib/number_theory/bigint.hpp
 my_lib/pnc/combinations.hpp
 my_lib/pnc/permutations.hpp
 my_lib/polynomials/polynomial.hpp

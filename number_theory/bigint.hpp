@@ -100,7 +100,6 @@ public:
             _n /= B_max;
         }
     }
-
     void operator=(string &_n)
     {
         this->a.clear();
@@ -125,6 +124,15 @@ public:
                 ai = 0;
                 tn = 0;
             }
+        }
+    }
+    void operator=(bigint<I, n> _n)
+    {
+        this->a.resize(_n.size());
+        this->sign = _n.sign;
+        for(I i=0;i<_n.size();i++)
+        {
+            this->a[i]=_n.a[i];
         }
     }
 

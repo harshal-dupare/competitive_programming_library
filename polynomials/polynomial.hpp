@@ -1,287 +1,326 @@
 #pragma once
 
 #include <bits/stdc++.h>
-
-std::vector<long long> rev, roots{0, 1};
-
-template <typename I, I mod>
-I power(I a, I b)
-{
-    a = (a) % mod;
-    if (a < 0)
-        a += mod;
-    I p = a;
-    a = (I)1;
-    while (b > 0)
-    {
-        if (b & 1)
-        {
-            a = (a * p) % mod;
-        }
-        p = (p * p) % mod;
-        b >>= 1;
-    }
-    return a;
-}
+#include "ffts.hpp"
 
 template <typename I, I mod>
-void dft(std::vector<I> &a)
+struct polynomial
 {
-    I n = a.size();
-    if (I(rev.size()) != n)
-    {
-        I k = __builtin_ctz(n) - 1;
-        rev.resize(n);
-        for (I i = 0; i < n; ++i)
-            rev[i] = rev[i >> 1] >> 1 | (i & 1) << k;
-    }
-    for (I i = 0; i < n; ++i)
-        if (rev[i] < i)
-            std::swap(a[i], a[rev[i]]);
-    if (I(roots.size()) < n)
-    {
-        I k = __builtin_ctz(roots.size());
-        roots.resize(n);
-        while ((1 << k) < n)
-        {
-            I e = power<I, mod>(3, (mod - 1) >> (k + 1));
-            for (I i = 1 << (k - 1); i < (1 << k); ++i)
-            {
-                roots[2 * i] = roots[i];
-                roots[2 * i + 1] = 1ll * roots[i] * e % mod;
-            }
-            ++k;
-        }
-    }
-    for (I k = 1; k < n; k *= 2)
-    {
-        for (I i = 0; i < n; i += 2 * k)
-        {
-            for (I j = 0; j < k; ++j)
-            {
-                I u = a[i + j];
-                I v = 1ll * a[i + j + k] * roots[k + j] % mod;
-                I x = u + v;
-                if (x >= mod)
-                    x -= mod;
-                a[i + j] = x;
-                x = u - v;
-                if (x < 0)
-                    x += mod;
-                a[i + j + k] = x;
-            }
-        }
-    }
-}
-
-template <typename I, I mod>
-void idft(std::vector<I> &a)
-{
-    I n = a.size();
-    std::reverse(a.begin() + 1, a.end());
-    dft<I, mod>(a);
-    I inv = power<I, mod>(n, mod - 2);
-    for (I i = 0; i < n; ++i)
-        a[i] = 1ll * a[i] * inv % mod;
-}
-
-template <typename I, I mod>
-class polynomial
-{
-public:
-    I n = -1;
     std::vector<I> a;
-    polynomial() {}
-    polynomial(I a0)
+    polynomial()
     {
-        this->n = 0;
-        a = {a0};
+        this->a.assign(1, 0);
     }
-    polynomial(std::vector<I> &a)
+    polynomial(I deg, I val)
     {
-        this->n = a.size() - 1;
-        this->a = a;
+        this->a.assign(deg + 1, val);
     }
-    void input()
+    polynomial(const std::vector<I> &_a)
     {
-        for (I i = 0; i <= n; i++)
+        this->a.assign(_a.begin(), _a.end());
+    }
+    polynomial(const polynomial<I, mod> &p)
+    {
+        this->a.assign(p.a.begin(), p.a.end());
+    }
+    polynomial(const string& s)
+    {
+        I i=0;
+        vector<pair<I,I>> pl;
+        I j=-1;
+        while (i<s.size())
         {
-            std::cin >> a[i];
+            if(s[i]=='+')
+            {
+                i++;
+                string c;
+                while (s[i]!='*')
+                {
+                    if(s[i]!=' ') c.push_back(s[i]);
+                    i++;
+                }
+                I ic = atoi(c.c_str());
+                pl.push_back(make_pair(-1,ic));
+                j++;
+            }
+            else if(s[i]=='-')
+            {
+                i++;
+                string c;
+                while (s[i]!='*')
+                {
+                    if(s[i]!=' ') c.push_back(s[i]);
+                    i++;
+                }
+                I ic = atoi(c.c_str());
+                pl.push_back(make_pair(-1,-ic));
+                j++;
+            }
+            else if(s[i]=='^')
+            {
+                i++;
+                string c;
+                while (i<s.size()&&s[i]!='+'&&s[i]!='-')
+                {
+                    if(s[i]!=' ') c.push_back(s[i]);
+                    i++;
+                }
 
-            a[i] = (a[i] % mod);
-            if (a[i] < 0)
-                a[i] += mod;
+                I ic = atoi(c.c_str());
+                pl[j].first = ic;
+            }
+            else
+            {
+                i++;
+            }
+        }
+        
+        sort(pl.begin(),pl.end());
+        this->a.clear();
+        I n = pl[pl.size()-1].first;
+        this->a.assign(n+1,0);
+        for(auto p: pl)
+        {
+            this->a[p.first] = p.second;
         }
     }
-    bool empty()
+    void operator=(const polynomial<I, mod> &other)
     {
-        return n == -1;
-    }
-    I size()
-    {
-        return this->n + 1;
-    }
-    friend polynomial<I, mod> operator+(polynomial<I, mod> &o, polynomial<I, mod> &self)
-    {
-        polynomial<I, mod> ans(std::max(self.n, o.n));
-        I i, msz = std::min(self.n, o.n);
-        for (i = 0; i <= msz; i++)
+        if (this != &other)
         {
-            ans.a[i] = (self.a[i] + o.a[i]) % mod;
+            this->a.assign(other.a.begin(), other.a.end());
         }
-        for (; i <= self.n; i++)
-        {
-            ans.a[i] = self.a[i];
-        }
-        for (; i <= o.n; i++)
-        {
-            ans.a[i] = o.a[i];
-        }
-        return ans;
-    }
-    friend polynomial<I, mod> operator-(polynomial<I, mod> &self, polynomial<I, mod> &o)
-    {
-        polynomial<I, mod> ans(std::max(self.n, o.n));
-        I i, msz = std::min(self.n, o.n);
-        for (i = 0; i <= msz; i++)
-        {
-            ans.a[i] = (self.a[i] + (mod - o.a[i])) % mod;
-        }
-        for (; i <= self.n; i++)
-        {
-            ans.a[i] = self.a[i];
-        }
-        for (; i <= o.n; i++)
-        {
-            ans.a[i] = mod-o.a[i];
-        }
-        return ans;
-    }
-    friend polynomial<I, mod> operator+(std::pair<I, I> pr, polynomial<I, mod> p)
-    {
-        polynomial<I, mod> ans(std::max(p.n, pr.second));
-
-        ans.a = p.a;
-        pr.first = pr.first % mod;
-        if (pr.first < 0)
-            pr.first += mod;
-        ans.a[pr.second] = (ans.a[pr.second] + pr.first) % mod;
-        return ans;
-    }
-    friend polynomial<I, mod> operator-(std::pair<I, I> pr, polynomial<I, mod> p)
-    {
-        polynomial<I, mod> ans(std::max(p.n, pr.second));
-
-        ans.a = ((I)(-1))*p.a;
-        pr.first = pr.first % mod;
-        if (pr.first < 0)
-            pr.first += mod;
-        ans.a[pr.second] = (ans.a[pr.second] + pr.first) % mod;
-        return ans;
-    }
-    void operator+=(polynomial<I, mod> &o)
-    {
-        this->a.resize(std::max(this->n, o.n) + (I)1);
-        I i, msz = std::min(this->n, o.n);
-        for (i = 0; i <= msz; i++)
-        {
-            this->a[i] = (this->a[i] + o.a[i]) % mod;
-        }
-        for (; i <= o.n; i++)
-        {
-            this->a[i] = o.a[i];
-        }
-    }
-    void operator-=(polynomial<I, mod> &o)
-    {
-        this->a.resize(std::max(this->n, o.n) + (I)1);
-        I i, msz = std::min(this->n, o.n);
-        for (i = 0; i <= msz; i++)
-        {
-            this->a[i] = (this->a[i] + (mod - o.a[i])) % mod;
-        }
-        for (; i <= o.n; i++)
-        {
-            this->a[i] = mod - o.a[i];
-        }
-    }
-    void operator+=(std::pair<I, I> pr)
-    {
-        this->a.resize(std::max(pr.second, this->n) + (I)1, 0);
-        pr.first = pr.first % mod;
-        if (pr.first < 0)
-            pr.first += mod;
-        this->a[pr.second] = (this->a[pr.second] + pr.first) % mod;
-    }
-    void operator-=(std::pair<I, I> pr)
-    {
-        this->a.resize(std::max(pr.second, this->n) + (I)1, 0);
-        pr.first = pr.first % mod;
-        if (pr.first < 0)
-            pr.first += mod;
-        this->a[pr.second] = (this->a[pr.second] + (mod - pr.first))% mod;
     }
 
-    polynomial<I, mod> operator*(I k)
+    // O(deg-last_non_zero_id)
+    void shrink_to_fit()
     {
-        polynomial<I, mod> ans(this->n);
-        k = (k) % mod;
-        if (k < 0)
-            k += mod;
-
-        for (I i = 0; i <= this->n; i++)
+        I _n = this->a.size() - 1;
+        while (_n > 0 && this->a[_n] == 0)
         {
-            ans.a[i] = (k * this->a[i]) % mod;
+            _n--;
         }
-        return ans;
+
+        this->a.resize(_n + 1);
     }
-    void operator*=(I k)
+    I size() const
     {
-        k = (k) % mod;
-        if (k < 0)
-            k += mod;
-
-        for (I i = 0; i <= this->n; i++)
-        {
-            this->a[i] = (k * this->a[i]) % mod;
-        }
+        return this->a.size();
     }
+    I degree() const
+    {
+        return this->a.size() - 1;
+    }
+    I operator[](int idx) const
+    {
+        if (idx < 0 || idx >= this->size())
+            return 0;
+        return this->a[idx];
+    }
+
+    // O(max(deg1,deg2))
+    polynomial<I, mod> operator+(const polynomial<I, mod> &y)
+    {
+        vector<I> _a(this->a.begin(), this->a.end());
+        _a.resize(std::max(this->size(), y.size()), 0);
+        for (int i = 0; i < y.size(); i++)
+        {
+            _a[i] += y.a[i];
+            if (_a[i] >= mod)
+            {
+                _a[i] -= mod;
+            }
+        }
+        int i=_a.size()-1;
+        while(i>0&&_a[i]==0)
+        {
+            i--;
+        }
+        _a.resize(i+1);
+        return polynomial<I, mod>(_a);
+    }
+    // O(max(deg1,deg2))
+    void operator+=(polynomial<I, mod> &y)
+    {
+        this->a.resize(std::max(this->size(), y.size()), 0);
+        for (int i = 0; i < y.size(); i++)
+        {
+            this->a[i] += y.a[i];
+            if (this->a[i] >= mod)
+            {
+                this->a[i] -= mod;
+            }
+        }
+        this->shrink_to_fit();
+    }
+    // O(max(deg1,deg2))
+    polynomial<I, mod> operator-(const polynomial<I, mod> &y)
+    {
+        vector<I> _a(this->a.begin(), this->a.end());
+        _a.resize(std::max(this->size(), y.size()), 0);
+        for (int i = 0; i < y.size(); i++)
+        {
+            _a[i] -= y.a[i];
+            if (_a[i] < 0)
+            {
+                _a[i] += mod;
+            }
+        }
+        int i=_a.size()-1;
+        while(i>0&&_a[i]==0)
+        {
+            i--;
+        }
+        _a.resize(i+1);
+        return polynomial<I, mod>(_a);
+    }
+    // O(max(deg1,deg2))
+    void operator-=(polynomial<I, mod> &y) 
+    {
+        this->a.resize(std::max(this->size(), y.size()), 0);
+        for (int i = 0; i < y.size(); i++)
+        {
+            this->a[i] -= y.a[i];
+            if (this->a[i] < 0)
+            {
+                this->a[i] += mod;
+            }
+        }
+        this->shrink_to_fit();
+    }
+    // O( deg*log(deg) )
+    friend polynomial<I, mod> operator*(polynomial<I, mod> a, polynomial<I, mod> b)
+    {
+        I sz = 1, tot = a.degree() + b.degree();
+        while (sz < tot + 1)
+            sz *= 2;
+        a.a.resize(sz, 0);
+        b.a.resize(sz, 0);
+
+        fft::ntt<I, mod>(a.a);
+        fft::ntt<I, mod>(b.a);
+        for (I i = 0; i < sz; ++i)
+            a.a[i] = (a.a[i] * b.a[i]) % mod;
+        fft::intt<I, mod>(a.a);
+        a.shrink_to_fit();
+        return a;
+    }
+    // O( deg*log(deg) )
+    void operator*=(polynomial<I, mod> b)
+    {
+        I sz = 1, tot = this->degree() + b.degree();
+        while (sz < tot + 1)
+            sz *= 2;
+        this->a.resize(sz, 0);
+        b.a.resize(sz, 0);
+
+        fft::ntt<I, mod>(this->a);
+        fft::ntt<I, mod>(b.a);
+        for (I i = 0; i < sz; ++i)
+            this->a[i] = (this->a[i] * b.a[i]) % mod;
+        fft::intt<I, mod>(this->a);
+        this->shrink_to_fit();
+    }
+    // O( deg )
     friend polynomial<I, mod> operator*(I k, polynomial<I, mod> &p)
     {
-        polynomial<I, mod> ans(p.n);
+        I n = p.degree();
+        polynomial<I, mod> ans(n,0);
         k = (k) % mod;
         if (k < 0)
             k += mod;
 
-        for (I i = 0; i <= p.n; i++)
+        for (I i = 0; i <= n; i++)
         {
             ans.a[i] = (k * p.a[i]) % mod;
         }
+        ans.shrink_to_fit();
         return ans;
     }
-
-    friend polynomial<I, mod> operator*(polynomial<I, mod> a, polynomial<I, mod> b)
+    // O( deg )
+    void operator*=(I k)
     {
-        I sz = 1, tot = a.n + b.n;
-        while (sz < tot)
-            sz *= 2;
-        a.a.resize(sz);
-        b.a.resize(sz);
-        dft<I, mod>(a.a);
-        dft<I, mod>(b.a);
-        for (I i = 0; i < sz; ++i)
-            a.a[i] = (a[i] * b[i]) % mod;
-        idft<I, mod>(a.a);
-        return polynomial<I, mod>(a.a);
-    }
-
-    friend polynomial<I, mod> operatr_mult(polynomial<I, mod> a, polynomial<I, mod> b)
-    {
-        polynomial<I, mod> ans(a.n + b.n);
-
-        for (I i = 0; i <= ans.n; i++)
+        k %= mod;
+        if (k < 0)
+            k += mod;
+        I n = this->degree();
+        for (I i = 0; i <= n; i++)
         {
-            for (I j = 0; j <= a.n; j++)
+            this->a[i] = (k * this->a[i]) % mod;
+        }
+        this.shrink_to_fit();
+    }
+    // O( deg*log(deg) )
+    friend polynomial<I, mod> operator/(polynomial<I, mod> a, polynomial<I, mod> b)
+    {
+        a.shrink_to_fit();
+        b.shrink_to_fit();
+        if (a.degree() < b.degree())
+        {
+            return polynomial<I, mod>(0,0);
+        }
+        std::reverse(a.a.begin(),a.a.end());
+        std::reverse(b.a.begin(),b.a.end());
+        I dega=a.degree(),degb=b.degree();
+        a = (a * b.inverse(dega-degb+1)).mod_xk(dega-degb+1);
+        a.shrink_to_fit();
+        std::reverse(a.a.begin(),a.a.end());
+        a = a.mult_xk(dega-degb-a.degree());
+        return a;
+    }
+    // O( deg*log(deg) )
+    void operator/=(polynomial<I, mod> b)
+    {
+        this->shrink_to_fit();
+        b.shrink_to_fit();
+        if (this->degree() < b.degree())
+        {
+            this->a.assign(0,0);
+        }
+        std::reverse(this->a.begin(),this->a.end());
+        std::reverse(b.a.begin(),b.a.end());
+        I dega=this->degree(),degb=b.degree();
+        (*this) = ((*this)* b.inverse(dega-degb+1)).mod_xk(dega-degb+1);
+        this->shrink_to_fit();
+        std::reverse(this->a.begin(),this->a.end());
+        (*this) = this->mult_xk(dega-degb-this->degree());
+    }
+    // O( deg*log(deg) )
+    friend polynomial<I, mod> operator%(polynomial<I, mod> a, polynomial<I, mod> b)
+    {
+        a.shrink_to_fit();
+        b.shrink_to_fit();
+        if (a.degree() < b.degree())
+        {
+            return a;
+        }
+        polynomial<I, mod> d = a/b;
+        d = (d*b).mod_xk(b.degree());
+        a = (a - d).mod_xk(b.degree());
+        return a;
+    }
+    // O( deg*log(deg) )
+    void operator%=(polynomial<I, mod> b)
+    {
+        this->shrink_to_fit();
+        b.shrink_to_fit();
+        if (this->degree() < b.degree())
+        {
+            return;
+        }
+        polynomial<I, mod> d = (*this)/b;
+        (*this) -=((d*b).mod_xk(b.degree()));   
+        (*this) = this->mod_xk(b.degree());  
+    }
+    // O( deg^2 )
+    friend polynomial<I, mod> mult(polynomial<I, mod> &a, polynomial<I, mod> &b)
+    {
+        polynomial<I, mod> ans(a.degree() + b.degree());
+        I n1 = ans.degree();
+        I n2 = a.degree();
+        for (I i = 0; i <= n1; i++)
+        {
+            for (I j = 0; j <= n2; j++)
             {
                 ans.a[i] = (ans.a[i] + (b[i - j] * a[j]) % mod) % mod;
             }
@@ -290,90 +329,151 @@ public:
         return ans;
     }
 
-    I operator[](I i)
+    // O( max(deg1,deg2) )
+    bool operator==(const polynomial<I, mod> &_a)
     {
-        if (i < 0 || i > n)
-            return 0;
-        return this->a[i];
+        I mn = std::max(this->size(),_a.size());
+        I i=0;
+        for(i=0;i<mn;i++)
+        {
+            if(this->a[i]!=_a.a[i])
+            {
+                return false;
+            }
+        }
+        for(;i<_a.size();i++)
+        {
+            if(_a.a[i]!=0)
+            {
+                return false;
+            }
+        }
+        for(;i<this->size();i++)
+        {
+            if(this->a[i]!=0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    // O( max(deg1,deg2) )
+    bool operator!=(const polynomial<I, mod> &_a)
+    {
+        I mn = std::max(this->size(),_a.size());
+        I i=0;
+        for(i=0;i<mn;i++)
+        {
+            if(this->a[i]!=_a.a[i])
+            {
+                return true;
+            }
+        }
+        for(;i<_a.size();i++)
+        {
+            if(_a.a[i]!=0)
+            {
+                return true;
+            }
+        }
+        for(;i<this->size();i++)
+        {
+            if(this->a[i]!=0)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
+    // O(deg)
     polynomial<I, mod> derivative()
     {
-        polynomial<I, mod> ans(this->n - 1);
-        for (I i = 0; i < ans.n; i++)
+        polynomial<I, mod> ans(this->degree() - 1, 0);
+        I n = ans.degree();
+        for (I i = 0; i < n; i++)
         {
             ans.a[i] = ((i + 1) * this->a[i + 1]) % mod;
         }
         return ans;
     }
-
+    // O(deg)
     polynomial<I, mod> integral()
     {
-        polynomial<I, mod> ans(this->n + 1);
-        for (I i = this->n + 1; i >= 1; i--)
+        polynomial<I, mod> ans(this->degree() + 1, 0);
+        for (I i = this->degree() + 1; i >= 1; i--)
         {
-            ans.a[i] = (this->power(i, mod - 2) * this->a[i - 1]) % mod;
+            ans.a[i] = (fft::power(i, mod - 2) * this->a[i - 1]) % mod;
         }
         ans.a[0] = 0;
 
         return ans;
     }
-
+    // O(k)
     polynomial<I, mod> mod_xk(I k)
     {
-        if (k > this->n)
+        if (k > this->degree())
             return polynomial<I, mod>(this->a);
-        polynomial<I, mod> p(std::vector<I>(this->a.begin(), this->a.begin() + k));
-
-        return p;
+        vector<I> p(k, 0);
+        k = std::min(k, this->degree() + 1);
+        for (I i = 0; i < k; i++)
+        {
+            p[i] = this->a[i];
+        }
+        return polynomial<I, mod>(p);
     }
-
+    // O(deg)
     polynomial<I, mod> mult_xk(I k)
     {
-        if (this->n == -1)
-            return polynomial<I, mod>();
-        polynomial<I, mod> ans(this->n + k);
-        for (I i = k; i <= ans.n; i++)
-        {
-            this->ans[i] = this->a[i - k];
-        }
 
+        polynomial<I, mod> ans(this->degree() + k, 0);
+        I n = ans.degree();
+        for (I i = k; i <= n; i++)
+        {
+            ans.a[i] = this->a[i - k];
+        }
         return ans;
     }
-
+    // O(deg-k)
     polynomial<I, mod> div_xk(I k)
     {
-        if (k > this->n)
-            return polynomial<I, mod>();
-        polynomial<I, mod> ans(this->n - k);
-        for (I i = 0; i <= ans.n; i++)
+        if (k > this->degree())
+            return polynomial<I, mod>(0, 0);
+        polynomial<I, mod> ans(this->degree() - k, 0);
+        I n = ans.degree();
+        for (I i = 0; i <= n; i++)
         {
-            this->ans[i] = this->a[i + k];
+            ans.a[i] = this->a[i + k];
         }
         return ans;
     }
-
+    // O( deg*log(deg) )
     polynomial<I, mod> inverse(I m)
     {
-        polynomial<I, mod> x(power(a[0], mod - 2));
+        polynomial<I, mod> x(0, fft::power<I>(a[0], mod - 2, mod));
+        polynomial<I, mod> tx;
         I k = 1;
+        polynomial<I, mod> two(0, 2);
         while (k < m)
         {
             k *= 2;
-            x = (x * (2 - this->mod_xk(k) * x)).mod_xk(k);
+            tx = (*this) * x;
+            tx.shrink_to_fit();
+            tx = two - tx;
+            x = x*tx;
+            x = x.mod_xk(k);
         }
         return x.mod_xk(m);
     }
-
+    // O(deg)
     polynomial<I, mod> log(I m)
     {
         return (this->derivative() * this->inverse(m)).integral().mod_xk(m);
     }
-
+    // O(deg)
     polynomial<I, mod> exp(I m)
     {
-        polynomial<I, mod> x(0);
-        x.a[0] = 1;
+        polynomial<I, mod> x(1, 1);
         I k = 1;
         while (k < m)
         {
@@ -382,10 +482,10 @@ public:
         }
         return x.mod_xk(m);
     }
-
+    // O(deg)
     polynomial<I, mod> sqrt(I m)
     {
-        polynomial<I, mod> x(1);
+        polynomial<I, mod> x(1, 1);
         I k = 1;
         while (k < m)
         {
@@ -394,7 +494,6 @@ public:
         }
         return x.mod_xk(m);
     }
-
     polynomial<I, mod> mulT(polynomial<I, mod> b)
     {
         if (b.size() == 0)
@@ -403,78 +502,166 @@ public:
         std::reverse(b.a.begin(), b.a.end());
         return ((*this) * b).div_xk(n - 1);
     }
-
-    std::vector<I> eval(std::vector<I> x)
+    // O( deg )
+    I eval(I x) const
     {
-        if (size() == 0)
-            return std::vector<I>(x.size(), 0);
-        const I n = std::max(I(x.size()), size());
-        std::vector<polynomial<I, mod>> q(4 * n);
-        std::vector<I> ans(x.size());
-        x.resize(n);
-        std::function<void(I, I, I)> build = [&](I p, I l, I r) {
-            if (r - l == 1)
-            {
-                q[p] = std::vector<I>{1, (mod - x[l]) % mod};
-            }
-            else
-            {
-                I m = (l + r) / 2;
-                build(2 * p, l, m);
-                build(2 * p + 1, m, r);
-                q[p] = q[2 * p] * q[2 * p + 1];
-            }
-        };
-        build(1, 0, n);
-        std::function<void(I, I, I, const polynomial<I, mod> &)> work = [&](I p, I l, I r, const polynomial<I, mod> &num) {
-            if (r - l == 1)
-            {
-                if (l < I(ans.size()))
-                    ans[l] = num[0];
-            }
-            else
-            {
-                I m = (l + r) / 2;
-                work(2 * p, l, m, num.mulT(q[2 * p + 1]).mod_xk(m - l));
-                work(2 * p + 1, m, r, num.mulT(q[2 * p]).mod_xk(r - m));
-            }
-        };
-        work(1, 0, n, mulT(q[1].inverse(n)));
-        return ans;
-    }
+        x = x%mod;
+        if(x<0) x+=mod;
 
-    friend std::ostream &operator<<(std::ostream &os, polynomial<I, mod> &p)
-    {
-        for (I i = 0; i <= p.n; i++)
+        I fx = 0;
+        for (I i = this->a.size() - 1; i >= 0; i--)
         {
-            os << "(" << std::showpos << p.a[i] << " :[";
-            os << std::noshowpos << i << "] ), ";
+            fx = (fx * x) % mod;
+            fx = (fx + this->a[i]);
+            if (fx >= mod)
+                fx -= mod;
+            else if (fx < 0)
+                fx += mod;
         }
+
+        return fx;
+    }
+    friend std::ostream &operator<<(std::ostream &os, const polynomial<I, mod> &p)
+    {
+        for (I i = p.a.size()-1; i >=0; i--)
+        {
+            if (p.a[i] != (I)0)
+            {
+                os << std::showpos << p.a[i] << "*x^";
+                os << std::noshowpos << i ;
+            }
+        }
+        
         os << "\n";
         return os;
     }
 };
 
-// template <typename V, typename I, I mod>
-// class transforms
-// {
-// public:
-//     std::vector<I> roots
-//     I root;
-//     // 998244353
-//     // has w_{2^23} = 7*17
-//     transforms()
-//     {
-//         this->root=mod-1;
-//         while(this->root&1==0)
-//         {
-//             this->root>>=1;
-//         }
-//     }
+// O( n * log(n) * log(deg) )
+template <typename I, I mod>
+std::vector<I> multipoint_eval(polynomial<I, mod> &poly,const std::vector<I> &u)
+{
+    I on = u.size();
+    I q = std::max((I)u.size(), poly.size());
+    I k = 0;
+    while (q > 0)
+    {
+        q >>= 1;
+        k++;
+    }
+    q = 1 << k;
+    vector<I> fu(on, poly.a[0]);
+    if(poly.degree()==0)
+    {
+        return fu;
+    }
 
-// };
+    // // construct P[i][j] polynomials
+    // std::vector<std::vector<polynomial<I, mod>>> P(k + 1);
+    // for (I i = 0; i < on; i++)
+    // {
+    //     polynomial<I, mod> tp(1, 1);
+    //     tp.a[0] = (mod-(u[i]%mod));
+    //     if(tp.a[0]<0) tp.a[0]+=mod;
+    //     else if (tp.a[0]>=mod) tp.a[0]-=mod;
+    //     P[0].push_back(tp);
+    // }
+    // for (I i = on; i < q; i++)
+    // {
+    //     polynomial<I, mod> tp(1, 1);
+    //     tp.a[0]=0;
+    //     P[0].push_back(tp);
+    // }
+    // for (I i = 1; i <= k; i++)
+    // {
+    //     I qi = (q >> i);
+    //     P[i].resize(qi);
+    //     for (I j = 0; j < qi; j++)
+    //     {
+    //         P[i][j]=P[i - 1][2 * j + 1] * P[i - 1][2 * j];
+    //     }
+    // }
 
-// void ntt(std::vector<I> &a)
-// {
+    // construct P[i][j] polynomials
+    // P[i][j] = xi....xi+2^j-1
+    std::vector<std::vector<polynomial<I, mod>>> P(k + 1);
+    for (I i = 0; i < on; i++)
+    {
+        polynomial<I, mod> tp(1, 1);
+        tp.a[0] = (mod-(u[i]%mod));
+        if(tp.a[0]<0) tp.a[0]+=mod;
+        else if (tp.a[0]>=mod) tp.a[0]-=mod;
+        P[0].push_back(tp);
+    }
+    for (I i = on; i < q; i++)
+    {
+        polynomial<I, mod> tp(1, 1);
+        tp.a[0]=0;
+        P[0].push_back(tp);
+    }
+    for (I i = 1; i <= k; i++)
+    {
+        I qi = (1 << i);
+        P[i].resize(q-qi+1);
+        for (I j = 0; j + qi - 1 < q; j++)
+        {
+            P[i][j]=P[i - 1][j] * P[i - 1][j+(1<<(i-1))];
+        }
+    }
 
-// }
+    // init stack
+    stack<polynomial<I, mod>> Sp;
+    stack<I> Sl;
+    stack<I> Sr;
+    stack<I> Sk;
+    Sp.push(poly);
+    Sl.push((I)0);
+    Sr.push(q - 1);
+    Sk.push(k);
+
+    while (!Sl.empty())
+    {
+        I l = Sl.top();
+        Sl.pop();
+        I r = Sr.top();
+        Sr.pop();
+        I tk = Sk.top();
+        Sk.pop();
+        polynomial<I, mod> f = Sp.top();
+        Sp.pop();
+
+        if(l>=on)
+        {
+            break;
+        }
+        f.shrink_to_fit();
+        if (f.degree() == 0 && (l==r))
+        {
+            fu[l] = f[0];
+            // I tv = poly.eval(u[l]);
+            // if(tv!=fu[l])
+            // {
+            //     cout<<poly;
+            //     cout<<u[l]<<": ( "<<fu[l]<<", "<<tv<<" )"<<endl;
+            //     r = 0;
+            // }
+            continue;
+        }
+        I mid = (l + r) / 2;
+        // polynomial<I, mod> r0 = f % P[tk - 1][0];
+        // polynomial<I, mod> r1 = f % P[tk - 1][1];
+        polynomial<I, mod> r0 = f % P[tk - 1][l];
+        polynomial<I, mod> r1 = f % P[tk - 1][mid+1];
+
+        Sl.push(mid+1);
+        Sr.push(r);
+        Sk.push(tk - 1);
+        Sp.push(r1);
+
+        Sl.push(l);
+        Sr.push(mid);
+        Sk.push(tk - 1);
+        Sp.push(r0);
+    }
+    return fu;
+}

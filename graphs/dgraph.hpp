@@ -22,6 +22,15 @@ public:
         this->ideg = vector<I>(n, 0);
     }
 
+    void resize(I n)
+    {
+        this->n = n;
+        this->oadjl = vector<vector<I>>(n, vector<I>(0));
+        this->iadjl = vector<vector<I>>(n, vector<I>(0));
+        this->odeg = vector<I>(n, 0);
+        this->ideg = vector<I>(n, 0);
+    }
+
     void add_edge(I x, I y)
     {
         this->oadjl[x].push_back(y);
@@ -348,6 +357,7 @@ I augmenting_flow_bfs(I s, I t, dgraph<I> &G, vector<vector<I>> &residual_capaci
     return 0;
 }
 
+// FIXME correct the error of not finding optimal path check other resources
 template <typename I>
 I edmonds_karp_max_flow(I s, I t, dgraph<I> &G, vector<vector<I>> &residual_capacity, vector<bool> &min_cut)
 {
