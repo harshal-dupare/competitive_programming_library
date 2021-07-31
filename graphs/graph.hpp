@@ -34,6 +34,7 @@ public:
         }
     }
 
+    // O(1) amortized :: vector push_back 
     void add_edge(I x, I y)
     {
         this->adjl[x].push_back(y);
@@ -43,15 +44,15 @@ public:
         this->edge_count++;
     }
 
-    void add_vertex(vector<pair<I, I>> &adj)
+    // O(degree) amortized :: vector push_back 
+    void add_vertex(vector<I> &adj)
     {
-        this->adjl.push_back(vector<I>(0));
+        this->adjl.push_back(adj);
         this->deg.push_back(adj.size());
         for (auto x : adj)
         {
-            this->adjl[this->n].push_back(x);
-            this->adjl[x.first].push_back(this->n);
-            this->deg[x.first]++;
+            this->adjl[x].push_back(this->n);
+            this->deg[x]++;
         }
         this->n++;
     }
@@ -702,14 +703,28 @@ void eignevalues(graph<I> &G)
 template <typename I>
 I tuckers_algorithm(graph<I> &G)
 {
+    I x;
     // new idea is to pair all the edges on a vertex into (in, out) pair
+    return x;
+}
+
+void level_graph_dinitz(I s, I t, graph<I> &G, vector<vector<I>> &residual_capacity, vector<vector<I>> &flow, vector<I> &parents)
+{
+    return;
 }
 
 template <typename I>
-I dinics_algorithm(graph<I> &G)
+I dinitz_algorithm(I s, I t, graph<I> &G, vector<vector<I>> &capacity, vector<vector<I>> &flow)
 {
-    I max_flow;
-
+    I max_flow=0;
+    flow = capacity;
+    for(int i=0;i<flow.size();i++)
+    {
+        for(int j=0;j<flow[i].size();j++)
+        {
+            flow[j]=0;
+        }
+    }
     return max_flow;
 }
 
@@ -723,9 +738,8 @@ I augmenting_flow_bfs(I s, I t, graph<I> &G, vector<vector<I>> &residual_capacit
     
     while (!Q.empty())
     {
-        pair<I,I> uaf = Q.front();
-        I u = uaf.first;
-        I af = uaf.second;
+        I u = Q.front().first;
+        I af = Q.front().second;
         Q.pop();
 
         for(auto v : G.adjl[u])
