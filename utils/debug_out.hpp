@@ -108,7 +108,7 @@ void debug_out(T *x, std::vector<I> dim)
             id++;
         }
         */
-        std::std::cerr << *(x+loc) << " ";
+        std::cerr << *(x+loc) << " ";
         loc++;
         
         cr=1;
@@ -121,7 +121,7 @@ void debug_out(T *x, std::vector<I> dim)
             id--;
             if(cr>0)
             {
-                std::cerr<<endl;
+                std::cerr<<"\n";
             }
         }
         

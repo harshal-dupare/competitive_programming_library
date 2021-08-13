@@ -43,24 +43,26 @@ namespace roots
     }
 
     // return a^(1/n) if its an integer O(log(a)*log(n))
-    // use bin search insted
+    // use bin search insted and if root doesnt exist returns 0
+    template <typename I>
     I inroot(I a, I n)
     {
-        // R ra = (R)a, rn = (R)n;
-        // I est = I(nroot(ra, rn));
-        // for (I k = est - err; k < est + err + 1; k++)
-        // {
-        //     if (a == power(k, n))
-        //     {
-        //         return k;
-        //     }
-        // }
-        // return 0;
-
         I l=1,r=a;
+        I sgn=1;
+        if(a<(I)0&&n%2==1)
+        {
+            sgn=-1;
+            r=-a;
+            a=r;
+        }
         I ra=0;
+        if(a==1)
+        {
+            ra=1;
+        }
         while (l<r)
         {
+            // std::cerr<<l<<","<<r<<"\n";
             I mid = l+(r-l)/2;
             I tn = n-1;
             ra=a;
@@ -70,12 +72,16 @@ namespace roots
             }
             if(ra==mid)
             {
-                if(n==ra*roots:power(mid,n-1))
+                // std::cerr<<ra<<":"<<roots::power<I>(mid,n-1)<<"\n";
+                if(a==ra*roots::power<I>(mid,n-1))
                 {
-                    l=r=ra=mid;
+                    // std::cerr<<"c11\n";
+                    l=r=mid;
+                    ra=mid;
                 }
                 else
                 {
+                    // std::cerr<<"c12\n";
                     l=r=mid;
                     ra=0;
                 }
@@ -83,48 +89,24 @@ namespace roots
             }
             if(ra<mid)
             {
+                // std::cerr<<"c2\n";
                 r=mid-1;
             }
             else
             {
+                // std::cerr<<"c3\n";
                 l=mid+1;
             }
+            ra=0;
         }
-        
+        ra=sgn*ra;
         return ra;
     }
 
+    template <typename I>
     I sqt(I n)
     {
-        I l=1,r=a;
-        I ra=0;
-        while (l<r)
-        {
-            I mid = l+(r-l)/2;
-            ra=a/mid;
-            if(ra==mid)
-            {
-                if(n==ra*mid)
-                {
-                    l=r=ra=mid;
-                }
-                else
-                {
-                    l=r=mid;
-                    ra=0;
-                }
-                break;
-            }
-            if(ra<mid)
-            {
-                r=mid-1;
-            }
-            else
-            {
-                l=mid+1;
-            }
-        }
-        return ra;
+        return roots::inroot<I>(n,(I)2);
     }
 
     template <typename R>
@@ -133,21 +115,20 @@ namespace roots
         a1 /= a2;
         a0 /= a2;
         R det = a1 * a1 - (R)4.0 * a0;
-        std::vector<R> ans;
+        std::vector<R> ans(4,(R)0);
         if (det < 0)
         {
             det = std::sqrt(std::abs(det));
-            ans.assign(3, 0);
             ans[0] = (-a1) / (2.0);
             ans[1] = (det) / (2.0);
-            ans[2] = -1;
+            ans[2] = ans[0];
+            ans[3] = -ans[1];
         }
         else
         {
             det = std::sqrt(det);
-            ans.assign(2, 0);
             ans[0] = (-a1 + det) / (2.0);
-            ans[1] = (-a1 - det) / (2.0);
+            ans[2] = (-a1 - det) / (2.0);
         }
 
         return ans;
@@ -180,7 +161,7 @@ namespace roots
         cans[1] = alpha * w - beta * w * w;
         cans[2] = alpha * w * w - beta * w;
 
-        for (I i = 0; i < 6; i++)
+        for (int i = 0; i < 6; i++)
         {
             if (i % 2 == 0)
                 ans.push_back(cans[(i / 2)].real()-a2);
@@ -221,7 +202,7 @@ namespace roots
         cans.push_back((-qb+std::sqrt(qb*qb-4.0*qa*qc))/(2.0*qa));
 
         std::vector<R> ans;
-        for (I i = 0; i < 8; i++)
+        for (int i = 0; i < 8; i++)
         {
             if (i % 2 == 0)
                 ans.push_back(cans[(i / 2)].real());

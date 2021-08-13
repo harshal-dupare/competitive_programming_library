@@ -3,69 +3,61 @@
 #include <string>
 #include <vector>
 
-template <typename I>
-class string_matching
+namespace string_matching
 {
-public:
-    char min_char;
-    char max_char;
-    char out_char;
-    I char_size;
-    I base;
-    I mod = 1e9 + 7;
-    std::vector<I> pi;
+    char min_char = 'a';
+    char max_char = 'z';
+    char out_char = '$';
+    int char_size = 26;
+    int base = 29;
+    int mod = 1e9 + 7;
 
-    string_matching(char _min_char = 'a', char _max_char = 'z', I _base = 29, char _out_char = '$')
-    {
-        this->min_char = _min_char;
-        this->max_char = _max_char;
-        this->out_char = _out_char;
-        this->char_size = _max_char - _min_char + 1;
-        this->base = _base;
-    }
-
-    void set(I n)
+    template <typename I>
+    void set(I n, std::vector<I> &pi)
     {
         pi.resize(n + 1);
         pi[0] = 1;
         for (I i = 1; i < n + 1; i++)
         {
-            pi[i] = (pi[i - 1] * base) % mod;
+            pi[i] = (pi[i - 1] * string_matching::base) % string_matching::mod;
         }
     }
 
     // O(|s|)
-    void get_prefix_hashes(std::string &s, std::vector<I> &hashvec)
+    template <typename I>
+    void get_prefix_hashes(std::string &s, std::vector<I> &hashvec, std::vector<I> &pi)
     {
         hashvec.resize(s.size());
-        hashvec[0] = (s[0] - min_char);
+        hashvec[0] = (s[0] - string_matching::min_char);
         for (I i = 1; i < s.size(); i++)
         {
-            hashvec[i] = (hashvec[i - 1] + pi[i] * (s[i] - min_char)) % mod;
+            hashvec[i] = (hashvec[i - 1] + pi[i] * (s[i] - string_matching::min_char)) % string_matching::mod;
         }
     }
 
     // O(|s|)
-    I hash(std::string &s)
+    template <typename I>
+    I hash(std::string &s,std::vector<I> &pi)
     {
-        I _hash = (s[0] - min_char);
+        I _hash = (s[0] - string_matching::min_char);
         for (I i = 1; i < s.size(); i++)
         {
-            _hash = (_hash + pi[i] * (s[i] - min_char)) % mod;
+            _hash = (_hash + pi[i] * (s[i] - string_matching::min_char)) % string_matching::mod;
         }
 
         return _hash;
     }
 
     // O(|s|+|p|*|matching_ids|)
-    std::vector<I> rabin_karp(std::string &s, std::string &pattern)
+    template <typename I>
+    std::vector<I> rabin_karp(std::string &s, std::string &pattern, std::vector<I> &pi)
     {
-        I phash = this->hash(pattern);
+        I phash = string_matching::hash<I>(pattern,pi);
         I m = pattern.size();
         I n = s.size();
         std::vector<I> match_index;
         std::vector<I> shash;
-        this->get_prefix_hashes(s, shash);
+        string_matching::get_prefix_hashes<I>(s, shash, pi);
 
         if (shash[m - 1] == phash)
         {
@@ -74,7 +66,7 @@ public:
 
         for (I i = 1; i < n - m; i++)
         {
-            if ((pi[i] * phash) % mod == ((shash[m - 1 + i] + mod - shash[i - 1]) % mod))
+            if ((pi[i] * phash) % string_matching::mod == ((shash[m - 1 + i] + string_matching::mod - shash[i - 1]) % string_matching::mod))
             {
                 bool poss = true;
                 for (I j = i; j < i + m; j++)
@@ -97,6 +89,7 @@ public:
     }
 
     // O(|s|)
+    template <typename I>
     void prefix_function(std::string &s, std::vector<I> &prefixf)
     {
         I n = s.size();
@@ -117,13 +110,14 @@ public:
     }
 
     // O(|s|+|p|) for proper suffix only
+    template <typename I>
     std::vector<I> kmp_matching(std::string &s, std::string &pattern)
     {
         std::vector<I> match_id;
         I n = s.size();
         I m = pattern.size();
         std::vector<I> pref_ptr(m + 1);
-        pattern.push_back(this->out_char);
+        pattern.push_back(string_matching::out_char);
         pref_ptr[0] = 0;
         for (I i = 1; i < m + 1; i++)
         {
@@ -131,8 +125,9 @@ public:
             while (j > 0 && pattern[i] != pattern[j])
                 j = pref_ptr[j - 1];
 
-            if (pattern[i] == pattern[j]) j++;
-                pref_ptr[i] = j;
+            if (pattern[i] == pattern[j])
+                j++;
+            pref_ptr[i] = j;
         }
 
         I lst_match = pref_ptr[m - 1];
@@ -162,21 +157,22 @@ public:
     }
 
     // O(|w|*|s|)
+    template <typename I>
     void automaton(std::string &s, std::vector<std::vector<I>> &aut)
     {
         s += "$";
-        aut.assign(s.size(), std::vector<I>(char_size, 0));
+        aut.assign(s.size(), std::vector<I>(string_matching::char_size, 0));
         std::vector<I> prefx;
-        this->prefix_function(s, prefx);
+        string_matching::prefix_function(s, prefx);
 
         for (I i = 0; i < s.size(); i++)
         {
-            for (I k = 0; k < char_size; k++)
+            for (I k = 0; k < string_matching::char_size; k++)
             {
-                if (i > 0 && min_char + k != s[i])
+                if (i > 0 && string_matching::min_char + k != s[i])
                     aut[i][k] = aut[prefx[i - 1]][k];
                 else
-                    aut[i][k] = i + (min_char + k == s[i]);
+                    aut[i][k] = i + (string_matching::min_char + k == s[i]);
             }
         }
 
@@ -184,6 +180,7 @@ public:
     }
 
     // O(|s|)
+    template <typename I>
     void z_function(std::string &s, std::vector<I> &zf)
     {
         zf.resize(s.size(), 0);

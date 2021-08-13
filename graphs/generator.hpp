@@ -1,15 +1,14 @@
 #pragma once
 #include <bits/stdc++.h>
 
-template <typename I>
-class generator
+namespace generator
 {
-public:
+    template <typename I>
     void erdos_renyi(I n, I m, graph<I> &G)
     {
-        
     }
 
+    template <typename I>
     void line(I n, graph<I> &G)
     {
         G = graph<I>(n);
@@ -19,6 +18,7 @@ public:
         }
     }
 
+    template <typename I>
     void complete(I n, graph<I> &G)
     {
         G = graph<I>(n);
@@ -32,6 +32,7 @@ public:
         }
     }
 
+    template <typename I>
     void cycle(I n, graph<I> &G)
     {
         G = graph<I>(n);
@@ -42,10 +43,12 @@ public:
         G.add_edge(n - 1, 0);
     }
 
+    template <typename I>
     void k_regular(I k, I n, graph<I> &G)
     {
     }
 
+    template <typename I>
     void hypercube(I n, graph<I> &G)
     {
         // 2^n vertices
@@ -65,6 +68,7 @@ public:
         }
     }
 
+    template <typename I>
     void octahedral(I n, graph<I> &G)
     {
         // scope to optimize
@@ -77,6 +81,7 @@ public:
         }
     }
 
+    template <typename I>
     void complete_biparted(I n, I m, graph<I> &G)
     {
         G = graph<I>(n + m);
@@ -89,6 +94,7 @@ public:
         }
     }
 
+    template <typename I>
     void perterson(graph<I> &G)
     {
         G = graph<I>(10);

@@ -1,8 +1,7 @@
 #pragma once
+#include <iostream>
 #include <vector>
 #include <complex>
-
-using namespace std;
 
 namespace fft
 {
@@ -39,7 +38,7 @@ namespace fft
 
     // expects input to be of size 2^k
     template <typename T>
-    void bit_reversal_permutation(vector<T> &a)
+    void bit_reversal_permutation(std::vector<T> &a)
     {
         int n = a.size();
         for (int i = 1, j = 0; i < n; i++)
@@ -60,31 +59,31 @@ namespace fft
 
             // we only swap once
             if (i < j)
-                swap(a[i], a[j]);
+                std::swap(a[i], a[j]);
         }
     }
 
     template <typename R>
-    void fft(vector<complex<R>> &a, bool inverse = false)
+    void fft(std::vector<std::complex<R>> &a, bool inverse = false)
     {
-        int n = greater_power_of_2((int)a.size());
+        int n = greater_power_of_2<int>((int)a.size());
 
         // resize and do bit reversal for inplace fft
-        a.resize(n, complex<R>((R)0, (R)0));
-        fft::bit_reversal_permutation(a);
+        a.resize(n, std::complex<R>((R)0, (R)0));
+        fft::bit_reversal_permutation<std::complex<R>>(a);
 
         for (int len = 2; len <= n; len <<= 1)
         {
             R ang = (R)2.0 * std::acos((R)(-1.0)) / len;
             if (inverse)
                 ang = -ang;
-            complex<R> wlen(std::cos(ang), std::sin(ang));
+            std::complex<R> wlen(std::cos(ang), std::sin(ang));
             for (int i = 0; i < n; i += len)
             {
-                complex<R> w(1);
+                std::complex<R> w(1);
                 for (int j = 0; j < len / 2; j++)
                 {
-                    complex<R> u = a[i + j], v = a[i + j + len / 2] * w;
+                    std::complex<R> u = a[i + j], v = a[i + j + len / 2] * w;
                     a[i + j] = u + v;
                     a[i + j + len / 2] = u - v;
                     w *= wlen;
@@ -101,23 +100,11 @@ namespace fft
     }
 
     // p = c2^k+1, g is primitive root mod p, g^c is 2^k 'th root of unity
-    std::vector<long long> PRIMES = {998244353ll, 7340033ll};
-    std::vector<long long> PRIMITIVE_ROOT = {3ll, 3ll};
-    std::unordered_map<long long, long long> ROOTS_OF_UNITY = {
-        {998244353ll, 15311432ll},
-        {7340033ll, 2187ll},
-        {97ll, 28ll},
-    };
-    std::unordered_map<long long, long long> IROOTS_OF_UNITY = {
-        {998244353ll, 469870224ll},
-        {7340033ll, 4665133ll},
-        {97ll, 52ll},
-    };
-    std::unordered_map<long long, long long> TWO_K = {
-        {998244353ll, 8388608ll},
-        {7340033ll, 1048576ll},
-        {97ll, 32ll},
-    };
+    std::vector<long long> PRIMES = {998244353ll, 7340033ll, 97ll};
+    std::vector<long long> PRIMITIVE_ROOT = {3ll, 3ll, 3ll};
+    std::vector<long long> ROOTS_OF_UNITY = {15311432ll, 2187ll, 28ll};
+    std::vector<long long> IROOTS_OF_UNITY = {469870224ll, 4665133ll, 52ll};
+    std::vector<long long> TWO_K = {8388608ll, 1048576ll, 32ll};
 
     template <typename I>
     void add_roots_set(I mod, I g)
@@ -133,11 +120,13 @@ namespace fft
         I w = power<I>((I)g, (I)c, mod);
         I tw = power<I>((I)w, (I)(mod - 2), mod);
 
-        ROOTS_OF_UNITY[mod] = w;
-        IROOTS_OF_UNITY[mod] = tw;
-        TWO_K[mod] = k;
+        PRIMES.push_back((long long)mod);
+        PRIMITIVE_ROOT.push_back((long long)g);
+        ROOTS_OF_UNITY.push_back((long long)w);
+        IROOTS_OF_UNITY.push_back((long long)tw);
+        TWO_K.push_back((long long)k);
 
-        std::cerr << w << ", " << tw << ", " << k << endl;
+        std::cerr << w << ", " << tw << ", " << k << std::endl;
     }
 
     template <typename I, I mod>
@@ -145,16 +134,30 @@ namespace fft
     {
         I n = greater_power_of_2((I)a.size());
         a.resize(n, 0);
-        
+
         // resize and do bit reversal for inplace fft
         fft::bit_reversal_permutation(a);
 
-        I two_k = TWO_K[(long long)mod];
+        // find the details about prime in database of primes
+        int id = 0;
+        for(;id<(int)PRIMES.size();id++)
+        {
+            if(PRIMES[id]==(long long)mod)
+            {
+                break;
+            }
+        }
+
+        I two_k = TWO_K[id];
+
+        // "mod=c*2^k+1 must have large enough order of unit root to apply dft on size n array"
+        assert((n<=two_k)&&"mod=c*2^k+1 must have large enough order of unit root to apply dft on size n array"); 
+
         I w_root;
         if (inverse)
-            w_root = IROOTS_OF_UNITY[(long long)mod];
+            w_root = IROOTS_OF_UNITY[id];
         else
-            w_root = ROOTS_OF_UNITY[(long long)mod];
+            w_root = ROOTS_OF_UNITY[id];
 
         for (I k = 1; k < n; k *= 2)
         {

@@ -1,14 +1,14 @@
 #include <bits/stdc++.h>
-#include "polynomial.hpp"
+#include "../polynomial.hpp"
 // #include "ffts.hpp"
 
 using namespace std;
 
 typedef long long ll;
-// ll mod = 998244353ll;
-ll mod = 97ll;
+ll mod = 998244353ll;
+// ll mod = 97ll;
 
-typedef polynomial<ll, 97ll> poly;
+typedef polynomial<ll, 998244353ll> poly;
 
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
@@ -16,6 +16,8 @@ poly rand_poly(ll N)
 {
     vector<ll> a;
     ll n = rng() % N;
+    if(n<0) n+=N;
+
     for (ll i = 0; i <= n; i++)
     {
         ll tp =rng() % (mod);
@@ -51,12 +53,12 @@ void test_add_sub()
             ll vamb=amb.eval(r);
             ll vbma=bma.eval(r);
 
-            cout<<"r="<<r<<endl;
-            cout<<va<<":"<<a;
-            cout<<vb<<":"<<b;
-            cout<<vapb<<":"<<apb;
-            cout<<vamb<<":"<<amb;
-            cout<<vbma<<":"<<bma;
+            // cout<<"r="<<r<<endl;
+            // cout<<va<<":"<<a;
+            // cout<<vb<<":"<<b;
+            // cout<<vapb<<":"<<apb;
+            // cout<<vamb<<":"<<amb;
+            // cout<<vbma<<":"<<bma;
             if((va+vb)%mod!=vapb)
             {
                 cout<<"a+b\n";
@@ -69,9 +71,9 @@ void test_add_sub()
             {
                 cout<<"b-a\n";
             }
-            cout << endl;
+            // cout << endl;
         }
-        cout << endl;
+        // cout << endl;
     }
 }
 
@@ -85,6 +87,7 @@ void test_mult()
     {
         auto a = rand_poly(N);
         auto b = rand_poly(N);
+
         auto apb = a*b;
         ll k = 100ll;
         while(k--)
@@ -96,15 +99,17 @@ void test_mult()
             ll vb=b.eval(r);
             ll vapb=apb.eval(r);
 
-
-            // cout<<"r="<<r<<endl;
-            // cout<<va<<":"<<a;
-            // cout<<vb<<":"<<b;
-            // cout<<vapb<<":"<<apb;
             if((va*vb)%mod!=vapb)
             {
                 cout<<"a*b\n";
                 ct++;
+            }
+            else
+            {
+                // cout<<"r="<<r<<endl;
+                // cout<<va<<":"<<a;
+                // cout<<vb<<":"<<b;
+                // cout<<vapb<<":"<<apb;
             }
         }
         cout << endl;
@@ -139,15 +144,15 @@ void test_div_mod()
 
             auto ra = arb+b*aqb;
 
-            cout<<"r="<<r<<endl;
-            cout<<"a="<<va<<":"<<a;
-            cout<<"b="<<vb<<":"<<b;
-            cout<<"a/b="<<vaqb<<":"<<aqb;
-            cout<<"a%b="<<varb<<":"<<arb;
+            // cout<<"r="<<r<<endl;
+            // cout<<"a="<<va<<":"<<a;
+            // cout<<"b="<<vb<<":"<<b;
+            // cout<<"a/b="<<vaqb<<":"<<aqb;
+            // cout<<"a%b="<<varb<<":"<<arb;
             ll ans = (vb*vaqb+varb)%mod;
             if(ans<0)
                 ans+=mod;
-            cout<<"qb+r="<<ans<<":"<<ra;
+            // cout<<"qb+r="<<ans<<":"<<ra;
             
             if(ans!=va)
             {
@@ -160,7 +165,7 @@ void test_div_mod()
                 ct++;
             }
         }
-        cout << endl;
+        // cout << endl;
 
     }
 
@@ -177,7 +182,7 @@ void test_multi_point_eval()
     while (n--)
     {
         auto a = rand_poly(N);
-        cout<<a;
+        // cout<<a;
         ll k = K;
         vector<ll> x;
         while(k--)
@@ -194,7 +199,7 @@ void test_multi_point_eval()
             if(ax[i]!=val)
             {
                 // cout<<a;
-                cout<<x[i]<<": ( "<<ax[i]<<", "<<val<<" )"<<endl;
+                // cout<<x[i]<<": ( "<<ax[i]<<", "<<val<<" )"<<endl;
                 ct++;
             }
             tc++;
@@ -250,7 +255,6 @@ int main()
     // test_mult();
     // test_div_mod();
     // test2();
-    // test_add_sub();
     test_multi_point_eval();
     return 0;
 }

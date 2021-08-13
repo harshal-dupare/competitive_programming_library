@@ -23,43 +23,43 @@ struct polynomial
     {
         this->a.assign(p.a.begin(), p.a.end());
     }
-    polynomial(const string& s)
+    polynomial(const std::string& s)
     {
         I i=0;
-        vector<pair<I,I>> pl;
+        std::vector<std::pair<I,I>> pl;
         I j=-1;
         while (i<s.size())
         {
             if(s[i]=='+')
             {
                 i++;
-                string c;
+                std::string c;
                 while (s[i]!='*')
                 {
                     if(s[i]!=' ') c.push_back(s[i]);
                     i++;
                 }
                 I ic = atoi(c.c_str());
-                pl.push_back(make_pair(-1,ic));
+                pl.push_back(std::make_pair(-1,ic));
                 j++;
             }
             else if(s[i]=='-')
             {
                 i++;
-                string c;
+                std::string c;
                 while (s[i]!='*')
                 {
                     if(s[i]!=' ') c.push_back(s[i]);
                     i++;
                 }
                 I ic = atoi(c.c_str());
-                pl.push_back(make_pair(-1,-ic));
+                pl.push_back(std::make_pair(-1,-ic));
                 j++;
             }
             else if(s[i]=='^')
             {
                 i++;
-                string c;
+                std::string c;
                 while (i<s.size()&&s[i]!='+'&&s[i]!='-')
                 {
                     if(s[i]!=' ') c.push_back(s[i]);
@@ -121,7 +121,7 @@ struct polynomial
     // O(max(deg1,deg2))
     polynomial<I, mod> operator+(const polynomial<I, mod> &y)
     {
-        vector<I> _a(this->a.begin(), this->a.end());
+        std::vector<I> _a(this->a.begin(), this->a.end());
         _a.resize(std::max(this->size(), y.size()), 0);
         for (int i = 0; i < y.size(); i++)
         {
@@ -156,7 +156,7 @@ struct polynomial
     // O(max(deg1,deg2))
     polynomial<I, mod> operator-(const polynomial<I, mod> &y)
     {
-        vector<I> _a(this->a.begin(), this->a.end());
+        std::vector<I> _a(this->a.begin(), this->a.end());
         _a.resize(std::max(this->size(), y.size()), 0);
         for (int i = 0; i < y.size(); i++)
         {
@@ -414,7 +414,7 @@ struct polynomial
     {
         if (k > this->degree())
             return polynomial<I, mod>(this->a);
-        vector<I> p(k, 0);
+        std::vector<I> p(k, 0);
         k = std::min(k, this->degree() + 1);
         for (I i = 0; i < k; i++)
         {
@@ -538,6 +538,8 @@ struct polynomial
 };
 
 // O( n * log(n) * log(deg) )
+// 100 1000 100
+// Total Erros: 0/10000
 template <typename I, I mod>
 std::vector<I> multipoint_eval(polynomial<I, mod> &poly,const std::vector<I> &u)
 {
@@ -550,7 +552,7 @@ std::vector<I> multipoint_eval(polynomial<I, mod> &poly,const std::vector<I> &u)
         k++;
     }
     q = 1 << k;
-    vector<I> fu(on, poly.a[0]);
+    std::vector<I> fu(on, poly.a[0]);
     if(poly.degree()==0)
     {
         return fu;
@@ -610,10 +612,10 @@ std::vector<I> multipoint_eval(polynomial<I, mod> &poly,const std::vector<I> &u)
     }
 
     // init stack
-    stack<polynomial<I, mod>> Sp;
-    stack<I> Sl;
-    stack<I> Sr;
-    stack<I> Sk;
+    std::stack<polynomial<I, mod>> Sp;
+    std::stack<I> Sl;
+    std::stack<I> Sr;
+    std::stack<I> Sk;
     Sp.push(poly);
     Sl.push((I)0);
     Sr.push(q - 1);
