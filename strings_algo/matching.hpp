@@ -108,11 +108,11 @@ public:
             while (j > 0 && s[i] != s[j])
                 j = prefixf[j - 1];
 
-            // if last char matches then increase length by 1 ans assign else its zero
+            // if last char matches then increase length by 1
             if (s[i] == s[j])
-                prefixf[i] = j + 1;
-            else
-                prefixf[i] = 0;
+                j++;
+
+            prefixf[i] = j;
         }
     }
 
@@ -131,10 +131,8 @@ public:
             while (j > 0 && pattern[i] != pattern[j])
                 j = pref_ptr[j - 1];
 
-            if (pattern[i] == pattern[j])
-                pref_ptr[i] = j + 1;
-            else
-                pref_ptr[i] = 0;
+            if (pattern[i] == pattern[j]) j++;
+                pref_ptr[i] = j;
         }
 
         I lst_match = pref_ptr[m - 1];
@@ -193,16 +191,22 @@ public:
         zf[0] = 0;
         for (I i = 1, l = 0, r = 0; i < n; i++)
         {
+            // initial estmate is 0 if i > r
+            // i.e. new matching is outside the right most matching
+            // else its min of seen region after i and the length of matching at i-l
+            // as s[0.....r-l] == s[l....r]
             if (r >= i)
             {
                 zf[i] = std::min(r - i + 1, zf[i - l]);
             }
 
+            // run trivial algo to compute the increment on initial estimate
             while (i + zf[i] < n && s[zf[i] + i] == s[zf[i]])
             {
                 zf[i]++;
             }
 
+            // update the right most matching
             if (i + zf[i] - 1 > r)
             {
                 l = i;

@@ -31,7 +31,7 @@ public:
     i*e[i] = e[i-1]p[1]-e[i-1]p[2]+...
     */
     // O( k*(n+k) ) time | O(n) space
-    void compute(int k, I inMOD = 10000009)
+    void compute(int k, I inMOD = 10000007)
     {
         vector<I> temp(n, 1);
         for (int j = 0; j < k; j++)
@@ -56,7 +56,19 @@ public:
             if(j==0) this->e[j] = 1;
             else
             {
-                this->e[j]/=j;
+                I pj=1;
+                I tn=inMOD-2;
+                I tj=j;
+                while(tn>0)
+                {
+                    if(tn&1)
+                    {
+                        tj = (tj*pj)%inMOD;
+                    }
+                    pj = (pj*pj)%inMOD;
+                    tn>>=1;
+                }
+                this->e[j]=(this->e[j]*tj)%inMOD;
             }
         }
     }

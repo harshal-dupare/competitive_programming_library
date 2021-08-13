@@ -3,13 +3,9 @@
 #include<vector>
 #include<complex>
 
-template <typename I, typename R>
-class roots
+namespace roots
 {
-public:
-    R EPS = 1e-6;
-    I itr = 50;
-
+    template <typename I>
     I power(I a, I n)
     {
         I t = 1;
@@ -25,22 +21,18 @@ public:
         return t;
     }
 
-    roots(R EPS = 1e-6)
-    {
-        this->EPS = EPS;
-    }
-
     // return a^(1/r) if its an integer O(log(a)*POW(r))
-    R nroot(R a, R r)
+    template <typename R=double, typename I=long>
+    R nroot(R a, R r,R EPS = 1e-6,I itr = 50)
     {
-        if (std::abs(a) < this->EPS)
+        if (std::abs(a) < EPS)
         {
             return 0.0;
         }
-        I itrr = this->itr;
+        I itrr = itr;
         R xr = 2.0;
         R xn = 1.0;
-        while (itrr > 0 && std::abs(xn - xr) > this->EPS)
+        while (itrr > 0 && std::abs(xn - xr) > EPS)
         {
             xn = xr;
             xr = xr * (1 - (1 / r)) + (a / r) / std::pow(xr, r - 1);
@@ -50,45 +42,92 @@ public:
         return xr;
     }
 
-    // return a^(1/n) if its an integer O(2err*long(n)+)
-    I inroot(I a, I n, I err = 3)
+    // return a^(1/n) if its an integer O(log(a)*log(n))
+    // use bin search insted
+    I inroot(I a, I n)
     {
-        R ra = (R)a, rn = (R)n;
-        I est = I(this->nroot(ra, rn));
+        // R ra = (R)a, rn = (R)n;
+        // I est = I(nroot(ra, rn));
+        // for (I k = est - err; k < est + err + 1; k++)
+        // {
+        //     if (a == power(k, n))
+        //     {
+        //         return k;
+        //     }
+        // }
+        // return 0;
 
-        for (I k = est - err; k < est + err + 1; k++)
+        I l=1,r=a;
+        I ra=0;
+        while (l<r)
         {
-            if (a == this->power(k, n))
+            I mid = l+(r-l)/2;
+            I tn = n-1;
+            ra=a;
+            while(tn--)
             {
-                return k;
+                ra/=mid;
+            }
+            if(ra==mid)
+            {
+                if(n==ra*roots:power(mid,n-1))
+                {
+                    l=r=ra=mid;
+                }
+                else
+                {
+                    l=r=mid;
+                    ra=0;
+                }
+                break;
+            }
+            if(ra<mid)
+            {
+                r=mid-1;
+            }
+            else
+            {
+                l=mid+1;
             }
         }
-
-        return 0;
+        
+        return ra;
     }
 
     I sqt(I n)
     {
-        if (n == 0)
-            return 0;
-        I dl = 1;
-        I dr = n;
-        while (dl < dr)
+        I l=1,r=a;
+        I ra=0;
+        while (l<r)
         {
-            I mid = (dr + dl) / 2;
-            if (mid * mid < n)
+            I mid = l+(r-l)/2;
+            ra=a/mid;
+            if(ra==mid)
             {
-                dl = mid + 1;
+                if(n==ra*mid)
+                {
+                    l=r=ra=mid;
+                }
+                else
+                {
+                    l=r=mid;
+                    ra=0;
+                }
+                break;
+            }
+            if(ra<mid)
+            {
+                r=mid-1;
             }
             else
             {
-                dr = mid;
+                l=mid+1;
             }
         }
-
-        return dl;
+        return ra;
     }
 
+    template <typename R>
     std::vector<R> quadratic_roots(R a0, R a1, R a2)
     {
         a1 /= a2;
@@ -114,7 +153,8 @@ public:
         return ans;
     }
 
-    std::vector<R> cubic_roots(R a0, R a1, R a2, R a3)
+    template <typename R>
+    std::vector<R> cubic_roots(R a0, R a1, R a2, R a3,R EPS = 1e-6)
     {
         a2 /= (3.0*a3);
         a1 /= a3;
@@ -135,7 +175,7 @@ public:
             cb = std::complex<R>(b0 + std::sqrt(std::abs(det)), 0);
         }
         std::complex<R> beta = pow(cb, std::complex<R>((R)1.0 / 3.0, 0)), alpha(0,0);
-        if(std::abs(beta)>this->EPS) alpha = std::complex<R>(b1, (R)0) / beta;
+        if(std::abs(beta)>EPS) alpha = std::complex<R>(b1, (R)0) / beta;
         cans[0] = alpha - beta;
         cans[1] = alpha * w - beta * w * w;
         cans[2] = alpha * w * w - beta * w;
@@ -152,6 +192,7 @@ public:
         return ans;
     }
 
+    template <typename R>
     std::vector<R> quartic_roots(R a0, R a1, R a2, R a3, R a4)
     {
         // x^4+2ax^3+bx^2+2cx+d = (x^2+ax+A)^2-(Bx+C)^2
@@ -163,7 +204,7 @@ public:
         a1 /= (2.0*a4);
         a0 /= a4;
         R a3r2ma2 = a3*a3-a2;
-        std::vector<R> cbans = this->cubic_roots(-a1*a1-a0*(a3r2ma2),2.0*(a1-a0),a3r2ma2-1,2.0);
+        std::vector<R> cbans = cubic_roots(-a1*a1-a0*(a3r2ma2),2.0*(a1-a0),a3r2ma2-1,2.0);
         std::complex<R> A(cbans[0],cbans[1]);
         std::complex<R> B=std::sqrt(2.0*A+a3r2ma2);
         std::complex<R> C=std::sqrt(A*A-a0);

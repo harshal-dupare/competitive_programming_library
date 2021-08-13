@@ -1,20 +1,20 @@
 
-
+#pragma once
 
 template <typename I>
 class combinations
 {
 public:
     I N;
-    vector<I> fact;
-    vector<I> subfact;
-    vector<I> bell;
-    vector<I> central_delannoy;
+    std::vector<I> fact;
+    std::vector<I> subfact;
+    std::vector<I> bell;
+    std::vector<I> central_delannoy;
 
     combinations(I N)
     {
         this->N = N;
-        this->fact = vector<I>(N + 1);
+        this->fact = std::vector<I>(N + 1);
     }
 
     I add(I a, I b)
@@ -118,18 +118,18 @@ class combinations_mod2
 public:
     I N;
     I inMOD;
-    vector<I> ifact;
-    vector<I> fact;
-    vector<I> subfact;
-    vector<I> bell;
-    vector<I> central_delannoy;
+    std::vector<I> ifact;
+    std::vector<I> fact;
+    std::vector<I> subfact;
+    std::vector<I> bell;
+    std::vector<I> central_delannoy;
 
     combinations_mod2(I N, I inMOD)
     {
         this->N = N;
         this->inMOD = inMOD;
-        this->fact = vector<I>(N + 1);
-        this->ifact = vector<I>(N + 1);
+        this->fact = std::vector<I>(N + 1);
+        this->ifact = std::vector<I>(N + 1);
     }
 
     inline I add(I a, I b)
@@ -181,7 +181,7 @@ public:
 
     void compute_subfact()
     {
-        this->subfact = vector<I>(this->N);
+        this->subfact = std::vector<I>(this->N);
         this->subfact[0] = 1;
         for (I i = 1; i <= this->N; i++)
         {
@@ -238,7 +238,7 @@ public:
     // O(n)
     void delannoy_number(I n)
     {
-        this->central_delannoy = vector<I>(n);
+        this->central_delannoy = std::vector<I>(n);
 
         this->central_delannoy[0] = 1;
         this->central_delannoy[1] = 3;
@@ -258,18 +258,18 @@ class combinations_mod
 public:
     I N;
     I inMOD;
-    vector<I> ifact;
-    vector<I> fact;
-    vector<I> subfact;
-    vector<I> bell;
-    vector<I> central_delannoy;
+    std::vector<I> ifact;
+    std::vector<I> fact;
+    std::vector<I> subfact;
+    std::vector<I> bell;
+    std::vector<I> central_delannoy;
 
     combinations_mod(I N, I inMOD)
     {
         this->N = N;
         this->inMOD = inMOD;
-        this->fact = vector<I>(N + 1);
-        this->ifact = vector<I>(N + 1);
+        this->fact = std::vector<I>(N + 1);
+        this->ifact = std::vector<I>(N + 1);
     }
 
     inline I add(I a, I b)
@@ -330,7 +330,7 @@ public:
 
     void compute_subfact()
     {
-        this->subfact = vector<I>(this->N);
+        this->subfact = std::vector<I>(this->N);
         this->subfact[0] = 1;
         for (I i = 1; i <= this->N; i++)
         {
@@ -387,7 +387,7 @@ public:
     // O(n)
     void delannoy_number(I n)
     {
-        this->central_delannoy = vector<I>(n);
+        this->central_delannoy = std::vector<I>(n);
 
         this->central_delannoy[0] = 1;
         this->central_delannoy[1] = 3;

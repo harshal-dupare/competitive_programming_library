@@ -1,12 +1,12 @@
 #pragma once
 #include <vector>
 #include "../algebra/linear_eq.hpp"
+#include "../number_theory/math_constants.hpp"
 
-double _EPSILON = 1e-4;
 typedef long long ll;
 
 template<typename R>
-R fractional_part(R x)
+R fractional_part(R x,double _EPSILON = 1e-4)
 {
     R x_ssc = (R)(((ll)(x)) + 3ll);
     R x_sc = (R)(((ll)(x)) + 2ll);
@@ -43,7 +43,7 @@ R fractional_part(R x)
 }
 
 template<typename R>
-R integral_part(R x)
+R integral_part(R x,double _EPSILON = 1e-4)
 {
     R x_sc = (R)(((ll)(x)) + 2ll);
     R x_c = (R)(((ll)(x)) + 1ll);
@@ -106,7 +106,7 @@ template <typename R>
 std::vector<R> add_poly(std::vector<R> &x, std::vector<R> &y)
 {
     std::vector<R> xpy;
-    ll i;
+    int i;
     for (i = 0; i < std::min(x.size(), y.size()); i++)
     {
         xpy.push_back(x[i] + y[i]);
@@ -124,35 +124,18 @@ std::vector<R> add_poly(std::vector<R> &x, std::vector<R> &y)
     return xpy;
 }
 
-template <typename I, typename R>
-class calculus
+namespace calculus
 {
-public:
-    R EPS = 1e-6;
-    I itr = 50;
-    long double PI = 3.14159265358979324l;
-    long double E = 2.71828182845904524l;
-    long double gamma = 0.577215664901533l;
-
-    calculus()
+    template <typename R>
+    R nroot(R a, R r, R EPS = 1e-6, int itrr = 50)
     {
-    }
-
-    calculus(R EPS)
-    {
-        this->EPS = EPS;
-    }
-
-    R nroot(R a, R r)
-    {
-        if (std::abs(a) < this->EPS)
+        if (std::abs(a) < EPS)
         {
             return 0.0;
         }
-        I itrr = this->itr;
         R xr = 2.0;
         R xn = 1.0;
-        while (itrr > 0 && std::abs(xn - xr) > this->EPS)
+        while (itrr > 0 && std::abs(xn - xr) > EPS)
         {
             xn = xr;
             xr = xr * (1 - (1 / r)) + (a / r) / pow(xr, r - 1);
@@ -162,13 +145,15 @@ public:
         return xr;
     }
 
+    template <typename R>
     R compute_polynomial(std::vector<R> &a, R x)
     {
-        if (a.size() < 1)
+        int n = (int)a.size();
+        if (n < 1)
             return 0.0;
 
-        R val = a[a.size() - 1];
-        for (I i = a.size() - 2; i >= 0; i--)
+        R val = a[n - 1];
+        for (int i = n - 2; i >= 0; i--)
         {
             val *= x;
             val += a[i];
@@ -177,30 +162,31 @@ public:
         return val;
     }
 
-    std::vector<R> poly_root(std::vector<R> a)
-    {
-        I n = a.size() - 1;
-        I mxdeg = n;
-        while (mxdeg >= 0)
-        {
-            if (std::abs(a[mxdeg]) > this->EPS)
-                break;
-            mxdeg--;
-        }
+    // template <typename R>
+    // std::vector<R> poly_root(std::vector<R> a,R EPS = 1e-6)
+    // {
+    //     int n = (int)a.size() - 1;
+    //     int mxdeg = n;
+    //     while (mxdeg >= 0)
+    //     {
+    //         if (std::abs(a[mxdeg]) > EPS)
+    //             break;
+    //         mxdeg--;
+    //     }
+    //     R mxrange = 0;
+    //     for (int i = mxdeg - 1; i >= 0; i--)
+    //     {
+    //         a[i] /= a[mxdeg];
+    //         mxrange = max(mxrange, std::abs(a[i]));
+    //     }
+    //     a[mxdeg] = (R)1.0;
+    //     mxrange += 1.0;
+    // }
 
-        R mxrange = 0;
-        for (I i = mxdeg - 1; i >= 0; i--)
-        {
-            a[i] /= a[mxdeg];
-            mxrange = max(mxrange, std::abs(a[i]));
-        }
-        a[mxdeg] = (R)1.0;
-        mxrange += 1.0;
-    }
-
+    template <typename R, typename I>
     R integrate_trapezoidal(R (*f)(R), R a, R b, I n)
     {
-        n = max((I)2, n);
+        n = std::max((I)2, n);
         R h = (b - a) / ((R)n);
 
         R ans = (f(a) + f(b)) / 2;
@@ -214,10 +200,11 @@ public:
         return ans;
     }
 
+    template <typename R, typename I>
     R integrate_simpson(R (*f)(R), R a, R b, I n)
     {
         n = (n / 2) * 2;
-        n = max(n, (I)2);
+        n = std::max(n, (I)2);
         R h = (b - a) / ((R)n);
 
         R ans = (f(a) + f(b));
@@ -236,10 +223,11 @@ public:
         return ans;
     }
 
+    template <typename R, typename I>
     R integrate_simpson38(R (*f)(R), R a, R b, I n)
     {
         n = (n / 3) * 3;
-        n = max(n, (I)3);
+        n = std::max(n, (I)3);
         R h = (b - a) / ((R)n);
 
         R ans = (f(a) + f(b));
@@ -259,11 +247,13 @@ public:
         return ans;
     }
 
+    template <typename R>
     R differentate2(R (*f)(R), R x, R h)
     {
         return (f(x + h) - f(x - h)) / (2.0 * h);
     }
 
+    template <typename R, typename I>
     R differentate2_n(R (*fl)(R), R x, R h, I n)
     {
         if (n <= 0)
@@ -295,24 +285,25 @@ public:
         return vf[0];
     }
 
+    template <typename R>
     R differentate4(R (*f)(R), R x, R h)
     {
         return (f(x - 2.0 * h) + 8.0 * f(x + h) - 8.0 * f(x - h) - f(x + 2.0 * h)) / (12.0 * h);
     }
 
-    R find_zero(R (*f)(R), R low, R high)
+    template <typename R, typename I=int>
+    R find_zero(R (*f)(R), R low, R high,R EPS = 1e-6,I itter = 50)
     {
-        I itter = this->itr;
         R flow = f(low), fhigh = f(high);
         R mid = (low + high) / 2;
         while (--itter)
         {
             mid = (low + high) / 2;
             R fmid = f(mid);
-            if (std::abs(fmid) < this->EPS)
+            if (std::abs(fmid) < EPS)
                 return mid;
 
-            if (fmid * flow > 0)
+            if (fmid * flow > (R)0.0)
             {
                 low = mid;
                 flow = fmid;
@@ -327,14 +318,15 @@ public:
         return mid;
     }
 
+    template <typename R>
     std::vector<R> interpolate(std::vector<R> &x, std::vector<R> &y)
     {
-        ll n = y.size();
+        int n = y.size();
         linear_eq<R> le(n, n);
-        for (ll i = 0; i < n; i++)
+        for (int i = 0; i < n; i++)
         {
             le.A[i][0] = 1;
-            for (ll j = 1; j < n; j++)
+            for (int j = 1; j < n; j++)
             {
                 le.A[i][j] = x[i] * le.A[i][j - 1];
             }
@@ -348,6 +340,7 @@ public:
 
     // very sensitive to small h values as accuracy gets lost in small precision, cant be propogated beyond 2-3 degree
     // use large enough h value so as to not be distrubed by precission loss
+    template <typename R, typename I>
     std::vector<R> taylor_series(R (*fl)(R), R a, R h, I deg)
     {
         std::vector<R> vf,coeff;

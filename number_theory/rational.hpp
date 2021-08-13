@@ -1,3 +1,4 @@
+#pragma once
 
 template <typename I>
 class rational
@@ -54,7 +55,6 @@ public:
         this->p = num;
         this->q = din;
     }
-
 
     rational operator*(const rational &b)
     {

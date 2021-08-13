@@ -10,7 +10,10 @@ class markov_chain
 public:
     int n;
     vector<vector<R>> a;
-    markov_chain(){}
+    markov_chain()
+    {
+        n=0;
+    }
 
     markov_chain(int _n)
     {

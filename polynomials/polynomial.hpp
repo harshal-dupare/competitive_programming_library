@@ -77,7 +77,7 @@ struct polynomial
         
         sort(pl.begin(),pl.end());
         this->a.clear();
-        I n = pl[pl.size()-1].first;
+        I n = pl[(int)pl.size()-1].first;
         this->a.assign(n+1,0);
         for(auto p: pl)
         {
@@ -95,7 +95,7 @@ struct polynomial
     // O(deg-last_non_zero_id)
     void shrink_to_fit()
     {
-        I _n = this->a.size() - 1;
+        I _n = (I)this->a.size() - 1;
         while (_n > 0 && this->a[_n] == 0)
         {
             _n--;
@@ -105,15 +105,15 @@ struct polynomial
     }
     I size() const
     {
-        return this->a.size();
+        return (I)this->a.size();
     }
     I degree() const
     {
-        return this->a.size() - 1;
+        return (I)this->a.size() - 1;
     }
     I operator[](int idx) const
     {
-        if (idx < 0 || idx >= this->size())
+        if (idx < 0 || idx >= (int)this->size())
             return 0;
         return this->a[idx];
     }
@@ -201,7 +201,7 @@ struct polynomial
         fft::ntt<I, mod>(b.a);
         for (I i = 0; i < sz; ++i)
             a.a[i] = (a.a[i] * b.a[i]) % mod;
-        fft::intt<I, mod>(a.a);
+        fft::ntt<I, mod>(a.a,true);
         a.shrink_to_fit();
         return a;
     }
@@ -218,7 +218,7 @@ struct polynomial
         fft::ntt<I, mod>(b.a);
         for (I i = 0; i < sz; ++i)
             this->a[i] = (this->a[i] * b.a[i]) % mod;
-        fft::intt<I, mod>(this->a);
+        fft::ntt<I, mod>(this->a,true);
         this->shrink_to_fit();
     }
     // O( deg )

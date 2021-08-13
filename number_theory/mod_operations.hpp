@@ -1,108 +1,45 @@
+#pragma once
 
-
-template <typename I>
-class lmodop
+namespace mod_operations
 {
-public:
-    I MOD;
-    lmodop(I MOD)
+    using ll = long long;
+    ll mod=1000000007ll;
+    ll one = 1ll;
+
+    ll add(const ll a, const ll b)
     {
-        this->MOD = MOD;
+        return (a+b)%mod_operations::mod;
     }
 
-    I add(I n, I m)
+    ll sub(const ll a, const ll b)
     {
-        return (this->MOD + (n + m) % this->MOD) % this->MOD;
+        return (a+mod_operations::mod-b)%mod_operations::mod;
     }
 
-    I sub(I n, I m)
+    ll mult(const ll a,const ll b)
     {
-        return (this->MOD + (n - m) % this->MOD) % this->MOD;
+        return (a*b)%mod_operations::mod;
     }
 
-    I mult(I n, I m)
+    ll power(ll a, ll n)
     {
-        return (this->MOD + (n * m) % this->MOD) % this->MOD;
-    }
-
-    I powm(I n, I k)
-    {
-        I ans = 1;
-        I po = n;
-        while (k > 0)
+        ll ta=1;
+        while(n>0)
         {
-            if (k & 1)
+            if(n&mod_operations::one)
             {
-                ans = this->mult(ans, n);
+                ta = (ta*a)%mod_operations::mod;
             }
-            po = this->mult(po, po);
-            k >>= 1;
+            n>>=1;
+            a = (a*a)%mod_operations::mod;
         }
-
-        return ans;
+        return ta;
     }
 
-    I div(I n, I m)
+    ll inv(const ll a)
     {
-        return this->mult(n, this->powm(m, this->MOD - 2));
-    }
-};
-
-template <typename I>
-class modop
-{
-public:
-    I MOD;
-    modop(I MOD)
-    {
-        this->MOD = MOD;
+        return mod_operations::power(a,mod_operations::mod-2);
     }
 
-    I add(I n, I m)
-    {
-        I ans = (n + m) % this->MOD;
-        if (ans < 0)
-            ans += this->MOD;
+}
 
-        return ans;
-    }
-
-    I sub(I n, I m)
-    {
-        I ans = (n - m) % this->MOD;
-        if (ans < 0)
-            ans += this->MOD;
-        return ans;
-    }
-
-    I mult(I n, I m)
-    {
-        I ans = (n * m) % this->MOD;
-        if (ans < 0)
-            ans += this->MOD;
-
-        return ans;
-    }
-
-    I powm(I n, I k)
-    {
-        I ans = 1;
-        I po = n;
-        while (k > 0)
-        {
-            if (k & 1)
-            {
-                ans = this->mult(ans, n);
-            }
-            po = this->mult(po, po);
-            k >>= 1;
-        }
-
-        return ans;
-    }
-
-    I div(I n, I m)
-    {
-        return this->mult(n, this->powm(m, this->MOD - 2));
-    }
-};

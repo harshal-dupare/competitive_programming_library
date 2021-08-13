@@ -1,10 +1,11 @@
+#pragma once
 
 template <typename I>
 class permutation
 {
 public:
     I n;
-    vector<I> p;
+    std::vector<I> p;
 
     permutation() {}
 
@@ -18,7 +19,7 @@ public:
         }
     }
 
-    permutation(vector<I> &a)
+    permutation(std::vector<I> &a)
     {
         this->n = a.size();
         this->p = a;
@@ -36,7 +37,7 @@ public:
 
     void operator*=(const permutation<I> &o)
     {
-        vector<I> po;
+        std::vector<I> po;
         po.assign(n, 0);
         for (I i = 0; i < n; i++)
         {
@@ -67,7 +68,7 @@ public:
 
     void operator>>=(I k)
     {
-        vector<I> po(n);
+        std::vector<I> po(n);
         po.assign(this->n, 0);
         for (I i = 0; i < this->n; i++)
         {
@@ -78,7 +79,7 @@ public:
 
     void operator<<=(I k)
     {
-        vector<I> po(n);
+        std::vector<I> po(n);
         for (I i = 0; i < this->n; i++)
         {
             po[i] = this->p[(this->n + (i - k) % this->n) % this->n];
@@ -130,9 +131,9 @@ public:
         this->p[i] ^= this->p[j];
     }
 
-    I cyclic_decompose(vector<vector<I>> &cycle)
+    I cyclic_decompose(std::vector<std::vector<I>> &cycle)
     {
-        vector<bool> done(n, false);
+        std::vector<bool> done(n, false);
         I id = 0;
         I transposition_ct = n;
         for (I i = 0; i < n; i++)
@@ -140,7 +141,7 @@ public:
             if (!done[i])
             {
                 I start = i;
-                cycle.push_back(vector<I>(1, this->p[start]));
+                cycle.push_back(std::vector<I>(1, this->p[start]));
                 done[start] = true;
 
                 while (true)
@@ -169,11 +170,11 @@ public:
 
     void print()
     {
-        cerr << "[ ";
+        std::cerr << "[ ";
         for (I i = 0; i < n; i++)
         {
-            cerr << this->p[i] << ", ";
+            std::cerr << this->p[i] << ", ";
         }
-        cerr << "]\n";
+        std::cerr << "]\n";
     }
 };

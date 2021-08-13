@@ -1,20 +1,21 @@
+#pragma once
 
 template <typename I>
 class stable_matching
 {
 public:
     I n;
-    vector<vector<I>> women;
-    vector<vector<I>> men;
-    vector<vector<I>> wpartner;
-    vector<vector<I>> mpartner;
+    std::vector<std::vector<I>> women;
+    std::vector<std::vector<I>> men;
+    std::vector<std::vector<I>> wpartner;
+    std::vector<std::vector<I>> mpartner;
     
     // input preferences must be in reverse
-    stable_matching(I n, vector<vector<I>> men, vector<vector<I>> &womenp)
+    stable_matching(I n, std::vector<std::vector<I>> men, std::vector<std::vector<I>> &womenp)
     {
         this->n = n;
         this->men = men;
-        this->women = vector<vector<I>>(n, vector<I>(n));
+        this->women = std::vector<std::vector<I>>(n, std::vector<I>(n));
         for (I i = 0; i < n; i++)
         {
             for (I j = 0; j < n; j++)
@@ -23,13 +24,12 @@ public:
             }
             reverse(this->men[i].begin(), this->men[i].end());
         }
-        this->wpartner = vector<vector<I>>(n, vector<I>(0));
-        // ok("created")
+        this->wpartner = std::vector<std::vector<I>>(n, std::vector<I>(0));
     }
 
     void match()
     {
-        vector<bool> pool(this->n, true);
+        std::vector<bool> pool(this->n, true);
         I inpool = this->n;
         while (inpool > 0)
         {
@@ -66,12 +66,9 @@ public:
                             inpool++;
                         }
                     }
-                    // this->wpartner[i].clear();
-                    // this->wpartner[i].push_back((*best_man));
-                    this->wpartner[i] = vector<I>(1,(*best_man));
+                    this->wpartner[i] = std::vector<I>(1,(*best_man));
                 }
             }
-            // ok("pool created")
         }
     }
 
