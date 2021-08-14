@@ -22,7 +22,7 @@ int main()
     cb.compute_subfact();
     tsf = tm.get();
 
-    combinations_mod2<ll> cb2(100005, (1e9 + 7));
+    combinations_mod<ll> cb2(100005, (1e9 + 7));
     tm.set();
     cb2.computeFact();
     tf2 = tm.get();

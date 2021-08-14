@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include <iostream>
 
 template <typename I>
 class permutation
@@ -19,12 +21,13 @@ public:
         }
     }
 
-    permutation(std::vector<I> &a)
+    permutation(const std::vector<I> &a)
     {
         this->n = a.size();
         this->p = a;
     }
 
+    // O(n)
     permutation<I> operator*(const permutation<I> &o)
     {
         permutation<I> po(this->n);
@@ -35,6 +38,7 @@ public:
         return po;
     }
 
+    // O(n)
     void operator*=(const permutation<I> &o)
     {
         std::vector<I> po;
@@ -46,6 +50,7 @@ public:
         this->p = po;
     }
 
+    // O(n)
     permutation<I> operator<<(I k)
     {
         permutation<I> po(this->n);
@@ -56,6 +61,7 @@ public:
         return po;
     }
 
+    // O(n)
     permutation<I> operator>>(I k)
     {
         permutation<I> po(this->n);
@@ -66,6 +72,7 @@ public:
         return po;
     }
 
+    // O(n)
     void operator>>=(I k)
     {
         std::vector<I> po(n);
@@ -77,6 +84,7 @@ public:
         this->p = po;
     }
 
+    // O(n)
     void operator<<=(I k)
     {
         std::vector<I> po(n);
@@ -87,6 +95,7 @@ public:
         this->p = po;
     }
 
+    // O(n)
     permutation<I> operator~()
     {
         permutation<I> po(n);
@@ -97,6 +106,7 @@ public:
         return po;
     }
 
+    // O(nlog(k))
     permutation<I> operator^(I k)
     {
         permutation<I> po(this->n);
@@ -120,6 +130,11 @@ public:
         return po1;
     }
 
+    I operator[](int i) const
+    {
+        return this->p[i];
+    }
+
     void swap(I i, I j)
     {
         if (i == j)
@@ -131,6 +146,7 @@ public:
         this->p[i] ^= this->p[j];
     }
 
+    // O(n)
     I cyclic_decompose(std::vector<std::vector<I>> &cycle)
     {
         std::vector<bool> done(n, false);
@@ -165,16 +181,18 @@ public:
 
     void randomize()
     {
-        random_shuffle(this->p.begin(),this->p.end());
+        std::random_shuffle(this->p.begin(),this->p.end());
     }
 
-    void print()
+    friend std::ostream& operator<<(std::ostream &os, const permutation<I>& p)
     {
-        std::cerr << "[ ";
-        for (I i = 0; i < n; i++)
+        os << "[ ";
+        for (I i = 0; i < p.n; i++)
         {
-            std::cerr << this->p[i] << ", ";
+            os << p.p[i] << ", ";
         }
-        std::cerr << "]\n";
+        os << "]\n";
+        return os;
     }
 };
+
