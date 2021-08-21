@@ -10,6 +10,7 @@ template <typename I, I mod>
 class necklace_coloring : public polya_enumeration_theorem<I, mod>
 {
     public:
+    necklace_coloring(){}
     necklace_coloring(I n, I k, vector<permutation<I>> &_pi) : polya_enumeration_theorem<I, mod>(n,k,_pi){}
 
     I number_of_cycles_in_pi(const permutation<I> &p)
@@ -17,6 +18,7 @@ class necklace_coloring : public polya_enumeration_theorem<I, mod>
         return __gcd(p[0]+1ll,this->n);
     }
     
+    // O(sqrt(n)*logn+(logn)^2)
     I num_eq_classes()
     {
         auto phi = [](I n)
@@ -28,7 +30,7 @@ class necklace_coloring : public polya_enumeration_theorem<I, mod>
             }
             while (n%2==0)
             {
-                ans = (ans*2);
+                ans = (ans*2)%mod;
                 n/=2;
             }
             
@@ -37,12 +39,12 @@ class necklace_coloring : public polya_enumeration_theorem<I, mod>
             {
                 if(n%i==0)
                 {
-                    ans = (ans*(i-1ll));
+                    ans = (ans*(i-1ll))%mod;
                     n/=i;
                 }
                 while (n%i==0)
                 {
-                    ans = (ans*i);
+                    ans = (ans*i)%mod;
                     n/=i;
                 }
                 i+=2ll;
@@ -50,7 +52,7 @@ class necklace_coloring : public polya_enumeration_theorem<I, mod>
 
             if(n>1ll)
             {
-                ans = (ans*(n-1ll));
+                ans = (ans*(n-1ll))%mod;
             }
             return ans;
         };
@@ -76,14 +78,14 @@ class necklace_coloring : public polya_enumeration_theorem<I, mod>
 int main()
 {
     ll n;
-    n = 200;
-    vector<permutation<ll>> vp(n,permutation<ll>(n));
-    for(ll i=0;i<n;i++)
-    {
-        vp[i]>>=i;
-    }
+    n = 2000000000000000ll;
+    // vector<permutation<ll>> vp(n,permutation<ll>(n));
+    // for(ll i=0;i<n;i++)
+    // {
+    //     vp[i]>>=i;
+    // }
 
-    necklace_coloring<ll,1000000007ll> nc(n,2ll,vp);
+    necklace_coloring<ll,1000000007ll> nc;//(n,2ll,vp);
     cout<<nc.num_eq_classes()<<endl;
 
     return 0;

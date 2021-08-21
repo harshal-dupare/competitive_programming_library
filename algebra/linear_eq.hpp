@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <complex>
+#include <iostream>
 
 template<typename R>
 struct linear_eq
@@ -55,14 +56,14 @@ struct linear_eq
 
     void input()
     {
-        cout << "for each next " << this->n_eq << " rows input " << this->n_var + 1 << " space separtaed numbers in the format :\na[i][1] a[i][2] .. a[i][n] b[i]\n";
+        std::cout << "for each next " << this->n_eq << " rows input " << this->n_var + 1 << " space separtaed numbers in the format :\na[i][1] a[i][2] .. a[i][n] b[i]\n";
         for (long long i = 0; i < n_eq; i++)
         {
             for (long long j = 0; j < n_var; j++)
             {
-                cin >> this->A[i][j];
+                std::cin >> this->A[i][j];
             }
-            cin >> this->B[i];
+            std::cin >> this->B[i];
         }
     }
 
@@ -196,7 +197,7 @@ struct linear_eq
 
     std::pair<bool,bool> static_gauss_elemination(std::vector<R> &x , long long k,bool reduce = false)
     {
-        pair<bool,bool> full_rank_convergence = {true,true};
+        std::pair<bool,bool> full_rank_convergence = {true,true};
         std::vector<std::vector<R>> tA=this->A;
         std::vector<R> tB=this->B;
         for (long long i = 0; i < std::min(n_eq, n_var); i++)
@@ -271,7 +272,7 @@ struct linear_eq
         return full_rank_convergence;
     }
 
-    friend ostream &operator<<(ostream &os, linear_eq &le)
+    friend std::ostream &operator<<(std::ostream &os, linear_eq &le)
     {
         for (long long i = 0; i < le.n_eq; i++)
         {

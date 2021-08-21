@@ -145,6 +145,10 @@ public:
         this->p[j] ^= this->p[i];
         this->p[i] ^= this->p[j];
     }
+    
+    // cycle count
+    // sign
+    // order p^order = I
 
     // O(n)
     I cyclic_decompose(std::vector<std::vector<I>> &cycle)

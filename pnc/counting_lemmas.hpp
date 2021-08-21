@@ -64,7 +64,7 @@ class polya_enumeration_theorem
     std::vector<permutation<I>> pi;
     I n;
     I k;
-
+    polya_enumeration_theorem(){}
     polya_enumeration_theorem(I n, I k, const std::vector<permutation<I>> &_pi)
     {
         this->pi = _pi;

@@ -118,21 +118,3 @@ public:
     }
 
 };
-
-
-template<typename I>
-struct element
-{
-    I id;
-
-    friend element<I> operator*(element a)
-    {
-        // define the operator of the group
-    }
-};
-
-template<typename I>
-struct general_group
-{
-    
-};

@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "../algebra/linear_eq.hpp"
-#include "../number_theory/math_constants.hpp"
 
 typedef long long ll;
 

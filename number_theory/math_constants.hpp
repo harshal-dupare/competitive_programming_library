@@ -1,6 +1,6 @@
 #pragma once
 
-namespace constants
+namespace math_constants
 {
     constexpr double pi = 3.14159265358979323846264338327950288;
     constexpr double e = 2.71828182845904523536028747135266249;

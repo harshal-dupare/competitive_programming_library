@@ -2,7 +2,7 @@
 
 #include <bits/stdc++.h>
 
-#define ONE_EXTRA_LINE 1
+#define ONE_EXTRA_LINE 0
 
 template <typename H, typename T>
 void debug_out(std::pair<H, T> x);
@@ -108,7 +108,8 @@ void debug_out(T *x, std::vector<I> dim)
             id++;
         }
         */
-        std::cerr << *(x+loc) << " ";
+        debug_out(*(x+loc));
+        debug_out(" ");
         loc++;
         
         cr=1;
@@ -121,7 +122,7 @@ void debug_out(T *x, std::vector<I> dim)
             id--;
             if(cr>0)
             {
-                std::cerr<<"\n";
+                debug_out();
             }
         }
         

@@ -1,6 +1,5 @@
 #pragma once
-
-#include<vector>
+#include <vector>
 
 template <typename I>
 class binary_indexed_tree_purq
@@ -9,14 +8,12 @@ public:
     I n;
     std::vector<I> a, t;
     I nullvalue = 0;
-
     binary_indexed_tree_purq(I n)
     {
         this->n = n;
         this->a.assign(n, this->nullvalue);
         this->t.assign(n, this->nullvalue);
     }
-
     void construct(std::vector<I> &arr)
     {
         for (I i = 0; i < this->n; i++)
@@ -24,7 +21,6 @@ public:
             this->update(i, arr[i], this->nullvalue);
         }
     }
-
     // query specific
     // f must saisfy this property  f(x,y,z,..w) = f(f(x,y),f(z,..w))
     I f(I x, I y)
@@ -32,46 +28,43 @@ public:
         // we need the value f(x,y,z,..w)
         // and there must be some way to combine two adjacent t[i] & t[j] into 1
         // implies f(0,0) = 0
-        return x + y;     // sum query
+        return x + y;          // sum query
         return std::min(x, y); // min query // and there does not exist g() such that f(x,y)=g(f(x,y,z...w),f(z,..w))
     }
-
-    // returns the new value of the t when x is changed by newx and old value is told
+    // @param `x` old value at index
+    // @param `newx` new value at index
+    // @param `t_old` old value in the tree
+    // @return the new value in tree `$t$` when x is changed by newx and old value is told
     I new_value(I x, I newx, I t_old)
     {
         return t_old + (newx - x); // for x+y function
         // for min function
-        if(t_old<x||newx<t_old)
+        if (t_old < x || newx < t_old)
         {
-            return std::min(t_old,newx);
+            return std::min(t_old, newx);
         }
         else
         {
-            
         }
     }
     // query specific
-
     // bit structure specific
     // g(i) = i&(i+1) is saying as removing all the last traialing 1s
     I g(I i)
     {
         // must satisfy
         // 0 <= g(i) <= i
-        // g(i) = 0 , is prefix sum
+        // g(0) = 0 , is prefix sum
 
         return i & (i + 1);
     }
-
     // h(i) must help us itterate over the values j,  g(j) <= i <= j in increasing order
     I h(I i)
     {
         // for g(i) = i&(i+1), h(i) = i|(i+1) ( i.e. making the last zero bit to 1)
-
         return i | (i + 1);
     }
     // bit structure specific
-
     I get(I i)
     {
         I ans = this->t[i];
@@ -83,15 +76,10 @@ public:
         }
         return ans;
     }
-
     I range_value(I i, I j)
     {
-        if (i == 0)
-            return this->get(j);
-
-        return this->get(j) - this->get(i - 1);
+        return this->get(j) - (i > 0 ? this->get(i - 1) : 0);
     }
-
     void update(I i, I value, I old_value)
     {
         this->a[i] = value;
@@ -102,14 +90,14 @@ public:
             i = this->h(i);
         }
     }
-
-    void print()
+    friend std::ostream &operator<<(std::ostream &os, const binary_indexed_tree_purq<I> &bit)
     {
-        for (I i = 0; i < this->n; i++)
+        for (I i = 0; i < bit.n; i++)
         {
-            cout << "(" << this->a[i] << "," << this->get(i) << "), ";
+            os << "(" << bit.a[i] << "," << bit.get(i) << "), ";
         }
-        cout << endl;
+        os << "\n";
+        return os;
     }
 };
 
@@ -204,13 +192,14 @@ public:
         }
     }
 
-    void print()
+    friend std::ostream &operator<<(std::ostream &os, const binary_indexed_tree_rupq<I> &bit)
     {
-        for (I i = 0; i < this->n; i++)
+        for (I i = 0; i < bit.n; i++)
         {
-            cout << "(" << this->a[i] << "," << this->get(i) << "), ";
+            os << "(" << bit.a[i] << "," << bit.get(i) << "), ";
         }
-        cout << endl;
+        os << "\n";
+        return os;
     }
 };
 
@@ -221,7 +210,6 @@ public:
     std::vector<I> a, t1, t2;
     I null_value = 0;
     I n;
-
     binary_indexed_tree_rurq(I n)
     {
         this->n = n;
@@ -229,7 +217,6 @@ public:
         this->t1 = std::vector<I>(n, this->null_value);
         this->t2 = std::vector<I>(n, this->null_value);
     }
-
     void construct(std::vector<I> arr)
     {
         for (I i = 0; i < this->n; i++)
@@ -237,31 +224,26 @@ public:
             this->update(i, i, arr[i]);
         }
     }
-
     // query specific
     I f(I x, I y)
     {
         return x + y;
     }
-
     I get_new_value(I val, I update_val)
     {
         return val + update_val;
     }
     // query specific
-
     // bit structure specific
     I g(I i)
     {
         return (i & (i + 1));
     }
-
     I h(I i)
     {
         return (i | (i + 1));
     }
     // bit structure specific
-
     I get(I i)
     {
         I ans1 = this->null_value;
@@ -275,7 +257,6 @@ public:
 
         return ans1 * (i + 1) - ans2;
     }
-
     void update(I i, I j, I update_value)
     {
         I update_value_ii = update_value * (i);
@@ -306,7 +287,6 @@ public:
             }
         }
     }
-
     I range_value(I i, I j)
     {
         if (i == 0)
@@ -314,21 +294,21 @@ public:
 
         return this->get(j) - this->get(i - 1);
     }
-
-    void print()
+    friend std::ostream &operator<<(std::ostream &os, const binary_indexed_tree_rurq<I> &bit)
     {
-        cerr<<"t:";
-        for (I i = 0; i < this->n; i++)
+        os << "t:";
+        for (I i = 0; i < bit.n; i++)
         {
-            cerr << "(" << this->t1[i] << "," << this->t2[i] << "), ";
+            os << "(" << bit.t1[i] << "," << bit.t2[i] << "), ";
         }
-        cerr << endl;
+        os << "\n";
 
-        cerr<<"a:";
-        for (I i = 0; i < this->n; i++)
+        os << "a:";
+        for (I i = 0; i < bit.n; i++)
         {
-            cerr << "(" << this->a[i] << "," << this->get(i) << "), ";
+            os << "(" << bit.a[i] << "," << bit.get(i) << "), ";
         }
-        cerr << endl;
+        os << "\n";
+        return os;
     }
 };

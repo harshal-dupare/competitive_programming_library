@@ -1,119 +1,199 @@
 #pragma once
 #include <bits/stdc++.h>
+#include "graph.hpp"
+#include <random>
+#include <chrono>
 
-namespace generator
+namespace special_graph
 {
-    template <typename I>
-    void erdos_renyi(I n, I m, graph<I> &G)
+    template <typename I, class E=mt19937>
+    class erdos_renyi : public graph<I>
     {
-    }
-
-    template <typename I>
-    void line(I n, graph<I> &G)
-    {
-        G = graph<I>(n);
-        for (I i = 1; i < n; i++)
+        erdos_renyi(I n, I m) : graph<I>(n)
         {
-            G.add_edge(i - 1, i);
-        }
-    }
-
-    template <typename I>
-    void complete(I n, graph<I> &G)
-    {
-        G = graph<I>(n);
-
-        for (I i = 0; i < n; i++)
-        {
-            for (I j = i + 1; j < n; j++)
+            I M = n * n;
+            E rg = E(chrono::steady_clock::now().time_since_epoch().count());
+            std::vector<I> per(M,0);
+            for(I i=0;i<M;i++)per[i]=i;
+            for(I i=M-1;m>(I)0;i--,m--)
             {
-                G.add_edge(i, j);
+                I rn = rg()%(1+i);
+                if(rn<(I)0)rn+=i+1;
+                swap(per[i],per[rn]);
+                this->add_edge(per[i]%n,per[i]/n);
             }
         }
-    }
 
-    template <typename I>
-    void cycle(I n, graph<I> &G)
-    {
-        G = graph<I>(n);
-        for (I i = 1; i < n; i++)
+        erdos_renyi(I n, double p) : graph<I>(n)
         {
-            G.add_edge(i - 1, i);
-        }
-        G.add_edge(n - 1, 0);
-    }
-
-    template <typename I>
-    void k_regular(I k, I n, graph<I> &G)
-    {
-    }
-
-    template <typename I>
-    void hypercube(I n, graph<I> &G)
-    {
-        // 2^n vertices
-        // O(n*2^n)
-        I vn = 1 << n;
-        G = graph<I>(vn);
-
-        for (I i = 0; i < vn; i++)
-        {
-            for (I j = 0; j < n; j++)
+            auto randgen = bind(std::bernoulli_distribution(p), E(chrono::steady_clock::now().time_since_epoch().count()));
+            for (I i = 0; i < n; i++)
             {
-                if (i < (i ^ (1 << j)))
+                for (I j = i + 1; j < n; j++)
                 {
-                    G.add_edge(i, i ^ (1 << j));
+                    if (randgen())
+                    {
+                        this->add_edge(i, j);
+                    }
                 }
             }
         }
-    }
-
+    };
     template <typename I>
-    void octahedral(I n, graph<I> &G)
+    class k_regular : public graph<I>
     {
-        // scope to optimize
-        this->complete(2, G);
-        graph<I> K2;
-        this->complete(2, K2);
-        for (I i = 1; i < n; i++)
+        k_regular(I k, I n) : graph<I>(n)
         {
-            G = G + K2;
         }
-    }
-
+    };
     template <typename I>
-    void complete_biparted(I n, I m, graph<I> &G)
+    class line : public graph<I>
     {
-        G = graph<I>(n + m);
-        for (I i = 0; i < n; i++)
+        line(I n) : graph<I>(n)
         {
-            for (I j = n; j < n + m; j++)
+            for (I i = 1; i < n; i++)
             {
-                G.add_edge(i, j);
+                this->add_edge(i - 1, i);
             }
         }
-    }
-
+    };
     template <typename I>
-    void perterson(graph<I> &G)
+    class complete : public graph<I>
     {
-        G = graph<I>(10);
-        G.add_edge(0, 1);
-        G.add_edge(1, 2);
-        G.add_edge(2, 3);
-        G.add_edge(3, 4);
-        G.add_edge(4, 0);
+        complete(I n) : graph<I>(n)
+        {
+            for (I i = 0; i < n; i++)
+            {
+                for (I j = i + 1; j < n; j++)
+                {
+                    this->add_edge(i, j);
+                }
+            }
+        }
+    };
+    template <typename I>
+    class cycle : public graph<I>
+    {
+        cycle(I n) : graph<I>(n)
+        {
+            for (I i = 1; i < n; i++)
+            {
+                this->add_edge(i - 1, i);
+            }
+            this->add_edge(n - 1, 0);
+        }
+    };
+    template <typename I>
+    class star : public graph<I>
+    {
+        star(I n) : graph<I>(n)
+        {
+            for (I i = 1; i < n; i++)
+            {
+                this->add_edge(0, i);
+            }
+        }
+    };
+    template <typename I>
+    class wheel : public graph<I>
+    {
+        wheel(I n):
+        graph<I>(n + 1)
+        {
+            for (I i = 1; i < n; i++)
+            {
+                this->add_edge(0, i);
+                this->add_edge(i, i + 1);
+            }
+            this->add_edge(n, 1);
+        }
+    };
+    template <typename I>
+    class friendship_graph : public graph<I>
+    {
+        friendship_graph(I n) : graph<I>(2 * n + 1)
+        {
+            for (I i = 1; i < 2 * n + 1; i++)
+            {
+                this->add_edge(0, i);
+            }
+            for (I i = 0; i < n; i++)
+            {
+                this->add_edge(2 * i + 2, 2 * i + 1);
+            }
+        }
+    };
+    template <typename I>
+    class hypercube : public graph<I>
+    {
+        hypercube(I n) : graph<I>(1 << n)
+        {
+            // 2^n vertices
+            // O(n*2^n)
+            I vn = 1 << n;
 
-        G.add_edge(5, 7);
-        G.add_edge(6, 8);
-        G.add_edge(7, 9);
-        G.add_edge(8, 5);
-        G.add_edge(9, 6);
+            for (I i = 0; i < vn; i++)
+            {
+                for (I j = 0; j < n; j++)
+                {
+                    if (i < (i ^ (1 << j)))
+                    {
+                        this->add_edge(i, i ^ (1 << j));
+                    }
+                }
+            }
+        }
+    };
+    template <typename I>
+    class octahedral : public graph<I>
+    {
+        octahedral(I n) : graph<I>(2)
+        {
+            // scope to optimize
+            this->add_edge(0, 1);
+            special_graph::complete<I> K2(2);
+            for (I i = 1; i < n; i++)
+            {
+                (*this) = (this) + K2;
+            }
+        }
+    };
+    template <typename I>
+    class complete_biparted : public graph<I>
+    {
+        complete_biparted(I n, I m) : graph<I>(n + m)
+        {
+            for (I i = 0; i < n; i++)
+            {
+                for (I j = n; j < n + m; j++)
+                {
+                    this->add_edge(i, j);
+                }
+            }
+        }
+    };
+    template <typename I>
+    class perterson : public graph<I>
+    {
+        perterson() : graph<I>(10)
+        {
+            this->add_edge(0, 1);
+            this->add_edge(1, 2);
+            this->add_edge(2, 3);
+            this->add_edge(3, 4);
+            this->add_edge(4, 0);
 
-        G.add_edge(0, 0 + 5);
-        G.add_edge(1, 1 + 5);
-        G.add_edge(2, 2 + 5);
-        G.add_edge(3, 3 + 5);
-        G.add_edge(4, 4 + 5);
-    }
+            this->add_edge(5, 7);
+            this->add_edge(6, 8);
+            this->add_edge(7, 9);
+            this->add_edge(8, 5);
+            this->add_edge(9, 6);
+
+            this->add_edge(0, 0 + 5);
+            this->add_edge(1, 1 + 5);
+            this->add_edge(2, 2 + 5);
+            this->add_edge(3, 3 + 5);
+            this->add_edge(4, 4 + 5);
+        }
+    };
 };

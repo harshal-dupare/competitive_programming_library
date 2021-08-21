@@ -1,9 +1,11 @@
 my_lib/algebra/group.hpp
 my_lib/algebra/linear_eq.hpp
+my_lib/algebra/matrix.hpp
 my_lib/algebra/roots.hpp
 my_lib/bit_representation/bit_operations.hpp
 my_lib/calculus/calculus.hpp
 my_lib/data_structure/binary_indexed_tree.hpp
+my_lib/data_structure/refers.hpp
 my_lib/data_structure/segment_tree.hpp
 my_lib/data_structure/sparse_table.hpp
 my_lib/data_structure/special_stacks_queue.hpp
@@ -23,13 +25,11 @@ my_lib/graphs/generator.hpp
 my_lib/graphs/graph.hpp
 my_lib/graphs/wdgraph.hpp
 my_lib/graphs/wgraph.hpp
-my_lib/matrix/matrix.hpp
 my_lib/number_theory/bigint.hpp
 my_lib/number_theory/general_linear_recurrence.hpp
 my_lib/number_theory/int_base.hpp
 my_lib/number_theory/math_constants.hpp
 my_lib/number_theory/modular_int.hpp
-my_lib/number_theory/mod_operations.hpp
 my_lib/number_theory/number_properties.hpp
 my_lib/number_theory/primes.hpp
 my_lib/number_theory/rational.hpp

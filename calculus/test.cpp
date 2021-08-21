@@ -2,17 +2,30 @@
 
 #include "../utils/debug_out.hpp"
 #include "../algebra/linear_eq.hpp"
+#include "../number_theory/math_constants.hpp"
+
 #include "calculus.hpp"
 
 using namespace std;
 
 typedef long long ll;
+template <typename T>
+T inverse(T a, T m) {
+  T u = 0, v = 1;
+  while (a != 0) {
+    T t = m / a;
+    m -= t * a; swap(a, m);
+    u -= t * v; swap(u, v);
+  }
+  assert(m == 1);
+  return u;
+}
 
 double f(double x)
 {
     return sin(x);
     return x * x * x * x * x;
-    return tanh(3.1415926535 * 3.0 * x) / (x * x * x + x);
+    return tanh(math_constants::pi * 3.0 * x) / (x * x * x + x);
 }
 
 double p(double x)
@@ -23,13 +36,12 @@ double p(double x)
 void test_diff()
 {
     double h = 1e-5;
-    calculus<ll, double> cal;
     ll n = 5;
     vector<double> diff;
     for (ll i = 0; i < n; i++)
     {
         // auto f = [&](double x) { return tanh(3.1415926535 * 3.0 * x) / (x * x * x + x); };
-        diff.push_back(cal.differentate2_n(f, 1.0, h, i));
+        diff.push_back(calculus::differentate2_n<double,ll>(f, 1.0, h, i));
     }
     debug(diff);
 }
@@ -37,9 +49,8 @@ void test_diff()
 void test_taylor_series()
 {
     double h = 1e-2;
-    calculus<ll, double> cal;
     ll n = 9;
-    vector<double> coeff = cal.taylor_series(f,0,h,n);
+    vector<double> coeff = calculus::taylor_series<double,ll>(f,0,h,n);
     debug(coeff);
 }
 
@@ -47,11 +58,10 @@ void test_integration()
 {
     ll prec = 10;
     double h = 1e-3;
-    calculus<ll, double> cal;
 
     // cout << fixed << setprecision(prec) << cal.integrate_trapezoidal(f, 0.0001, 20000, 10000) << endl;
     // cout << fixed << setprecision(prec) << cal.integrate_simpson(f, 0.001, 20000, 10000) << endl;
-    cout << fixed << setprecision(prec) << cal.integrate_simpson38(f, 0.001, 20000, 100000000) << endl;
+    cout << fixed << setprecision(prec) << calculus::integrate_simpson38<double,ll>(f, 0.001, 20000, 100000000) << endl;
 
     // cout << fixed << setprecision(prec) << cal.differentate2(f, 2, h) << endl;
     // cout << fixed << setprecision(prec) << cal.differentate4(f, 2, h) << endl;
@@ -66,9 +76,7 @@ void test_interpolation()
         y.push_back(p(xi));
     }
 
-    calculus<ll, double> cal;
-
-    auto coeff = cal.interpolate(x, y);
+    auto coeff = calculus::interpolate<double>(x, y);
 }
 
 void test_liner()
@@ -114,11 +122,26 @@ void test_liner()
     double nerr = accumulate(err.begin(), err.end(), 0);
 }
 
+void test()
+{
+    ll n;
+    cin>>n;
+    for(ll i=2;i<=n;i++)
+    {
+        for(ll j=1;j<i;j++)
+        {
+            if(__gcd(i,j)!=1) continue;
+            mdebug(j,i,inverse<ll>(j,i));
+        }
+    }
+}
+
 int main()
 {
     // test_interpolation();
     // test_liner();
     // test_diff();
-    test_taylor_series();
+    // test_taylor_series();
+    test();
     return 0;
 }

@@ -128,6 +128,7 @@ public:
     I n;
 
     segment_heap();
+    // @param
     segment_heap(I n)
     {
         this->N = n;

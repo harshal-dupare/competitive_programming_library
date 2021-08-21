@@ -1,35 +1,24 @@
 #include <bits/stdc++.h>
-#include "../utils/debug_out.hpp"
+#include "../../utils/debug_out.hpp"
 // #include "int_base.hpp"
-#include "bigint.hpp"
-
+#include "../bigint.hpp"
+#include "../../randoms/random_gen.hpp"
 
 using namespace std;
 
 // typedef int_base<int, 13> intb;
 typedef bigint<long long, 2> bint;
+typedef bigint<long long, 5> bint2;
 typedef long long ll;
 
-// void test_intb()
-// {
-//     intb x(120), y(13);
-//     debug(x);
-//     debug(y);
-//     debug(x + y);
-//     debug(x >> 1);
-//     debug(y >> 1);
-//     debug(x << 1);
-//     debug(y << 1);
-//     debug(y - x);
-//     debug(y * x);
-// }
+vector<pair<ll,ll>> add,sub,mult,diver,qut;
+vector<ll> assig,inc,erdec;
 
 void check_assign()
 {
     ll n;
     cin>>n;
     bint x;
-    vector<ll> inc,dec,assig;
     for(ll i=-n;i<=n;i++)
     {
         x=i;
@@ -47,10 +36,42 @@ void check_assign()
         x--;
         if(x.get_int()!=i-1)
         {
-            dec.push_back(i);
+            erdec.push_back(i);
         }
     }
+    debug(inc);
+    debug(erdec);
+    debug(assig);
 
+    cin>>n;
+    auto rg = random_gens::uniform_int<ll>(-10000000000ll,10000000000ll);
+    bint2 x2;
+    while(n--)
+    {
+        ll i = rg();
+        x2=i;
+        if(x2.get_int()!=i)
+        {
+            assig.push_back(i);
+            break;
+        }
+        x2++;
+        if(x2.get_int()!=i+1)
+        {
+            inc.push_back(i);
+        }
+        x2=i;
+        x2--;
+        if(x2.get_int()!=i-1)
+        {
+            erdec.push_back(i);
+        }
+        cout<<"["<<x2<<":"<<i-1<<"] ";
+    }
+
+    debug(inc);
+    debug(erdec);
+    debug(assig);
 }
 
 void check_add_sub()
@@ -58,8 +79,6 @@ void check_add_sub()
     ll n,k;
     cin>>n>>k;
     bint x,K(k);
-    vector<pair<ll,ll>> add,sub;
-    vector<ll> assig;
     for(ll i=-n;i<=n;i++)
     {
         x=i;
@@ -84,11 +103,9 @@ void check_add_sub()
 
 void check_mul_div()
 {
-    ll n,k;
-    cin>>n>>k;
-    bint x,K(k);
-    vector<pair<ll,ll>> add,sub;
-    vector<ll> assig;
+    ll n,m;
+    cin>>n>>m;
+    bint x;
     for(ll i=-n;i<=n;i++)
     {
         x=i;
@@ -97,24 +114,35 @@ void check_mul_div()
             assig.push_back(i);
             break;
         }
-        auto ans = x*K;
-        if(ans.get_int()!=i*k)
+        for(ll j=-m;j<=m;j++)
         {
-            add.push_back({i,k});
-        }
-        ans = x/K;
-        if(ans.get_int()!=i/k)
-        {
-            sub.push_back({i,k});
+            if(j==0) continue;
+            bint y(j);
+            if(y.get_int()!=j)
+            {
+                assig.push_back(j);
+                break;
+            }
+            auto ans = x*y;
+            if(ans.get_int()!=i*j)
+            {
+                add.push_back({i,j});
+            }
+            ans = x/y;
+            if(ans.get_int()!=i/j)
+            {
+                sub.push_back({i,j});
+            }
         }
     }
+    debug(assig.size());
+    debug(sub.size());
+    debug(add.size());
 
 }
 
 void test_bint()
 {
-    vector<ll> inc,dec,assig;
-    vector<pair<ll,ll>> add,sub;
     bint x,y,one({1ll},1),neg_one({1ll},-1);
     cout<<x<<","<<y<<endl;
     ll n;
@@ -148,7 +176,7 @@ void test_bint()
             y--;
             if(y.get_int()!=j-1)
             {
-                dec.push_back(j);
+                erdec.push_back(j);
             }
         }
         x++;
@@ -164,8 +192,8 @@ void test_bint()
 int main()
 {
     // test_bint();
-    // check_assign();
+    check_assign();
     // check_add_sub();
-    check_mul_div();
+    // check_mul_div();
     return 0;
 }
