@@ -1,11 +1,10 @@
 my_lib/algebra/group.hpp
+my_lib/algebra/linalg.hpp
 my_lib/algebra/linear_eq.hpp
-my_lib/algebra/matrix.hpp
 my_lib/algebra/roots.hpp
 my_lib/bit_representation/bit_operations.hpp
 my_lib/calculus/calculus.hpp
 my_lib/data_structure/binary_indexed_tree.hpp
-my_lib/data_structure/refers.hpp
 my_lib/data_structure/segment_tree.hpp
 my_lib/data_structure/sparse_table.hpp
 my_lib/data_structure/special_stacks_queue.hpp
@@ -33,6 +32,7 @@ my_lib/number_theory/modular_int.hpp
 my_lib/number_theory/number_properties.hpp
 my_lib/number_theory/primes.hpp
 my_lib/number_theory/rational.hpp
+my_lib/number_theory/real.hpp
 my_lib/pnc/combinations.hpp
 my_lib/pnc/counting_lemmas.hpp
 my_lib/pnc/permutations.hpp
@@ -54,3 +54,6 @@ my_lib/special_methods/linear_programming/simplex.hpp
 my_lib/special_methods/linear_programming/two_phase.hpp
 my_lib/strings_algo/matching.hpp
 my_lib/trees/tree.hpp
+my_lib/utils/debug_out.hpp
+my_lib/utils/plotting.hpp
+my_lib/utils/timer.hpp
