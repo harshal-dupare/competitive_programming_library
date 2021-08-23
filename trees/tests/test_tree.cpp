@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "tree.hpp"
+#include "../tree.hpp"
 using namespace std;
 
 typedef long long ll;

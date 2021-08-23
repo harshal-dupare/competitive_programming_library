@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
-#include "../../utils/debug_out.h"
-#include "../point.h"
-#include "../line.h"
-#include "../polygon.h"
-#include "../algos.h"
+#include "../../utils/debug_out.hpp"
+#include "../point.hpp"
+#include "../line.hpp"
+#include "../polygon.hpp"
+#include "../algos.hpp"
 
 mt19937 rng(198);
 

@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 
-#include "../utils/debug_out.hpp"
-#include "../utils/timer.hpp"
-#include "../algebra/linear_eq.hpp"
-#include "../number_theory/math_constants.hpp"
+#include "../../utils/debug_out.hpp"
+#include "../../utils/timer.hpp"
+#include "../../algebra/linear_eq.hpp"
+#include "../../number_theory/math_constants.hpp"
 
-#include "calculus.hpp"
+#include "../calculus.hpp"
 
 using namespace std;
 

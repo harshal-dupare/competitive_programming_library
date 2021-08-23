@@ -1,12 +1,12 @@
 #include <bits/stdc++.h>
 #include <fstream>
-#include "../utils/timer.hpp"
-#include "../utils/debugger.hpp"
-#include "graph.hpp"
-#include "dgraph.hpp"
-#include "wgraph.hpp"
-// #include "wdgraph.hpp"
-// #include "generator.hpp"
+#include "../../utils/timer.hpp"
+#include "../../utils/debug_out.hpp"
+#include "../graph.hpp"
+#include "../dgraph.hpp"
+#include "../wgraph.hpp"
+// #include "../wdgraph.hpp"
+// #include "../generator.hpp"
 
 using namespace std;
 

@@ -3,37 +3,38 @@
 #include <bits/stdc++.h>
 #include "../utils/debug_out.hpp"
 
+template<typename I>
 class group
 {
 public:
-    int order;
-    std::vector<std::vector<int>> table;
-    group(int order)
+    I order;
+    std::vector<std::vector<I>> table;
+    group(I order)
     {
         this->order = order;
-        this->table.assign(order, std::vector<int>(order));
+        this->table.assign(order, std::vector<I>(order));
     }
 
-    void input(std::map<int, int> &mp)
+    void input(std::map<I, I> &mp)
     {
-        for (int i = 0; i < order; i++)
+        for (I i = 0; i < order; i++)
         {
-            for (int j = 0; j < order; j++)
+            for (I j = 0; j < order; j++)
             {
-                int tp;
-                cin >> tp;
-                table[i][j] = element(tp);
+                I tp;
+                std::cin >> tp;
+                table[i][j] = tp;
             }
         }
     }
 
-    void iter_over_subsets(std::vector<int> &subset, int nxt, std::vector<std::vector<int>> &subg, std::map<int, int> &imp)
+    void iter_over_subsets(std::vector<I> &subset, I nxt, std::vector<std::vector<I>> &subg, std::map<I, I> &imp)
     {
         // check if its subgroup
-        set<int> elems;
-        for (int i = 0; i < subset.size(); i++)
+        std::set<I> elems;
+        for (I i = 0; i < subset.size(); i++)
         {
-            for (int j = 0; j < subset.size(); j++)
+            for (I j = 0; j < subset.size(); j++)
             {
                 elems.insert(table[subset[i]][subset[j]]);
             }
@@ -41,8 +42,8 @@ public:
 
         if (elems.size() == subset.size())
         {
-            int i = 0;
-            std::vector<int> apnd;
+            I i = 0;
+            std::vector<I> apnd;
             for (auto y : elems)
             {
                 if (subset[i] != y)
@@ -56,7 +57,7 @@ public:
             }
         }
 
-        for (int i = nxt; i < order; i++)
+        for (I i = nxt; i < order; i++)
         {
             subset.push_back(i);
             iter_over_subsets(subset, i + 1, subg, imp);
@@ -64,15 +65,15 @@ public:
         }
     }
 
-    void find_subgroups(std::vector<std::vector<int>> &subg, std::map<int, int> &imp)
+    void find_subgroups(std::vector<std::vector<I>> &subg, std::map<I, I> &imp)
     {
-        std::vector<int> subset;
+        std::vector<I> subset;
         iter_over_subsets(subset, 0, subg, imp);
     }
 
-    int inverse(int a)
+    I inverse(I a)
     {
-        for(int i=0;i<order;i++)
+        for(I i=0;i<order;i++)
         {
             if(table[a][i]==0)
             {
@@ -100,10 +101,10 @@ public:
         return true;
     }
 
-    int order_of(int a)
+    I order_of(I a)
     {
         if(a==0) return 0;
-        int ct = 1;
+        I ct = 1;
 
         while(ct<order+1)
         {

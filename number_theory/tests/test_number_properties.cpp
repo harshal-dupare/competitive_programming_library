@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
-#include "../utils/timer.hpp"
-#include "../utils/debugger.hpp"
-#include "number_properties.hpp"
+#include "../../utils/timer.hpp"
+#include "../../utils/debugger.hpp"
+#include "../number_properties.hpp"
 
 using namespace std;
 

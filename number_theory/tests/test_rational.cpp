@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "../rational.hpp"
 
 using namespace std;
 

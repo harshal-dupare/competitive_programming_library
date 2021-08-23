@@ -1,7 +1,7 @@
 #include<bits/stdc++.h>
 
-#include "markov_chain.hpp"
-#include "../utils/debug_out.h"
+#include "../markov_chain.hpp"
+#include "../../utils/debug_out.h"
 
 typedef double R;
 

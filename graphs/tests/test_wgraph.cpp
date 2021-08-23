@@ -2,8 +2,8 @@
 
 using namespace std;
 
-#include "wgraph.h"
-#include "../utils/debug_out.h"
+#include "../wgraph.h"
+#include "../../utils/debug_out.h"
 
 typedef double R;
 
