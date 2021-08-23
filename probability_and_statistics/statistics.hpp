@@ -8,6 +8,8 @@ using namespace std;
 #include <limits>
 #include <functional>
 #include "../randoms/random_gen.hpp"
+// FIXME define scope andfind fuc and methods to add
+// FIXME correctness of known methods
 
 template <typename T>
 struct report

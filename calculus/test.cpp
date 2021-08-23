@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 
 #include "../utils/debug_out.hpp"
+#include "../utils/timer.hpp"
 #include "../algebra/linear_eq.hpp"
 #include "../number_theory/math_constants.hpp"
 
@@ -142,6 +143,5 @@ int main()
     // test_liner();
     // test_diff();
     // test_taylor_series();
-    test();
     return 0;
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
-
+// FIXME read other implementaions n theory
+// FIXME try to improve
 template <typename I>
 class tree
 {

@@ -1,5 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
+// FIXME compile problems
+// FIXME bridges and AST correctness and implementattion
 
 using namespace std;
 

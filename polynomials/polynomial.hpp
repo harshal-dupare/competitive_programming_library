@@ -1,5 +1,6 @@
 #pragma once
-
+// FIXME need to do some major tests
+// FIXME scalability tests too
 #include <bits/stdc++.h>
 #include "ffts.hpp"
 

@@ -2,7 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <complex>
-
+// FIXME read other NTTs 
+// FIXME try to add modular_int in it
 namespace fft
 {
     template <typename I>

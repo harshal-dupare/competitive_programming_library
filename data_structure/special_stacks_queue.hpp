@@ -1,6 +1,7 @@
 #pragma once
 #include <stack>
 #include <queue>
+// FIXME improve the robustness of implementation
 
 template<typename T>
 struct min_stack

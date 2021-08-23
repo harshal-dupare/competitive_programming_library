@@ -1,4 +1,6 @@
 #pragma once
+// FIXME read n understand
+// FIXME improve implimentation
 
 template <typename V, typename P>
 struct treap

@@ -1,4 +1,8 @@
 
+// FIXME read n understand
+// FIXME improve implimentation
+// FIXME see alternative implementation
+
 template <typename I>
 class trie
 {

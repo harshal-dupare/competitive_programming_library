@@ -1,6 +1,8 @@
 #pragma once
 #include <bits/stdc++.h>
-
+// FIXME compile problems
+// FIXME dinitz and emp adding
+// FIXME emopty functions 
 using namespace std;
 
 template <typename I, typename V>

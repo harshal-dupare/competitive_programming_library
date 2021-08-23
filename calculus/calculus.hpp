@@ -4,103 +4,6 @@
 
 typedef long long ll;
 
-template<typename R>
-R fractional_part(R x,double _EPSILON = 1e-4)
-{
-    R x_ssc = (R)(((ll)(x)) + 3ll);
-    R x_sc = (R)(((ll)(x)) + 2ll);
-    R x_c = (R)(((ll)(x)) + 1ll);
-    R x_f = (R)((ll)(x));
-    R x_s = (R)(((ll)(x)) - 1ll);
-    R x_sf = (R)(((ll)(x)) - 2ll);
-    R x_ssf = (R)(((ll)(x)) - 3ll);
-
-    for(ll i=-2;i<3;i++)
-    {
-        R x_i = (R)(i);
-        if(x==x_i+_EPSILON||x==x_i-_EPSILON)
-        {
-            return 0;
-        }
-    }
-
-    if (std::abs(x_c - x) <= _EPSILON || std::abs(x_f - x) <= _EPSILON || std::abs(x-x_s)<=_EPSILON || std::abs(x-x_sc)<=_EPSILON || std::abs(x-x_sf)<=_EPSILON || std::abs(x-x_ssf)<=_EPSILON || std::abs(x-x_ssc)<=_EPSILON)
-    {
-        return 0;
-    }
-
-    if (x < 0)
-    {
-        return 1 - x_f + x;
-    }
-    else
-    {
-        return x - x_f;
-    }
-
-    return 0;
-}
-
-template<typename R>
-R integral_part(R x,double _EPSILON = 1e-4)
-{
-    R x_sc = (R)(((ll)(x)) + 2ll);
-    R x_c = (R)(((ll)(x)) + 1ll);
-    R x_f = (R)((ll)(x));
-    R x_s = (R)(((ll)(x)) - 1ll);
-    R x_sf = (R)(((ll)(x)) - 2ll);
-
-    for(ll i=-2;i<3;i++)
-    {
-        R x_i = (R)(i);
-        if(x==x_i+_EPSILON||x==x_i-_EPSILON)
-        {
-            return x_i;
-        }
-    }
-
-    if(std::abs(x)<=_EPSILON)
-    {
-        return 0;
-    }
-
-    if (std::abs(x_f - x) <= _EPSILON)
-    {
-        return x_f;
-    }
-
-    if (std::abs(x_c - x) <= _EPSILON)
-    {
-        return x_c;
-    }
-
-    if (std::abs(x_sc - x) <= _EPSILON)
-    {
-        return x_sc;
-    }
-
-    if (std::abs(x_sf - x) <= _EPSILON)
-    {
-        return x_sf;
-    }
-
-    if (std::abs(x_s - x) <= _EPSILON)
-    {
-        return x_s;
-    }
-
-    if (x > 0)
-    {
-        return x_f;
-    }
-    else if (x < 0)
-    {
-        return x_f - 1;
-    }
-
-    return 0;
-}
-
 template <typename R>
 std::vector<R> add_poly(std::vector<R> &x, std::vector<R> &y)
 {
@@ -160,27 +63,6 @@ namespace calculus
 
         return val;
     }
-
-    // template <typename R>
-    // std::vector<R> poly_root(std::vector<R> a,R EPS = 1e-6)
-    // {
-    //     int n = (int)a.size() - 1;
-    //     int mxdeg = n;
-    //     while (mxdeg >= 0)
-    //     {
-    //         if (std::abs(a[mxdeg]) > EPS)
-    //             break;
-    //         mxdeg--;
-    //     }
-    //     R mxrange = 0;
-    //     for (int i = mxdeg - 1; i >= 0; i--)
-    //     {
-    //         a[i] /= a[mxdeg];
-    //         mxrange = max(mxrange, std::abs(a[i]));
-    //     }
-    //     a[mxdeg] = (R)1.0;
-    //     mxrange += 1.0;
-    // }
 
     template <typename R, typename I>
     R integrate_trapezoidal(R (*f)(R), R a, R b, I n)

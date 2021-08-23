@@ -1,5 +1,6 @@
 #pragma once
-
+// FIXME inherent from matrix from algebra 
+// FIXME calculate different properties stedy state times etc types of states
 #include <bits/stdc++.h>
 
 using namespace std;

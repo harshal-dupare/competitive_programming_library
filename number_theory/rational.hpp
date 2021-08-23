@@ -1,5 +1,6 @@
 #pragma once
-
+// FIXME add operators
+// FIXME scalabality for large numbers
 template <typename I>
 class rational
 {

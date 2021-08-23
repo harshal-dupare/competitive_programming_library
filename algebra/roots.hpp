@@ -214,6 +214,13 @@ namespace roots
         return ans;
     }
 
+    // FIXME Genenral polynomial root
+    template <typename R>
+    std::vector<R> polynomial_roots(const std::vector<R>& a)
+    {
+        std::vector<R> ans;
+        return ans;
+    }
 };
 
 

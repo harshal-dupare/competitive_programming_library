@@ -1,6 +1,8 @@
 #pragma once
 #include <ostream>
-
+// FIXME robusts tests 
+// FIXME proof reading 
+// FIXME Lcm Gcd of sets and normal
 namespace Zmod
 {
     template <typename I, I mod>

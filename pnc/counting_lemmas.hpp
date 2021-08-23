@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <iostream>
-
+// FIXME add other counting lemmas and methods
 #include "permutations.hpp"
 
 // given a set of objects (f) which can be represented by a permutations of size `n`

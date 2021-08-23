@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+// FIXME restructure
 
 template <typename I>
 class binary_indexed_tree_purq

@@ -1,4 +1,5 @@
 
+// FIXME compare with other implementation
 // properties : (static array, {add,min,max}:other similar)
 template <typename I>
 class sparse_table

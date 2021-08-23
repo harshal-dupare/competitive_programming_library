@@ -146,10 +146,9 @@ public:
         this->p[i] ^= this->p[j];
     }
     
-    // cycle count
-    // sign
-    // order p^order = I
-
+    // cycle count : cycle.size()
+    // sign : pairity of return value
+    // order p^order = I : lcm of sizes of cycles
     // O(n)
     I cyclic_decompose(std::vector<std::vector<I>> &cycle)
     {

@@ -1,4 +1,9 @@
 
+// FIXME understadn seg heap
+// FIXME read other seg trees and find imp ways & their advantages
+// FIXME impliment seg tree
+
+
 
 template <typename I>
 class segment_tree

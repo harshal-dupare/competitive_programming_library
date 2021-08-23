@@ -430,4 +430,4 @@ void Debug(Head H, Tail... T)
 
 #define debug(...) std::cerr <<  #__VA_ARGS__ << " =", Debug(__VA_ARGS__)
 
-#define mdebug(...) std::cerr << #__VA_ARGS__ << " =", debug_out(__VA_ARGS__), cerr << "\n"
+#define mdebug(...) std::cerr << #__VA_ARGS__ << " =", debug_out(__VA_ARGS__), std::cerr << "\n"

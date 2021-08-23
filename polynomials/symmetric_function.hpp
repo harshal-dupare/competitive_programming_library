@@ -11,12 +11,14 @@ public:
     std::vector<I> p;
     std::vector<I> e;
     I n;
+    bool usemod;
 
     newtons_formula(I n)
     {
         this->n = n;
         this->p = std::vector<I>(this->n + 1, 0);
         this->e = std::vector<I>(this->n + 1, 0);
+        this->usemod=false;
     }
 
     newtons_formula(std::vector<I> a)
@@ -25,6 +27,7 @@ public:
         this->n = a.size();
         this->p = std::vector<I>(this->n + 1, 0);
         this->e = std::vector<I>(this->n + 1, 0);
+        this->usemod=false;
     }
 
     /*
@@ -35,7 +38,14 @@ public:
     i*e[i] = e[i-1]p[1]-e[i-1]p[2]+...
     */
     // O( k*(n+k) ) time | O(n) space
-    void compute(I k, I inMOD = 10000007)
+    void normalize(I &a, I mod)
+    {
+        if(a>=0&&a<mod) return;
+        a%=mod;
+        if(a<0) a+=mod;
+    }
+
+    void compute(I k, I MOD = 10000007)
     {
         assert(k <= n);
 
@@ -44,8 +54,10 @@ public:
         {
             for (I i = 0; i < this->n; i++)
             {
-                this->p[j] = (this->p[j] + temp[i]) % inMOD;
-                temp[i] = (temp[i] * this->a[i]) % inMOD;
+                this->p[j] = (this->p[j] + temp[i]);
+                if(this->usemod) this->normalize(this->p[j],MOD);
+                temp[i] = (temp[i] * this->a[i]);
+                if(this->usemod) this->normalize(temp[j],MOD);
             }
         }
 
@@ -53,7 +65,10 @@ public:
         {
             for (I i = j - 1; i >= 0; i--)
             {
-                this->e[j] = (this->e[j] + inMOD + ((j - i) % 2 == 1 ? 1 : -1) * ((this->e[i] * this->p[j - i]) % inMOD)) % inMOD;
+                I t = (this->e[i] * this->p[j - i]);
+                if(this->usemod) this->normalize(t,MOD);
+                this->e[j] = (this->e[j] + ((j - i) % 2 == 1 ? 1 : -1) * t) ;
+                if(this->usemod) this->normalize(this->e[j],MOD);
             }
             if (j == 0)
             {
@@ -61,19 +76,29 @@ public:
             }
             else
             {
-                I pj = 1;
-                I tn = inMOD - 2;
-                I tj = j;
-                while (tn > 0)
+                if(this->usemod)
                 {
-                    if (tn & 1)
+                    I pj = 1;
+                    I tn = MOD - 2;
+                    I tj = j;
+                    while (tn > 0)
                     {
-                        tj = (tj * pj) % inMOD;
+                        if (tn & 1)
+                        {
+                            tj = (tj * pj);
+                            this->normalize(tj,MOD);
+                        }
+                        pj = (pj * pj);
+                        this->normalize(pj,MOD);
+                        tn >>= 1;
                     }
-                    pj = (pj * pj) % inMOD;
-                    tn >>= 1;
+                    this->e[j] = (this->e[j] * tj);
+                    this->normalize(this->e[j],MOD);
                 }
-                this->e[j] = (this->e[j] * tj) % inMOD;
+                else
+                {
+                    this->e[j]/=j;
+                }
             }
         }
     }

@@ -2,7 +2,9 @@
 #include <vector>
 #include <unordered_map>
 #include <iostream>
-
+// FIXME compile 
+// FIXME correctness
+// FIXME restructure classes vs without classes
 using namespace std;
 
 template <typename I, typename D>

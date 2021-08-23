@@ -2,6 +2,8 @@
 #include <vector>
 #include <queue>
 #include <iostream>
+// FIXME check for which one is more optimal in x=f[x]=f[f[x]] or using queue with size heuristic and without
+// FIXME combine into 1 big template guy to accomodate all of them
 
 template <typename I>
 class union_find

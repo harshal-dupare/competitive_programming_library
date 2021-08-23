@@ -3,7 +3,7 @@
 #include "graph.hpp"
 #include <random>
 #include <chrono>
-
+// FIXME tests
 namespace special_graph
 {
     template <typename I, class E=mt19937>
