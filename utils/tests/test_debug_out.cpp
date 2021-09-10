@@ -4,7 +4,7 @@
 using namespace std;
 // namespaces ends
 
-#include "../debug_out.hpp"
+#include "../new_debug_out.hpp"
 
 int main()
 {
@@ -51,7 +51,7 @@ int main()
     debug(i);
     debug(x);
     debug(t);
-    mdebug(i,x,t);
+    debug(i,x,t);
     debug(ppp);
     debug(vk);
     debug(vt);

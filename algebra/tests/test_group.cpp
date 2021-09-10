@@ -7,7 +7,7 @@ typedef long long int ll;
 
 void test_subg_S3()
 {
-    group g(6);
+    group<int> g(6);
     vector<vector<int>> subgs;
     map<int, int> mp, imp;
     mp[123] = 0, imp[0] = 123;
@@ -23,7 +23,7 @@ void test_subg_S3()
 
 void test_subg_D4()
 {
-    group g(8);
+    group<int> g(8);
     vector<vector<int>> subgs;
     map<int, int> mp, imp;
     mp[0] = 0, imp[0] = 0;
@@ -41,6 +41,8 @@ void test_subg_D4()
 
 int main()
 {
+    test_subg_S3();
+    // test_subg_D4();
     return 0;
 }
 

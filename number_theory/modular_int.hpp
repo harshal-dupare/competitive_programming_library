@@ -106,8 +106,9 @@ namespace Zmod
 
         mint operator&(const mint &o)
         {
-            mint ans = o;
-            ans.n &= this->n;
+            mint ans;
+            ans.n = this->n;
+            ans.n &= o.n;
             return ans;
         }
         template <typename U>
@@ -121,8 +122,9 @@ namespace Zmod
 
         mint operator^(const mint &o)
         {
-            mint ans = o;
-            ans.n ^= this->n;
+            mint ans;
+            ans.n = this->n;
+            ans.n ^= o.n;
             return ans;
         }
         template <typename U>
@@ -136,8 +138,9 @@ namespace Zmod
 
         mint operator|(const mint &o)
         {
-            mint ans = o;
-            ans.n |= this->n;
+            mint ans;
+            ans.n = this->n;
+            ans.n |= o.n;
             return ans;
         }
         template <typename U>
@@ -181,8 +184,8 @@ namespace Zmod
 
         mint operator+(const mint &o)
         {
-            mint ans = o;
-            ans.n += this->n;
+            mint ans = *this;
+            ans.n += o.n;
             if (ans.n >= mod)
                 ans.n -= mod;
             return ans;
@@ -199,8 +202,9 @@ namespace Zmod
         template <typename U>
         friend mint operator+(const U &i, const mint &a)
         {
-            mint ans = a;
-            ans.n += Zmod::normalize<I, mod>((I)i);
+            mint ans;
+            ans.n = Zmod::normalize<I, mod>((I)i);
+            ans.n += a.n;
             if (ans.n >= mod)
                 ans.n -= mod;
             return ans;
@@ -240,8 +244,9 @@ namespace Zmod
         template <typename U>
         friend mint operator-(const U &i, const mint &a)
         {
-            mint ans = a;
-            ans.n -= Zmod::normalize<I, mod>((I)i);
+            mint ans;
+            ans.n = Zmod::normalize<I, mod>((I)i);
+            ans.n -= a.n;
             if (ans.n < (I)0)
                 ans.n += mod;
             return ans;

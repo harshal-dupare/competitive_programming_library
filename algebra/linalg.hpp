@@ -15,7 +15,7 @@ namespace linalg
     template <typename T>
     bool isZero(const T &a)
     {
-        T eps = (T)1e-6;
+        T eps = (T)1e-4;
         if (std::abs(a) <= eps)
             return true;
 
@@ -451,26 +451,51 @@ namespace linalg
                 }
             return false;
         }
-
+        
+        /// this -= k * a
+        void reduce(const T &k, const linalg::matrix<T, I, IS_SQUARE> &a)
+        {
+            assert(a.n==this->n);
+            assert(a.m==this->m);
+            if(linalg::isZero(k))
+            {
+                return;
+            }
+            (*this) -= k*a;
+        }
         // linalg::matrix<T, I, IS_SQUARE>[i][:] -= k*linalg::matrix<T, I, IS_SQUARE>[j][:]
         void row_reduce(I i, I j, const T &k)
         {
+            if(linalg::isZero(k)) return;
             for (I t = 0; t < this->m; t++)
                 this->a[i][t] -= k * this->a[j][t];
         }
         // mat[:][i] -= k*mat[:][j]
         void col_reduce(I i, I j, const T &k)
         {
+            if(linalg::isZero(k)) return;
             for (I t = 0; t < this->n; t++)
                 this->a[t][i] -= k * this->a[t][j];
         }
         void row_scale(I i, const T &k)
         {
+            if(linalg::isZero(k))
+            {
+                for (I t = 0; t < this->m; t++)
+                    this->a[i][t] = T();
+                    return;
+            }
             for (I t = 0; t < this->m; t++)
                 this->a[i][t] *= k;
         }
         void col_scale(I i, const T &k)
         {
+            if(linalg::isZero(k))
+            {
+                for (I t = 0; t < this->n; t++)
+                    this->a[t][0] = T();
+                    return;
+            }
             for (I t = 0; t < this->n; t++)
                 this->a[t][i] *= k;
         }
@@ -576,10 +601,10 @@ namespace linalg
         I rk = 0;
         for (I i = 0; i < std::min(a.n, a.m); i++)
         {
-            // bring max i'th col value in the i'th row
-            I maxi = i;
-            T maxt = (a.a[i][i] < T() ? -a.a[i][i] : a.a[i][i]);
-            for (I j = i + 1; j < a.n; j++)
+            // bring max i'th col value in the rk'th row
+            I maxi = rk;
+            T maxt = (a.a[rk][i] < T() ? -a.a[rk][i] : a.a[rk][i]);
+            for (I j = rk + 1; j < a.n; j++)
             {
                 if (maxt < a.a[j][i] || maxt < -a.a[j][i])
                 {
@@ -587,23 +612,21 @@ namespace linalg
                     maxt = (a.a[j][i] < T() ? -a.a[j][i] : a.a[j][i]);
                 }
             }
-            a.row_swap(i, maxi);
+            a.row_swap(rk, maxi);
             // bring max i'th col value in the i'th row
 
-            // if det becomes zero
-            if (linalg::isZero<T>(maxt))
-                break;
-            rk++;
-
-            T scale(1);
-            scale /= a.a[i][i];
-            a.row_scale(i, scale);
-            for (I j = i + 1; j < a.n; j++)
+            // if non zero element is found then that col has a independent vector so rank++
+            if (!linalg::isZero<T>(maxt))
             {
-                if (j == i)
-                    continue;
-                scale = a.a[j][i];
-                a.row_reduce(j, i, scale);
+                T scale(1);
+                scale /= a.a[rk][i];
+                a.row_scale(rk, scale);
+                for (I j = rk + 1; j < a.n; j++)
+                {
+                    scale = a.a[j][i];
+                    a.row_reduce(j, i, scale);
+                }
+                rk++;
             }
         }
         return rk;
@@ -690,7 +713,7 @@ namespace linalg
             for (I i = 0; i < a.n; i++)
             {
                 // bring max i'th col value in the i'th row
-                I maxi = 0;
+                I maxi = i;
                 T maxt = (a.a[i][i] < T() ? -a.a[i][i] : a.a[i][i]);
                 for (I j = i + 1; j < a.n; j++)
                 {
@@ -702,7 +725,7 @@ namespace linalg
                 }
                 a.row_swap(i, maxi);
                 // bring max i'th col value in the i'th row
-
+                /// mdebug(maxi,maxt);
                 // if det becomes zero
                 if (linalg::isZero<T>(maxt))
                     return T();
@@ -718,7 +741,9 @@ namespace linalg
                     T jscale = a.a[j][i];
                     a.row_reduce(j, i, jscale);
                 }
+                // debug(a);
             }
+            return deta;
         }
         else
         {
@@ -747,7 +772,6 @@ namespace linalg
         return ta;
     }
 
-    // FIXME test
     // only column vectors
     template <typename T, typename I, bool IS_SQUARE>
     T inner_product(const linalg::matrix<T, I, IS_SQUARE> &a, const linalg::matrix<T, I, IS_SQUARE> &b)
@@ -780,7 +804,6 @@ namespace linalg
                 u.a[i][0] /= su;
     }
 
-    // FIXME test
     template <typename T, typename I, bool IS_SQUARE>
     void gram_schmidt_process(std::vector<linalg::matrix<T, I, IS_SQUARE>> &u)
     {
@@ -789,14 +812,13 @@ namespace linalg
             linalg::matrix<T, I, IS_SQUARE> tp(u[i]);
             for (I j = 0; j < i; j++)
             {
-                tp -= u[j] * linalg::inner_product<T, I, IS_SQUARE>(u[j], u[i]);
+                tp.reduce(linalg::inner_product<T, I, IS_SQUARE>(u[j], u[i]),u[j]);
             }
             u[i] = tp;
             unitize<T, I, IS_SQUARE>(u[i]);
         }
     }
 
-    // FIXME test
     template <typename T, typename I, bool IS_SQUARE>
     bool isdiagonal(const linalg::matrix<T, I, IS_SQUARE> &a)
     {
@@ -807,6 +829,42 @@ namespace linalg
             for (I j = 0; j < a.m; j++)
             {
                 if (i == j)
+                    continue;
+                if (!linalg::isZero<T>(a.a[i][j]))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    template <typename T, typename I, bool IS_SQUARE>
+    bool is_upper_triangular(const linalg::matrix<T, I, IS_SQUARE> &a)
+    {
+        if (a.n != a.m)
+            return false;
+        for (I i = 0; i < a.n; i++)
+        {
+            for (I j = 0; j < a.m; j++)
+            {
+                if (i <= j)
+                    continue;
+                if (!linalg::isZero<T>(a.a[i][j]))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    template <typename T, typename I, bool IS_SQUARE>
+    bool is_lower_triangular(const linalg::matrix<T, I, IS_SQUARE> &a)
+    {
+        if (a.n != a.m)
+            return false;
+        for (I i = 0; i < a.n; i++)
+        {
+            for (I j = 0; j < a.m; j++)
+            {
+                if (i >= j)
                     continue;
                 if (!linalg::isZero<T>(a.a[i][j]))
                     return false;
@@ -869,4 +927,7 @@ namespace linalg
         return linalg::matrix<T, I, IS_SQUARE>();
     }
 
+
+    // FIXME LU decomposition
+    // FIXME SVD -> psoudo inverse
 }

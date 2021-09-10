@@ -3,6 +3,7 @@
 #include <bits/stdc++.h>
 #include "../utils/debug_out.hpp"
 
+// FIXME correctness
 template<typename I>
 class group
 {

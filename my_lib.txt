@@ -13,6 +13,7 @@ my_lib/data_structure/suffix_tree.hpp
 my_lib/data_structure/treap.hpp
 my_lib/data_structure/trie.hpp
 my_lib/data_structure/union_find.hpp
+my_lib/game_theory/game.hpp
 my_lib/game_theory/stable_matching.hpp
 my_lib/geometry/algos.hpp
 my_lib/geometry/line.hpp
@@ -57,5 +58,6 @@ my_lib/randoms/random_gen.hpp
 my_lib/strings_algo/matching.hpp
 my_lib/trees/tree.hpp
 my_lib/utils/debug_out.hpp
+my_lib/utils/new_debug_out.hpp
 my_lib/utils/plotting.hpp
 my_lib/utils/timer.hpp

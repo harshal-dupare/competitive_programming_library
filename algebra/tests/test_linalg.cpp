@@ -1,7 +1,8 @@
 #include <bits/stdc++.h>
-#include "../linalg.hpp"
 #include "../../utils/debug_out.hpp"
 #include "../../randoms/random_gen.hpp"
+
+#include "../linalg.hpp"
 
 // namespaces starts
 using namespace std;
@@ -135,16 +136,99 @@ void testinv()
     }
 }
 
-
 void ttest()
 {
     debug(int());
     debug(ll());
 }
 
+void test_col_n_row_normalize()
+{
+    ll n,m,k;
+    cin>>n>>m>>k;
+    while(k--)
+    {
+        mat a = getmat(n,m);
+        debug(a);
+        col_normalize<R,ll,isqr>(a);
+        debug(a);
+        a = getmat(n,m);
+        debug(a);
+        row_normalize<R,ll,isqr>(a);
+        debug(a);
+    }
+}
+
+void test_rank()
+{
+    ll n,m,k;
+    cin>>n>>m>>k;
+    while(k--)
+    {
+        mat a = getmat(n,m);
+        ll rk = linalg::rank<R,ll,isqr>(a);
+        if(rk<m)
+        {
+            debug(a);
+            debug(rk);
+        }
+    }
+}
+
+void test_det()
+{
+    ll n,k;
+    cin>>n>>k;
+    while(k--)
+    {
+        mat a = getmat(n,n);
+        R det = linalg::det<R,ll,isqr>(a);
+        debug(a);
+        debug(det);
+    }
+}
+
+void test_inner_product()
+{
+    ll n,k;
+    cin>>n>>k;
+    while(k--)
+    {
+        mat a = getmat(n,1);
+        mat b = getmat(n,1);
+        R ip = linalg::inner_product<R,ll,isqr>(a,b);
+        debug(a);
+        debug(b);
+        debug(ip);
+    }
+}
+
+void test_gram_schmidt_process()
+{
+    ll n,m,k;
+    cin>>n>>m>>k;
+    while(k--)
+    {
+        vector<mat> u;
+        for (ll i=0;i<m;i++)u.push_back(getmat(n,1));
+        // debug(u);
+        linalg::gram_schmidt_process<R,ll,isqr>(u);
+        // debug(u);
+        for(ll i=0;i<m;i++)
+        {
+            for(ll j=i+1;j<m;j++) cerr<<fixed<<setprecision(4)<<linalg::inner_product<R,ll,isqr>(u[i],u[j])<<" ";
+        }
+        debug_out();
+    }
+}
+
 int main()
 {
     //testinv();
-    ttest();
+    // ttest();
+    // test_rank();
+    // test_det();
+    // test_inner_product();
+    // test_gram_schmidt_process();
     return 0;
 }
