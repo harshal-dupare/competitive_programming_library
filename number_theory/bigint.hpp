@@ -11,7 +11,7 @@
 template <typename I, int n>
 class bigint
 {
-    const static I B_max = std::pow((I)10, n);
+    static constexpr I B_max = std::pow((I)10, n);
 
 public:
     typedef bigint<I, n> bint;

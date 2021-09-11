@@ -23,8 +23,7 @@ my_lib/geometry/segments.hpp
 my_lib/graphs/dgraph.hpp
 my_lib/graphs/generator.hpp
 my_lib/graphs/graph.hpp
-my_lib/graphs/wdgraph.hpp
-my_lib/graphs/wgraph.hpp
+my_lib/graphs/tree.hpp
 my_lib/linear_programming/big_M.hpp
 my_lib/linear_programming/branch_and_bound.hpp
 my_lib/linear_programming/cutting_plane.hpp
@@ -56,7 +55,6 @@ my_lib/probability_and_statistics/markov_chain.hpp
 my_lib/probability_and_statistics/statistics.hpp
 my_lib/randoms/random_gen.hpp
 my_lib/strings_algo/matching.hpp
-my_lib/trees/tree.hpp
 my_lib/utils/debug_out.hpp
 my_lib/utils/new_debug_out.hpp
 my_lib/utils/plotting.hpp

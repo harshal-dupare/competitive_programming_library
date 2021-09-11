@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "../../utils/timer.h"
+#include "../primes.hpp"
 
 using namespace std;
 

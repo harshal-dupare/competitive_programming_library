@@ -8,6 +8,26 @@ using namespace std;
 typedef long long ll;
 typedef double R;
 
+template <typename I>
+wgraph<I, R> rand_graph(I n, double p)
+{
+    mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+    bernoulli_distribution ber(p);
+    uniform_real_distribution<R> unf(1,10.0);
+    wgraph<I, R> G(n);
+    for (I i = 0; i < n; i++)
+    {
+        for (I j = i + 1; j < n; j++)
+        {
+            if (ber(rng))
+            {
+                G.add_edge(i, j, unf(rng));
+            }
+        }
+    }
+    return G;
+}
+
 void flow_input(graph<ll> &g,vector<unordered_map<ll,ll>> &rescap,vector<bool> &cut)
 {
     ll n,m;

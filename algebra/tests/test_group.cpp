@@ -4,6 +4,7 @@
 
 using namespace std;
 typedef long long int ll;
+typedef double R;
 
 void test_subg_S3()
 {
