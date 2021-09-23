@@ -2,6 +2,7 @@
 
 #include<vector>
 #include<complex>
+#include "linalg.hpp"
 
 namespace roots
 {
@@ -214,11 +215,26 @@ namespace roots
         return ans;
     }
 
-    // FIXME Genenral polynomial root
-    template <typename R>
-    std::vector<R> polynomial_roots(const std::vector<R>& a)
+    template <typename R, typename I =int>
+    std::vector<std::complex<R>> polynomial_roots_companion_matrix(const std::vector<R>& a,R _radix_base=2,R _p_norm=2,double _confidence=0.95,I _max_itr=100)
     {
-        std::vector<R> ans;
+        using C = std::complex<R>;
+        I n = (I)a.size();
+        linalg::matrix<C,I,true> companion_matrix(n,n);
+        companion_matrix.a[0][n-2] = a[0]/a[n-1];
+        for(I i=1;i<n-1;i++)
+        {
+            companion_matrix.a[i][i-1] = -1;
+            companion_matrix.a[i][n-2] = a[i]/a[n-1];
+        }
+
+        linalg::balancing_parlett_reinsch(companion_matrix,C(_radix_base),C(_p_norm),_confidence,_max_itr);
+        auto  QD = linalg::eigenpairs_QR_algorithm(companion_matrix,_max_itr);
+        std::vector<std::complex<R>> ans;
+        for(I i=0;i<n-1;i++)
+        {
+            ans.push_back(QD.second.a[i][i]);
+        }
         return ans;
     }
 };

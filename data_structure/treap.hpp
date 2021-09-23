@@ -2,6 +2,9 @@
 // FIXME read n understand
 // FIXME improve implimentation
 
+#include <bits/stdc++.h>
+using namespace std;
+
 template <typename V, typename P>
 struct treap
 {
@@ -13,11 +16,20 @@ struct treap
         int size;
         node()
         {
+            key = V();
+            priority = P();
             l = nullptr;
             r = nullptr;
             size = 0;
         };
-        node(V _k, P _p) key(_k), priority(_p), size(0){};
+        node(V _k, P _p)
+        {
+            key = _k;
+            priority = _p;
+            l = nullptr;
+            r = nullptr;
+            size = 0;
+        };
     };
 
     node *root;
@@ -160,7 +172,7 @@ struct treap
         }
         return;
     }
-}
+};
 
 template <typename V, typename P>
 struct implicit_treap
@@ -173,11 +185,20 @@ struct implicit_treap
         int size;
         node()
         {
+            key = V();
+            priority = P();
             l = nullptr;
             r = nullptr;
             size = 0;
         };
-        node(V _k, P _p) key(_k), priority(_p), size(0){};
+        node(V _k, P _p)
+        {
+            key = _k;
+            priority = _p;
+            l = nullptr;
+            r = nullptr;
+            size = 0;
+        };
     };
 
     node *root;
@@ -310,4 +331,4 @@ struct implicit_treap
         return;
     }
 
-}
+};

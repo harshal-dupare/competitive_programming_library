@@ -782,6 +782,19 @@ namespace linalg
         return (linalg::transpose<T, I, IS_SQUARE>(a) * b).a[0][0];
     }
 
+    // only column vectors
+    template <typename T, typename I, bool IS_SQUARE>
+    T norm_p(const linalg::matrix<T, I, IS_SQUARE> &a, T p)
+    {
+        assert(a.m == (I)1);
+        T nor = 0;
+        for(I i=0;i<a.n;i++)
+        {
+            nor+=std::pow(a[i][0],p);
+        }
+        return std::pow(nor,(1/p));
+    }
+
     // FIXME test
     template <typename T, typename I, bool IS_SQUARE>
     void unitize(linalg::matrix<T, I, IS_SQUARE> &u)
@@ -927,6 +940,64 @@ namespace linalg
         return linalg::matrix<T, I, IS_SQUARE>();
     }
 
+    template <typename T, typename I, bool IS_SQUARE>
+    void balancing_parlett_reinsch(linalg::matrix<T, I, IS_SQUARE> &a, T radix_base=(T)2,T p_norm=(T)2, double confidence = 0.95,I max_itr=100)
+    {
+        assert(a.n==a.m);
+        I n = a.n;
+        // set D = I
+        linalg::matrix<T, I, IS_SQUARE> D(n,1);
+        for(I i=0;i<n;i++) D.a[i][0]=(T)1;
+
+        bool converged = false;
+
+        while (!converged&&max_itr>0)
+        {
+            confidence=true;
+            for(I i=0;i<n;i++)
+            {
+                T c=0,r=0,s=0,f=1;
+                for(I j=0;j<n;j++)
+                {
+                    if(j==i) continue;
+                    r+=std::pow(std::abs(a.a[i][j]),p_norm);
+                    c+=std::pow(std::abs(a.a[j][i]),p_norm);
+                }
+
+                s = c+r;
+                c = std::pow(c,1.0/std::abs(p_norm));
+                r = std::pow(r,1/p_norm);
+                while(std::abs(c)<std::abs(r/radix_base))
+                {
+                    c*=radix_base;
+                    f*=radix_base;
+                    r/=radix_base;
+                }
+
+                while(std::abs(c)>=std::abs(r*radix_base))
+                {
+                    c/=radix_base;
+                    f/=radix_base;
+                    r*=radix_base;
+                }
+                c = std::pow(c,p_norm);
+                r = std::pow(r,p_norm);
+                if(std::abs(c+r)<confidence*std::abs(f))
+                {
+                    converged=false;
+                    D.a[i][0]*=f;
+                    for(I j=0;j<n;j++)
+                    {
+                        if(j==i) continue;
+                        a.a[j][i]*=f;
+                        a.a[i][j]/=f;
+                    }
+                }
+            }
+            max_itr--;
+        }
+    
+    }
 
     // FIXME LU decomposition
     // FIXME SVD -> psoudo inverse

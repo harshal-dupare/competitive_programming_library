@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
-#include "../../utils/timer.h"
-#include "../../utils/debug_out.h"
+#include "../../utils/timer.hpp"
+#include "../../utils/debug_out.hpp"
 #include "../matching.hpp"
 
 using namespace std;
@@ -16,7 +16,7 @@ void test_rabin_karp()
 
     sm.set(s.size());
     vector<ll> mtc = sm.rabin_karp(s, p);
-    oks(mtc);
+    debug(mtc);
 }
 
 void test_kmp()
@@ -51,7 +51,7 @@ void test_zf()
     // cin >> p;
     vector<ll> zf(s.size(), 0);
     sm.z_function(s, zf);
-    oks(zf);
+    debug(zf);
 }
 
 void test_aut()
@@ -63,8 +63,8 @@ void test_aut()
     sm.automaton(s, aut);
     vector<ll> pp;
     sm.prefix_function(s, pp);
-    oks(pp);
-    okvv(aut);
+    debug(pp);
+    debug(aut);
 }
 
 int main()

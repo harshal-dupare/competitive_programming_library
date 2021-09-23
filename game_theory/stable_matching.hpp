@@ -1,82 +1,89 @@
 #pragma once
+#include <vector>
 
-template <typename I>
-class stable_matching
+// always gives better allotment for men
+// O(log(sum(max_num_wpartners))*sum(max_num_mpartners)*sum(max_num_wpartners)  +  num_men*num_women)
+// O(m*w*log(w))
+template<typename I>
+void stable_matching(const std::vector<std::vector<I>>& menp, const std::vector<std::vector<I>> &womenp,
+                     const std::vector<I> &max_num_mpartners, const std::vector<I> &max_num_wpartners, 
+                     std::vector<std::vector<I>> & wpartner)
 {
-public:
-    I n;
-    std::vector<std::vector<I>> women;
-    std::vector<std::vector<I>> men;
-    std::vector<std::vector<I>> wpartner;
-    std::vector<std::vector<I>> mpartner;
+    // set the initial data 
+    I n_men = (I)menp.size();
+    I n_women = (I)womenp.size();
+    std::vector<I> men_sid(n_men,0);// all men first prorpose the most prefered women
+    // O(m*w)
+    std::vector<std::vector<I>> women(n_women, std::vector<I>(n_men,-1));
+    for (I i = 0; i < n_women; i++)
+    {
+        for (I j = 0; j < n_men; j++)
+        {
+            women[i][womenp[i][j]] = j;
+        }
+    }
+    wpartner.assign(n_women, std::vector<I>(0));
+    std::vector<I> num_matchings_done(n_men,0);
+
     
-    // input preferences must be in reverse
-    stable_matching(I n, std::vector<std::vector<I>> men, std::vector<std::vector<I>> &womenp)
-    {
-        this->n = n;
-        this->men = men;
-        this->women = std::vector<std::vector<I>>(n, std::vector<I>(n));
-        for (I i = 0; i < n; i++)
-        {
-            for (I j = 0; j < n; j++)
-            {
-                this->women[i][womenp[i][j]] = j;
-            }
-            reverse(this->men[i].begin(), this->men[i].end());
-        }
-        this->wpartner = std::vector<std::vector<I>>(n, std::vector<I>(0));
-    }
+    I inpool = 0;
+    // O(|Sm|=|#pm1|+|#pm2|+...) totoal number of partners of men
+    for(I i=0;i<n_men;i++)inpool+=max_num_mpartners[i];
 
-    void match()
+    // O(log(Sw)*Sm*Sw)
+    while (inpool > 0)
     {
-        std::vector<bool> pool(this->n, true);
-        I inpool = this->n;
-        while (inpool > 0)
+        // all men make their proposals
+        // O(m(not_fully_matched))
+        for (I man = 0; man < n_men; man++)
         {
-            // make all the proposals
-            for (I man = 0; man < this->n; man++)
+            if (num_matchings_done[man]>=max_num_mpartners[man])
+                continue;
+            if(men_sid[man]<(I)menp[man].size())
             {
-                if (!pool[man])
-                    continue;
+                // get the best women
+                I best_women = menp[man][men_sid[man]];
+                men_sid[man]++;
 
-                I best_women = this->men[man][this->men[man].size() - 1];
-                this->men[man].pop_back();
                 // propose the best women
-                this->wpartner[best_women].push_back(man);
-                pool[man]=false;
-                inpool--;
+                wpartner[best_women].push_back(man);
             }
-
-            for (I i = 0; i < this->n; i++)
-            {
-                if (this->wpartner[i].size() > 1)
-                {
-                    auto best_man = this->wpartner[i].begin();
-                    for (auto man = this->wpartner[i].begin() + 1; man != this->wpartner[i].end(); man++)
-                    {
-                        if (this->women[i][(*man)] < this->women[i][(*best_man)])
-                        {
-                            pool[*best_man]= true;
-                            inpool++;
-                            best_man = man;
-                        }
-                        else
-                        {
-                            pool[*man]=true;
-                            inpool++;
-                        }
-                    }
-                    this->wpartner[i] = std::vector<I>(1,(*best_man));
-                }
-            }
+            num_matchings_done[man]++;
+            inpool--;
         }
-    }
-
-    void show_matching()
-    {
-        for (I i = 0; i < this->n; i++)
+        
+        // let |Sw|=|#pw1|+|#pw2|+...) totoal number of partners of men
+        // O(log(|#pw1|*||#pw1|+m1|+log(|#pw2|*||#pw2|+m2|+...) <= O(log(Sw)*(Sw+m(not_fully_matched)))
+        for (I i = 0; i < n_women; i++)
         {
-            cout << i << ": " << this->wpartner[i][0] << endl;
+            if ((I)wpartner[i].size() > max_num_wpartners[i])
+            {
+                // O(log(k)*|wprt[i]|)
+                std::vector<I> best_men;
+                for(I j=0;j<max_num_wpartners[i];j++) best_men.push_back(wpartner[i][j]);
+                auto comps = [&](I men1,I men2){return women[i][men1]<women[i][men2];};
+                std::make_heap(best_men.begin(),best_men.end(),comps);
+                for (auto man = wpartner[i].begin() +  max_num_wpartners[i]; man != wpartner[i].end(); man++)
+                {
+                    // O(log(k))
+                    if (women[i][(*man)] < women[i][best_men[0]])
+                    {
+                        // current man is better than the current worst man
+                        num_matchings_done[best_men[0]]--;
+                        inpool++;
+                        std::pop_heap(best_men.begin(), best_men.end(),comps);
+                        best_men.pop_back();
+                        best_men.push_back((*man));
+                        std::push_heap(best_men.begin(), best_men.end(),comps);
+                    }
+                    else
+                    {
+                        num_matchings_done[*man]--;
+                        inpool++;
+                    }
+                }
+                wpartner[i] = best_men;
+            }
         }
     }
-};
+}

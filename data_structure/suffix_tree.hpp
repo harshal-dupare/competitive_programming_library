@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+using namespace std;
 // FIXME read other implementaions n theory
 // FIXME try to improve
 template <typename I>

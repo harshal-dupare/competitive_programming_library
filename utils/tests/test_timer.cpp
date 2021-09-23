@@ -6,8 +6,6 @@ using namespace std;
 
 typedef long long ll;
 
-void test()
-
 int main()
 {
     timer tm(100);

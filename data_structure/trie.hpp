@@ -3,16 +3,14 @@
 // FIXME improve implimentation
 // FIXME see alternative implementation
 
+#include <bits/stdc++.h>
+
+using namespace std;
+
 template <typename I>
 class trie
 {
 public:
-    char top_char = '$';
-    char start_char = 'a';
-    char end_char = 'z';
-    I char_count = 26;
-    I word_ct = 0;
-
     struct node
     {
         bool word_end = false;
@@ -42,6 +40,11 @@ public:
         }
     };
 
+    char top_char = '$';
+    char start_char = 'a';
+    char end_char = 'z';
+    I char_count = 26;
+    I word_ct = 0;
     vector<node> nodes;
 
     // start and end both inclusive

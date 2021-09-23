@@ -1,6 +1,7 @@
 #pragma once
 
-#include "point.h"
+#include "point.hpp"
+#include <vector>
 
 template<typename R>
 class polygon
@@ -8,7 +9,7 @@ class polygon
 public:
     int n;
     // clockwise order
-    vector<point2<R>> points;
+    std::vector<point2<R>> points;
 
     
 };

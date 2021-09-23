@@ -27,9 +27,19 @@ tfl.close()
 #     opf.write("\n"+80*'-'+"\n")
 # opf.close()
 
-
-for l in tls:
+n = len(tls)
+i = 40
+while i < n:
+    l = tls[i]
     l = l[0:-1]
     cmd = "g++ "+l[7:]
-    print("\n"+cmd+"\n")
+    print("\n"+str(i)+":"+ cmd +"\n")
     os.system(cmd)
+    s = int(input("0 to exit\t 1 to continue\t 2 to run again: "))
+    if s==0: 
+        break
+    if s==2:
+        i-=1
+    i+=1
+
+"""26-37,40,43,44,45,56,59,"""

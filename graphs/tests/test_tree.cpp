@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "../tree.hpp"
+#include "../../utils/debug_out.hpp"
 using namespace std;
 
 typedef long long ll;
@@ -36,10 +37,10 @@ void test()
     tr.dfs(1, intime, outtime);
     tr.prufer_seq(pruf);
 
-    oks(level);
-    oks(intime);
-    oks(outtime);
-    oks(pruf)
+    debug(level);
+    debug(intime);
+    debug(outtime);
+    debug(pruf);
 }
 
 void testes()
@@ -57,9 +58,9 @@ void testes()
     vector<ll> es, esr;
     vector<bool> vis(n, false);
     tr.euler_seq(0, es);
-    oks(es);
+    debug(es);
     tr.rec_euler_seq(0, vis, esr);
-    oks(esr);
+    debug(esr);
 }
 
 int main()

@@ -206,7 +206,6 @@ public:
 
         while (!S.empty())
         {
-            okp(S);
             auto v = *S.begin();
             S.erase(v);
 

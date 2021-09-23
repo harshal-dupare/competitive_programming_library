@@ -76,10 +76,10 @@ public:
     {
         I m;
         I v1, v2;
-        cin >> n > m;
+        std::cin >> n >> m;
         for (I i = 0; i < m; i++)
         {
-            cin >> v1 >> v2;
+            std::cin >> v1 >> v2;
             this->add_edge(v1, v2);
         }
     }
@@ -158,10 +158,10 @@ public:
         I m;
         I v1, v2;
         V w;
-        cin >> this->n > m;
+        std::cin >> this->n >> m;
         for (I i = 0; i < m; i++)
         {
-            cin >> v1 >> v2 >> w;
+            std::cin >> v1 >> v2 >> w;
             this->add_edge(v1, v2, w);
         }
     }

@@ -24,7 +24,7 @@ public:
     }
     // query specific
     // f must saisfy this property  f(x,y,z,..w) = f(f(x,y),f(z,..w))
-    I f(I x, I y)
+    I f(I x, I y) const
     {
         // we need the value f(x,y,z,..w)
         // and there must be some way to combine two adjacent t[i] & t[j] into 1
@@ -36,7 +36,7 @@ public:
     // @param `newx` new value at index
     // @param `t_old` old value in the tree
     // @return the new value in tree `$t$` when x is changed by newx and old value is told
-    I new_value(I x, I newx, I t_old)
+    I new_value(I x, I newx, I t_old) const
     {
         return t_old + (newx - x); // for x+y function
         // for min function
@@ -51,7 +51,7 @@ public:
     // query specific
     // bit structure specific
     // g(i) = i&(i+1) is saying as removing all the last traialing 1s
-    I g(I i)
+    I g(I i) const
     {
         // must satisfy
         // 0 <= g(i) <= i
@@ -60,13 +60,13 @@ public:
         return i & (i + 1);
     }
     // h(i) must help us itterate over the values j,  g(j) <= i <= j in increasing order
-    I h(I i)
+    I h(I i) const
     {
         // for g(i) = i&(i+1), h(i) = i|(i+1) ( i.e. making the last zero bit to 1)
         return i | (i + 1);
     }
     // bit structure specific
-    I get(I i)
+    I get(I i) const
     {
         I ans = this->t[i];
         i = this->g(i) - 1;
@@ -77,7 +77,7 @@ public:
         }
         return ans;
     }
-    I range_value(I i, I j)
+    I range_value(I i, I j) const
     {
         return this->get(j) - (i > 0 ? this->get(i - 1) : 0);
     }
@@ -91,9 +91,10 @@ public:
             i = this->h(i);
         }
     }
-    friend std::ostream &operator<<(std::ostream &os, const binary_indexed_tree_purq<I> &bit)
+    template<typename U>
+    friend std::ostream &operator<<(std::ostream &os, const binary_indexed_tree_purq<U> &bit)
     {
-        for (I i = 0; i < bit.n; i++)
+        for (U i = 0; i < bit.n; i++)
         {
             os << "(" << bit.a[i] << "," << bit.get(i) << "), ";
         }
@@ -127,30 +128,30 @@ public:
     }
 
     // query specific
-    I f(I x, I y)
+    I f(I x, I y) const 
     {
         return x + y;
     }
 
-    I get_new_value(I val, I update_val)
+    I get_new_value(I val, I update_val) const
     {
         return val + update_val;
     }
     // query specific
 
     // bit structure specific
-    I g(I i)
+    I g(I i) const 
     {
         return (i & (i + 1));
     }
 
-    I h(I i)
+    I h(I i) const 
     {
         return (i | (i + 1));
     }
     // bit structure specific
 
-    I get(I i)
+    I get(I i) const
     {
         I ans = this->null_value;
         while (i >= 0)
@@ -162,7 +163,7 @@ public:
         return ans;
     }
 
-    I range_value(I i, I j)
+    I range_value(I i, I j) const
     {
         if (i == 0)
             return this->get(j);
@@ -193,9 +194,10 @@ public:
         }
     }
 
-    friend std::ostream &operator<<(std::ostream &os, const binary_indexed_tree_rupq<I> &bit)
+    template <typename U>
+    friend std::ostream &operator<<(std::ostream &os, const binary_indexed_tree_rupq<U> &bit)
     {
-        for (I i = 0; i < bit.n; i++)
+        for (U i = 0; i < bit.n; i++)
         {
             os << "(" << bit.a[i] << "," << bit.get(i) << "), ";
         }
@@ -226,26 +228,26 @@ public:
         }
     }
     // query specific
-    I f(I x, I y)
+    I f(I x, I y) const
     {
         return x + y;
     }
-    I get_new_value(I val, I update_val)
+    I get_new_value(I val, I update_val) const
     {
         return val + update_val;
     }
     // query specific
     // bit structure specific
-    I g(I i)
+    I g(I i) const
     {
         return (i & (i + 1));
     }
-    I h(I i)
+    I h(I i) const
     {
         return (i | (i + 1));
     }
     // bit structure specific
-    I get(I i)
+    I get(I i) const
     {
         I ans1 = this->null_value;
         I ans2 = this->null_value;
@@ -288,24 +290,26 @@ public:
             }
         }
     }
-    I range_value(I i, I j)
+    I range_value(I i, I j) const
     {
         if (i == 0)
             return this->get(j);
 
         return this->get(j) - this->get(i - 1);
     }
-    friend std::ostream &operator<<(std::ostream &os, const binary_indexed_tree_rurq<I> &bit)
+
+    template <typename U>
+    friend std::ostream &operator<<(std::ostream &os, const binary_indexed_tree_rurq<U> &bit)
     {
         os << "t:";
-        for (I i = 0; i < bit.n; i++)
+        for (U i = 0; i < bit.n; i++)
         {
             os << "(" << bit.t1[i] << "," << bit.t2[i] << "), ";
         }
         os << "\n";
 
         os << "a:";
-        for (I i = 0; i < bit.n; i++)
+        for (U i = 0; i < bit.n; i++)
         {
             os << "(" << bit.a[i] << "," << bit.get(i) << "), ";
         }

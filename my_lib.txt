@@ -30,7 +30,6 @@ my_lib/linear_programming/cutting_plane.hpp
 my_lib/linear_programming/dual_simplex.hpp
 my_lib/linear_programming/game.hpp
 my_lib/linear_programming/hungarian.hpp
-my_lib/linear_programming/linear_eq.hpp
 my_lib/linear_programming/linear_programming_problem.hpp
 my_lib/linear_programming/revised_simplex.hpp
 my_lib/linear_programming/simplex.hpp

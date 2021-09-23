@@ -1195,12 +1195,6 @@ void lab()
     return;
 }
 
-int main()
-{
-    lab();
-    return 0;
-}
-
 /*
 1
 2

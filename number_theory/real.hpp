@@ -5,11 +5,11 @@
 namespace real
 {
     // fp >=0,fp+ip=x
-    template <typename R, R eps=1e-6>
+    template <typename R, R const &eps>
     std::pair<R, R> decompose(R x)
     {
         R ni = std::round(x);
-        if (std::abs(x - ni) <= eps)
+        if (x - ni <= eps&&x - ni >= eps)
             return {0.0, ni};
         R ip, fp;
         if (x >= ni)
@@ -19,10 +19,13 @@ namespace real
         return {fp, ip};
     }
 
-    template <typename R, R eps=1e-6>
+    template <typename R, R const &eps>
     inline R normalize(R a)
     {
-        if(abs(a)<=eps) return R();
+        if(a<=eps&&a>=-eps)
+        {
+            return R();
+        }
         return a;
     }
 
@@ -44,21 +47,21 @@ namespace real
 
     // @tparam `R` the type of floating point to use
     // @tparam `eps` precision level
-    template <typename R, R eps=1e-6>
+    template <typename R, R const &eps>
     class precision_real
     {
     public:
         typedef precision_real<R,eps> prl;
         R n;
-        precision_real() { this->n = R(); }
+        precision_real() {this->n = R(); }
         template <typename U>
-        precision_real(const U &x) { this->n = real::normalize<R,eps>((R)x); }
+        precision_real(const U &x) {this->n = real::normalize<R,eps>((R)x); }
         template <typename U>
         explicit operator U() const { return static_cast<U>(this->n); }
 
         void operator=(const prl &o) { this->n = o.n; }
         template <typename U>
-        void operator=(const U _n) { this->n = real::normalize<R, eps>((R)_n); }
+        void operator=(const U _n) {this->n = real::normalize<R, eps>((R)_n); }
 
         bool operator>(const prl &o) { return this->n > o.n; }
         template <typename U>
@@ -282,7 +285,7 @@ namespace real
         std::pair<prl, prl> decompose()
         {
             prl ni(std::round(this->n));
-            if (std::abs(this->n - ni.n) <= eps)
+            if (this->n - ni.n <= eps&&this->n - ni.n >= eps)
                 return {prl(), prl(ni)};
             prl ip, fp;
             if (this->n >= ni.n)

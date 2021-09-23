@@ -3,8 +3,9 @@
 #include "../roots.hpp"
 
 using namespace std;
-typedef long long int ll;
 
+typedef long long int ll;
+typedef double R;
 void test_inroot()
 {
     
@@ -17,8 +18,15 @@ void test_inroot()
     }
 }
 
+void test_polynomial_roots_companion_matrix()
+{
+    vector<R> p = {1,5,3};
+    auto proots = roots::polynomial_roots_companion_matrix<R,int>(p);
+    debug(proots);
+}
+
 int main()
 {
-    test_inroot();
+    test_polynomial_roots_companion_matrix();
     return 0;
 }

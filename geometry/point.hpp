@@ -660,7 +660,7 @@ public:
         {
             return 0;
         }
-        else if (volume > (R)0.0)
+        else if (volu > (R)0.0)
         {
             return 1;
         }

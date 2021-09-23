@@ -26,7 +26,7 @@ struct min_stack
         s.pop();
     }
 
-    pair<T,T> top()
+    std::pair<T,T> top()
     {
         return s.top();
     }
@@ -146,7 +146,7 @@ struct max_stack
         s.pop();
     }
 
-    pair<T,T> top()
+    std::pair<T,T> top()
     {
         return s.top();
     }

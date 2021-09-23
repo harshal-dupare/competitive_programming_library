@@ -100,14 +100,14 @@ public:
     {
         n = (R)0;
         lq = (R)0;
-        gen = random_gen::uniform_real<R, E>(0.0, 1.0);
+        gen = random_gens::uniform_real<R, E>(0.0, 1.0);
     }
     online_sample_uniform_random(const T &_a)
     {
         a = _a;
         n = (R)1;
         lq = (R)0;
-        gen = random_gen::uniform_real<R, E>(0.0, 1.0);
+        gen = random_gens::uniform_real<R, E>(0.0, 1.0);
     }
 
     void add(T &x)

@@ -3,7 +3,8 @@
 // FIXME read other seg trees and find imp ways & their advantages
 // FIXME impliment seg tree
 
-
+#include <bits/stdc++.h>
+using namespace std;
 
 template <typename I>
 class segment_tree
@@ -73,30 +74,31 @@ public:
     // give zero indexed
     I get(I i, I l, I r, I szl, I szr)
     {
-        ok(i);
-        ok(szl);
-        ok(szr);
+        debug(i);
+        debug(szl);
+        debug(szr);
         if (szl >= l && szr <= r)
         {
-            ok(this->tree[i]) return this->tree[i];
+            debug(this->tree[i]); 
+            return this->tree[i];
         }
         if (szr < l || szl > r)
         {
-            ok(this->null_value);
+            debug(this->null_value);
             return this->null_value;
         }
 
         I mid = (szl + szr) / 2;
-        ll lc = i << 1;
-        ll rc = lc + 1;
+        I lc = i << 1;
+        I rc = lc + 1;
         if (rc < 2 * this->n)
         {
-            ok("rl");
+            debug("rl");
             return this->f(get(lc, l, r, szl, mid), get(rc, l, r, mid + 1, szr));
         }
         else
         {
-            ok("l");
+            debug("l");
             return get(lc, l, r, szl, mid);
         }
     }
@@ -190,31 +192,31 @@ public:
     // give zero indexed
     I get(I i, I l, I r, I szl, I szr)
     {
-        // ok(i);
-        // ok(szl);
-        // ok(szr);
+        // debug(i);
+        // debug(szl);
+        // debug(szr);
         if (szl >= l && szr <= r)
         {
-            // ok(this->heap[i]);
+            // debug(this->heap[i]);
             return this->heap[i];
         }
         if (szr < l || szl > r)
         {
-            // ok(this->null_value);
+            // debug(this->null_value);
             return this->null_value;
         }
 
         I mid = (szl + szr) / 2;
-        ll lc = i << 1;
-        ll rc = lc + 1;
+        I lc = i << 1;
+        I rc = lc + 1;
         if (rc < 2 * this->n)
         {
-            // ok("rl");
+            // debug("rl");
             return this->f(get(lc, l, r, szl, mid), get(rc, l, r, mid + 1, szr));
         }
         else
         {
-            // ok("l");
+            // debug("l");
             return get(lc, l, r, szl, mid);
         }
     }

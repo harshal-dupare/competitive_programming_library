@@ -85,14 +85,14 @@ public:
         {
             std::cout << this->b[i] << ", ";
         }
-        std::cout << endl;
+        std::cout << std::endl;
 
         for (I i = 0; i < this->n; i++)
         {
             I temp = this->get(i);
             std::cout << "(" << this->a[i] << ", " << temp << "), ";
         }
-        std::cout << endl;
+        std::cout << std::endl;
     }
 };
 
@@ -173,14 +173,14 @@ public:
         {
             std::cout << this->b[i] << ", ";
         }
-        std::cout << endl;
+        std::cout << std::endl;
 
         for (I i = 0; i < this->n; i++)
         {
             I temp = this->get(i);
             std::cout << "(" << this->a[i] << ", " << temp << "), ";
         }
-        std::cout << endl;
+        std::cout << std::endl;
     }
 };
 
@@ -293,13 +293,13 @@ public:
         {
             std::cout << "(" << this->b[i] << "," << this->c[i] << "), ";
         }
-        std::cout << endl;
+        std::cout << std::endl;
 
         for (I i = 0; i < this->n; i++)
         {
             I temp = this->point_query(i);
             std::cout << "(" << this->a[i] << ", " << temp << "), ";
         }
-        std::cout << endl;
+        std::cout << std::endl;
     }
 };

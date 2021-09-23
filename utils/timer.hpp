@@ -38,8 +38,8 @@ public:
     {
         if (at == n)
             at = 0;
-        event_names[at] = s;
         event_time[at] = this->get();
+        event_names[at] = s;
         if (reset == 1)
             this->set();
         at++;

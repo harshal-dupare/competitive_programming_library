@@ -3,19 +3,19 @@
 #include <complex>
 #include <iostream>
 
-template<typename R>
+template<typename R,typename I=int>
 struct linear_eq
 {
     std::vector<std::vector<R>> A;
     std::vector<R> B;
-    std::vector<long long> xids;
-    long long n_eq;
-    long long n_var;
+    std::vector<I> xids;
+    I n_eq;
+    I n_var;
     R EPS = 1e-6;
     R _pEPS = 1e-9;
     R ninf = -1e20;
 
-    linear_eq(long long _n_eq, long long _n_var)
+    linear_eq(I _n_eq, I _n_var)
     {
         this->n_eq = _n_eq;
         this->n_var = _n_var;
@@ -24,7 +24,7 @@ struct linear_eq
         this->xids.assign(_n_var, 0);
     }
 
-    void rswap(long long i, long long j)
+    void rswap(I i, I j)
     {
         std::vector<R> tp = this->A[j];
         this->A[j] = this->A[i];
@@ -36,18 +36,18 @@ struct linear_eq
     }
 
     // R[i]<-R[i]-C*R[j]
-    void r_reduce(long long i, long long j, R C)
+    void r_reduce(I i, I j, R C)
     {
-        for (long long k = 0; k < this->n_var; k++)
+        for (I k = 0; k < this->n_var; k++)
         {
             this->A[i][k] -= this->A[j][k] * C;
         }
         this->B[i] -= this->B[j] * C;
     }
 
-    void scale(long long j, R C)
+    void scale(I j, R C)
     {
-        for (long long i = 0; i < n_var; i++)
+        for (I i = 0; i < n_var; i++)
         {
             this->A[j][i] /= C;
         }
@@ -57,9 +57,9 @@ struct linear_eq
     void input()
     {
         std::cout << "for each next " << this->n_eq << " rows input " << this->n_var + 1 << " space separtaed numbers in the format :\na[i][1] a[i][2] .. a[i][n] b[i]\n";
-        for (long long i = 0; i < n_eq; i++)
+        for (I i = 0; i < n_eq; i++)
         {
-            for (long long j = 0; j < n_var; j++)
+            for (I j = 0; j < n_var; j++)
             {
                 std::cin >> this->A[i][j];
             }
@@ -67,12 +67,12 @@ struct linear_eq
         }
     }
 
-    void gauss_seidel_itr(long long n, std::vector<std::vector<R>> &A, std::vector<R> &B, std::vector<R> &x)
+    void gauss_seidel_itr(I n, std::vector<std::vector<R>> &A, std::vector<R> &B, std::vector<R> &x)
     {
-        for (long long i = 0; i < n; i++)
+        for (I i = 0; i < n; i++)
         {
             x[i] = B[i];
-            for (long long j = 0; j < n; j++)
+            for (I j = 0; j < n; j++)
             {
                 if (i != j)
                 {
@@ -83,10 +83,10 @@ struct linear_eq
         }
     }
 
-    bool gauss_seidel(long long k, std::vector<R> &x)
+    bool gauss_seidel(I k, std::vector<R> &x)
     {
         x.resize(this->n_eq, 0);
-        for (long long i = 0; i < this->n_eq; i++)
+        for (I i = 0; i < this->n_eq; i++)
             x[i] = 0;
 
         double err = 1;
@@ -96,7 +96,7 @@ struct linear_eq
         {
             gauss_seidel_itr(this->n_eq, A, B, x);
             err = 0;
-            for (long long j = 0; j < this->n_eq; j++)
+            for (I j = 0; j < this->n_eq; j++)
             {
                 err += std::abs(xl[j] - x[j]);
             }
@@ -115,11 +115,11 @@ struct linear_eq
     bool row_echilon_form(bool reduced = false)
     {
         bool full_rank = true;
-        for (long long i = 0; i < std::min(n_eq, n_var); i++)
+        for (I i = 0; i < std::min(n_eq, n_var); i++)
         {
-            long long mxid = -1;
+            I mxid = -1;
             R mxv = 0;
-            for (long long j = i; j < n_eq; j++)
+            for (I j = i; j < n_eq; j++)
             {
                 if (std::abs(this->A[j][i]) >= mxv)
                 {
@@ -137,7 +137,7 @@ struct linear_eq
             if (mxid != i)
                 this->rswap(mxid, i);
 
-            for (long long j = i + 1; j < n_eq; j++)
+            for (I j = i + 1; j < n_eq; j++)
             {
                 this->r_reduce(j, i, this->A[j][i] / this->A[i][i]);
             }
@@ -154,11 +154,11 @@ struct linear_eq
     bool gauss_elemination(bool reduce = false)
     {
         bool full_rank = true;
-        for (long long i = 0; i < std::min(n_eq, n_var); i++)
+        for (I i = 0; i < std::min(n_eq, n_var); i++)
         {
-            long long mxid = -1;
+            I mxid = -1;
             R mxv = 0;
-            for (long long j = i; j < n_eq; j++)
+            for (I j = i; j < n_eq; j++)
             {
                 if (std::abs(this->A[j][i]) >= mxv)
                 {
@@ -178,7 +178,7 @@ struct linear_eq
             if (mxid != i)
                 this->rswap(mxid, i);
 
-            for (long long j = 0; j < n_eq; j++)
+            for (I j = 0; j < n_eq; j++)
             {
                 if (j != i)
                 {
@@ -195,16 +195,16 @@ struct linear_eq
         return full_rank;
     }
 
-    std::pair<bool,bool> static_gauss_elemination(std::vector<R> &x , long long k,bool reduce = false)
+    std::pair<bool,bool> static_gauss_elemination(std::vector<R> &x , I k,bool reduce = false)
     {
         std::pair<bool,bool> full_rank_convergence = {true,true};
         std::vector<std::vector<R>> tA=this->A;
         std::vector<R> tB=this->B;
-        for (long long i = 0; i < std::min(n_eq, n_var); i++)
+        for (I i = 0; i < std::min(n_eq, n_var); i++)
         {
-            long long mxid = -1;
+            I mxid = -1;
             R mxv = 0;
-            for (long long j = i; j < n_eq; j++)
+            for (I j = i; j < n_eq; j++)
             {
                 if (std::abs(this->A[j][i]) >= mxv)
                 {
@@ -222,7 +222,7 @@ struct linear_eq
             if (mxid != i)
                 this->rswap(mxid, i);
 
-            for (long long j = 0; j < n_eq; j++)
+            for (I j = 0; j < n_eq; j++)
             {
                 if (j != i)
                 {
@@ -246,7 +246,7 @@ struct linear_eq
             {
                 gauss_seidel_itr(this->n_eq, tA, tB, x);
                 err = 0;
-                for (long long j = 0; j < this->n_eq; j++)
+                for (I j = 0; j < this->n_eq; j++)
                 {
                     err += std::abs(xl[j] - x[j]);
                 }
@@ -274,19 +274,17 @@ struct linear_eq
 
     friend std::ostream &operator<<(std::ostream &os, linear_eq &le)
     {
-        for (long long i = 0; i < le.n_eq; i++)
+        for (I i = 0; i < le.n_eq; i++)
         {
             os << "[ ";
-            for (long long j = 0; j < le.n_var; j++)
+            for (I j = 0; j < le.n_var; j++)
             {
                 os << le.A[i][j] << " ";
             }
             os << " | " << le.B[i];
             os << " ]\n";
         }
-
         return os;
     }
 
 };
-

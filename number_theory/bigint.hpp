@@ -30,7 +30,7 @@ public:
         }
     }
 
-    template <typename U>
+    template <class U, class = typename std::enable_if<std::is_integral<U>::value>::type> 
     bigint(const U &__n)
     {
         I _n = (I)__n;
@@ -55,7 +55,7 @@ public:
             _n /= B_max;
         }
     }
-    template <typename U>
+    template <class U, class = typename std::enable_if<std::is_integral<U>::value>::type> 
     void operator=(const U &__n)
     {
         I _n = (I)__n;

@@ -1,3 +1,9 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+typedef long long ll;
+typedef double R;
 
 // FIXME compare with other implementation
 // properties : (static array, {add,min,max}:other similar)
@@ -10,7 +16,7 @@ public:
     I k;
     I(*f)(I, I);
     vector<I> a;
-    I null_value=1e10;
+    I null_value=1e9;
 
     sparse_table(I n, I (*f)(I, I), vector<I> a)
     {
