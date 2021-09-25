@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "../../utils/new_debug_out.hpp"
+#include "../../utils/debug_out.hpp"
 #include "../generator.hpp"
 // #define DEACTIVATE_DEBUG
 

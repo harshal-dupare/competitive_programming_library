@@ -20,7 +20,7 @@ void test_inroot()
 
 void test_polynomial_roots_companion_matrix()
 {
-    vector<R> p = {1,5,3};
+    vector<R> p = {6,-5,-2,1,5,7};
     auto proots = roots::polynomial_roots_companion_matrix<R,int>(p);
     debug(proots);
 }

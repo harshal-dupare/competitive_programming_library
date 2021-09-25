@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #include "../../utils/timer.hpp"
-#include "../../utils/new_debug_out.hpp"
+#include "../../utils/debug_out.hpp"
 #include "../stable_matching.hpp"
 
 using namespace std;

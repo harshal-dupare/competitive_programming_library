@@ -10,8 +10,7 @@ using namespace linalg;
 
 typedef double R;
 typedef long long ll;
-const bool isqr = false;
-typedef matrix<R,ll,isqr> mat;
+typedef matrix<R,ll> mat;
 
 mat getmat(ll n, ll m)
 {
@@ -124,7 +123,7 @@ void testinv()
     while(k--)
     {
         mat c = getmat(n,n);
-        mat invc = inverse<R,ll,isqr>(c);
+        mat invc = inverse<R,ll>(c);
         mat diff = invc*c-I;
         // debug(diff);
         if(!iseql(invc*c,I))
@@ -150,11 +149,11 @@ void test_col_n_row_normalize()
     {
         mat a = getmat(n,m);
         debug(a);
-        col_normalize<R,ll,isqr>(a);
+        col_normalize<R,ll>(a);
         debug(a);
         a = getmat(n,m);
         debug(a);
-        row_normalize<R,ll,isqr>(a);
+        row_normalize<R,ll>(a);
         debug(a);
     }
 }
@@ -166,7 +165,7 @@ void test_rank()
     while(k--)
     {
         mat a = getmat(n,m);
-        ll rk = linalg::rank<R,ll,isqr>(a);
+        ll rk = linalg::rank<R,ll>(a);
         if(rk<m)
         {
             debug(a);
@@ -182,7 +181,7 @@ void test_det()
     while(k--)
     {
         mat a = getmat(n,n);
-        R det = linalg::det<R,ll,isqr>(a);
+        R det = linalg::det<R,ll>(a);
         debug(a);
         debug(det);
     }
@@ -196,7 +195,7 @@ void test_inner_product()
     {
         mat a = getmat(n,1);
         mat b = getmat(n,1);
-        R ip = linalg::inner_product<R,ll,isqr>(a,b);
+        R ip = linalg::inner_product<R,ll>(a,b);
         debug(a);
         debug(b);
         debug(ip);
@@ -212,11 +211,11 @@ void test_gram_schmidt_process()
         vector<mat> u;
         for (ll i=0;i<m;i++)u.push_back(getmat(n,1));
         // debug(u);
-        linalg::gram_schmidt_process<R,ll,isqr>(u);
+        linalg::gram_schmidt_process<R,ll>(u);
         // debug(u);
         for(ll i=0;i<m;i++)
         {
-            for(ll j=i+1;j<m;j++) cerr<<fixed<<setprecision(4)<<linalg::inner_product<R,ll,isqr>(u[i],u[j])<<" ";
+            for(ll j=i+1;j<m;j++) cerr<<fixed<<setprecision(4)<<linalg::inner_product<R,ll>(u[i],u[j])<<" ";
         }
         debug_out();
     }

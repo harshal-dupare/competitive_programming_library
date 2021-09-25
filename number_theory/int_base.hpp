@@ -8,7 +8,7 @@
 #include <math.h>
 #include <iomanip>
 
-#include "../utils/new_debug_out.hpp"
+#include "../utils/debug_out.hpp"
 
 namespace baseint
 {

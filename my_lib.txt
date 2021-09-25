@@ -16,10 +16,8 @@ my_lib/data_structure/union_find.hpp
 my_lib/game_theory/game.hpp
 my_lib/game_theory/stable_matching.hpp
 my_lib/geometry/algos.hpp
-my_lib/geometry/line.hpp
 my_lib/geometry/point.hpp
-my_lib/geometry/polygon.hpp
-my_lib/geometry/segments.hpp
+my_lib/geometry/spaces.hpp
 my_lib/graphs/dgraph.hpp
 my_lib/graphs/generator.hpp
 my_lib/graphs/graph.hpp
@@ -55,6 +53,5 @@ my_lib/probability_and_statistics/statistics.hpp
 my_lib/randoms/random_gen.hpp
 my_lib/strings_algo/matching.hpp
 my_lib/utils/debug_out.hpp
-my_lib/utils/new_debug_out.hpp
 my_lib/utils/plotting.hpp
 my_lib/utils/timer.hpp

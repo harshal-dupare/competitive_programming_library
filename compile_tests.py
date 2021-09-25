@@ -28,7 +28,7 @@ tfl.close()
 # opf.close()
 
 n = len(tls)
-i = 40
+i = 0
 while i < n:
     l = tls[i]
     l = l[0:-1]

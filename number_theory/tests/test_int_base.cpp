@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "../../utils/new_debug_out.hpp"
+#include "../../utils/debug_out.hpp"
 #include "../int_base.hpp"
 
 using namespace std;

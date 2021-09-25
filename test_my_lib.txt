@@ -16,10 +16,8 @@ my_lib/data_structure/tests/test_union_find.cpp
 my_lib/game_theory/tests/test_game.cpp
 my_lib/game_theory/tests/test_stable_matching.cpp
 my_lib/geometry/tests/test_algos.cpp
-my_lib/geometry/tests/test_line.cpp
 my_lib/geometry/tests/test_point.cpp
-my_lib/geometry/tests/test_polygon.cpp
-my_lib/geometry/tests/test_segments.cpp
+my_lib/geometry/tests/test_spaces.cpp
 my_lib/graphs/tests/test_dgraph.cpp
 my_lib/graphs/tests/test_generator.cpp
 my_lib/graphs/tests/test_graph.cpp
@@ -30,7 +28,6 @@ my_lib/linear_programming/tests/test_cutting_plane.cpp
 my_lib/linear_programming/tests/test_dual_simplex.cpp
 my_lib/linear_programming/tests/test_game.cpp
 my_lib/linear_programming/tests/test_hungarian.cpp
-my_lib/linear_programming/tests/test_linear_eq.cpp
 my_lib/linear_programming/tests/test_linear_programming_problem.cpp
 my_lib/linear_programming/tests/test_revised_simplex.cpp
 my_lib/linear_programming/tests/test_simplex.cpp
@@ -56,6 +53,5 @@ my_lib/probability_and_statistics/tests/test_statistics.cpp
 my_lib/randoms/tests/test_random_gen.cpp
 my_lib/strings_algo/tests/test_matching.cpp
 my_lib/utils/tests/test_debug_out.cpp
-my_lib/utils/tests/test_new_debug_out.cpp
 my_lib/utils/tests/test_plotting.cpp
 my_lib/utils/tests/test_timer.cpp

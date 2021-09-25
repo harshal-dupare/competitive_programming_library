@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 #include "../../utils/debug_out.hpp"
 #include "../point.hpp"
-#include "../line.hpp"
-#include "../polygon.hpp"
 #include "../algos.hpp"
 
 mt19937 rng(198);
@@ -39,8 +37,6 @@ int main()
         debug(opt.on_plain(ps[i], ps[i + 1], ps[i + 2]));
         debug(opt.in_segment(ps[i + 1], ps[i + 2]));
         debug(opt.in_triangle(ps[i], ps[i + 1], ps[i + 2]));
-
-        debug_out();
     }
 
     return 0;

@@ -8,7 +8,7 @@
 namespace linalg
 {
 
-    template <typename T, typename I, bool IS_SQUARE>
+    template <typename T, typename I>
     class matrix;
 
     // FIXME generalize and test
@@ -16,19 +16,19 @@ namespace linalg
     bool isZero(const T &a)
     {
         T eps = (T)1e-4;
-        if (std::abs(a) <= eps)
+        if (a <= eps && a >= -eps)
             return true;
 
         return false;
     }
 
     // FIXME add extended inverse for non square matrix
-    template <typename T, typename I, bool IS_SQUARE>
-    linalg::matrix<T, I, IS_SQUARE> inverse(linalg::matrix<T, I, IS_SQUARE> a)
+    template <typename T, typename I>
+    linalg::matrix<T, I> inverse(linalg::matrix<T, I> a)
     {
-        if (IS_SQUARE || a.n == a.m)
+        if (a.n == a.m)
         {
-            linalg::matrix<T, I, IS_SQUARE> inva;
+            linalg::matrix<T, I> inva;
             inva.diagonal(a.n, T(1));
             // std::vector<std::pair<I, I>> swaps;
 
@@ -52,7 +52,7 @@ namespace linalg
 
                 if (linalg::isZero<T>(maxt))
                 {
-                    std::cerr<<a<<std::endl;
+                    std::cerr << a << std::endl;
                     assert(false && "matrix is not invertable");
                 }
                 T scale(1);
@@ -82,14 +82,13 @@ namespace linalg
         }
         else
         {
-            return linalg::matrix<T, I, IS_SQUARE>();
+            return linalg::matrix<T, I>();
         }
     }
 
     // ordering <,> is not defined for matrix
     // @tparam `T` T() must initilize it to zero element of T
-    // @tparam `IS_SQUARE` set true if you want to enforce square matrix only
-    template <typename T, typename I, bool IS_SQUARE>
+    template <typename T, typename I>
     class matrix
     {
     public:
@@ -98,8 +97,6 @@ namespace linalg
         matrix() : n(0), m(0) {}
         matrix(I _n, I _m)
         {
-            if (IS_SQUARE)
-                assert(_n == _m);
             this->n = _n;
             this->m = _m;
             a.assign(_n, std::vector<T>(_m, T()));
@@ -109,16 +106,12 @@ namespace linalg
             a = _a;
             n = (I)_a.size();
             m = (I)_a[0].size();
-            if (IS_SQUARE)
-                assert(this->n == this->m);
         }
-        matrix(const linalg::matrix<T, I, IS_SQUARE> &_m)
+        matrix(const linalg::matrix<T, I> &_m)
         {
             this->a = _m.a;
             this->n = _m.n;
             this->m = _m.m;
-            if (IS_SQUARE)
-                assert(this->n == this->m && "failed due to passing wrong size matrix");
         }
         void diagonal(const I _n, const T &k)
         {
@@ -133,37 +126,19 @@ namespace linalg
             a = _a;
             n = (I)_a.size();
             m = (I)_a[0].size();
-            if (IS_SQUARE)
-                assert(this->n == this->m);
         }
-        void operator=(const linalg::matrix<T, I, IS_SQUARE> &_m)
+        void operator=(const linalg::matrix<T, I> &_m)
         {
             this->a = _m.a;
             this->n = _m.n;
             this->m = _m.m;
-            if (IS_SQUARE)
-                assert(this->n == this->m);
         }
 
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend linalg::matrix<NT, NI, NIS_SQUARE> operator-(const linalg::matrix<NT, NI, NIS_SQUARE> &a)
-        {
-            linalg::matrix<NT, NI, NIS_SQUARE> temp(a);
-            for (NI i = 0; i < a.n; i++)
-            {
-                for (NI j = 0; j < a.m; j++)
-                {
-                    temp.a[i][j] = -temp.a[i][j];
-                }
-            }
-            return temp;
-        }
-
-        linalg::matrix<T, I, IS_SQUARE> operator+(const linalg::matrix<T, I, IS_SQUARE> &b)
+        linalg::matrix<T, I> operator+(const linalg::matrix<T, I> &b)
         {
             assert(this->n == b.n);
             assert(this->m == b.m);
-            linalg::matrix<T, I, IS_SQUARE> temp(*this);
+            linalg::matrix<T, I> temp(*this);
             for (I i = 0; i < temp.n; i++)
             {
                 for (I j = 0; j < temp.m; j++)
@@ -173,7 +148,7 @@ namespace linalg
             }
             return temp;
         }
-        void operator+=(const linalg::matrix<T, I, IS_SQUARE> &b)
+        void operator+=(const linalg::matrix<T, I> &b)
         {
             assert(this->n == b.n);
             assert(this->m == b.m);
@@ -186,11 +161,11 @@ namespace linalg
             }
         }
 
-        linalg::matrix<T, I, IS_SQUARE> operator-(const linalg::matrix<T, I, IS_SQUARE> &b)
+        linalg::matrix<T, I> operator-(const linalg::matrix<T, I> &b)
         {
             assert(this->n == b.n);
             assert(this->m == b.m);
-            linalg::matrix<T, I, IS_SQUARE> temp(*this);
+            linalg::matrix<T, I> temp(*this);
             for (I i = 0; i < temp.n; i++)
             {
                 for (I j = 0; j < temp.m; j++)
@@ -200,7 +175,7 @@ namespace linalg
             }
             return temp;
         }
-        void operator-=(const linalg::matrix<T, I, IS_SQUARE> &b)
+        void operator-=(const linalg::matrix<T, I> &b)
         {
             assert(this->n == b.n);
             assert(this->m == b.m);
@@ -213,10 +188,10 @@ namespace linalg
             }
         }
 
-        linalg::matrix<T, I, IS_SQUARE> operator*(const linalg::matrix<T, I, IS_SQUARE> &b)
+        linalg::matrix<T, I> operator*(const linalg::matrix<T, I> &b)
         {
             assert(this->m == b.n);
-            linalg::matrix<T, I, IS_SQUARE> temp(this->n, b.m);
+            linalg::matrix<T, I> temp(this->n, b.m);
             for (I i = 0; i < temp.n; i++)
             {
                 for (I j = 0; j < temp.m; j++)
@@ -230,40 +205,38 @@ namespace linalg
             }
             return temp;
         }
-        void operator*=(const linalg::matrix<T, I, IS_SQUARE> &b)
+        void operator*=(const linalg::matrix<T, I> &b)
         {
             *this = (*this) * b;
         }
 
-        linalg::matrix<T, I, IS_SQUARE> operator/(const linalg::matrix<T, I, IS_SQUARE> &b)
+        linalg::matrix<T, I> operator/(const linalg::matrix<T, I> &b)
         {
             assert(this->m == b.m);
-            linalg::matrix<T, I, IS_SQUARE> temp(this->n, b.n);
-            temp *= linalg::inverse<T, I, IS_SQUARE>(b);
+            linalg::matrix<T, I> temp(this->n, b.n);
+            temp *= linalg::inverse<T, I>(b);
             return temp;
         }
-        void operator/=(const linalg::matrix<T, I, IS_SQUARE> &b)
+        void operator/=(const linalg::matrix<T, I> &b)
         {
             assert(this->m == b.m);
-            *this = (*this) * linalg::inverse<T, I, IS_SQUARE>(b);
+            *this = (*this) * linalg::inverse<T, I>(b);
         }
 
+        // scalar operators
         // k = k*I_{n,m} assumptions
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend linalg::matrix<NT, NI, NIS_SQUARE> operator+(const linalg::matrix<NT, NI, NIS_SQUARE> &a, const NT &k)
+        friend linalg::matrix<T, I> operator+(const linalg::matrix<T, I> &a, const T &k)
         {
-            linalg::matrix<NT, NI, NIS_SQUARE> temp(a);
-            for (NI i = 0; i < std::min(temp.n, temp.m); i++)
+            linalg::matrix<T, I> temp(a);
+            for (I i = 0; i < std::min(temp.n, temp.m); i++)
             {
                 temp.a[i][i] += k;
             }
             return temp;
         }
-
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend linalg::matrix<NT, NI, NIS_SQUARE> operator+(const NT &k, const linalg::matrix<NT, NI, NIS_SQUARE> &a)
+        friend linalg::matrix<T, I> operator+(const T &k, const linalg::matrix<T, I> &a)
         {
-            linalg::matrix<NT, NI, NIS_SQUARE> temp(a);
+            linalg::matrix<T, I> temp(a);
             for (I i = 0; i < std::min(temp.n, temp.m); i++)
             {
                 temp.a[i][i] = k + temp.a[i][i];
@@ -278,21 +251,19 @@ namespace linalg
             }
         }
 
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend linalg::matrix<NT, NI, NIS_SQUARE> operator-(const linalg::matrix<NT, NI, NIS_SQUARE> &a, const NT &k)
+        friend linalg::matrix<T, I> operator-(const linalg::matrix<T, I> &a, const T &k)
         {
-            linalg::matrix<NT, NI, NIS_SQUARE> temp(a);
-            for (NI i = 0; i < std::min(temp.n, temp.m); i++)
+            linalg::matrix<T, I> temp(a);
+            for (I i = 0; i < std::min(temp.n, temp.m); i++)
             {
                 temp.a[i][i] -= k;
             }
             return temp;
         }
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend linalg::matrix<NT, NI, NIS_SQUARE> operator-(const NT &k, const linalg::matrix<NT, NI, NIS_SQUARE> &a)
+        friend linalg::matrix<T, I> operator-(const T &k, const linalg::matrix<T, I> &a)
         {
-            linalg::matrix<NT, NI, NIS_SQUARE> temp(a);
-            for (NI i = 0; i < std::min(temp.n, temp.m); i++)
+            linalg::matrix<T, I> temp(a);
+            for (I i = 0; i < std::min(temp.n, temp.m); i++)
             {
                 temp.a[i][i] = k - temp.a[i][i];
             }
@@ -306,26 +277,24 @@ namespace linalg
             }
         }
 
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend linalg::matrix<NT, NI, NIS_SQUARE> operator*(const linalg::matrix<NT, NI, NIS_SQUARE> &a, const NT &k)
+        friend linalg::matrix<T, I> operator*(const linalg::matrix<T, I> &a, const T &k)
         {
-            linalg::matrix<NT, NI, NIS_SQUARE> temp(a);
-            for (NI i = 0; i < temp.n; i++)
+            linalg::matrix<T, I> temp(a);
+            for (I i = 0; i < temp.n; i++)
             {
-                for (NI j = 0; j < temp.m; j++)
+                for (I j = 0; j < temp.m; j++)
                 {
                     temp.a[i][j] = temp.a[i][j] * k;
                 }
             }
             return temp;
         }
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend linalg::matrix<NT, NI, NIS_SQUARE> operator*(const NT &k, const linalg::matrix<NT, NI, NIS_SQUARE> &a)
+        friend linalg::matrix<T, I> operator*(const T &k, const linalg::matrix<T, I> &a)
         {
-            linalg::matrix<NT, NI, NIS_SQUARE> temp(a);
-            for (NI i = 0; i < temp.n; i++)
+            linalg::matrix<T, I> temp(a);
+            for (I i = 0; i < temp.n; i++)
             {
-                for (NI j = 0; j < temp.m; j++)
+                for (I j = 0; j < temp.m; j++)
                 {
                     temp.a[i][j] = k * temp.a[i][j];
                 }
@@ -343,26 +312,24 @@ namespace linalg
             }
         }
 
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend linalg::matrix<NT, NI, NIS_SQUARE> operator/(const linalg::matrix<NT, NI, NIS_SQUARE> &a, const NT &k)
+        friend linalg::matrix<T, I> operator/(const linalg::matrix<T, I> &a, const T &k)
         {
-            linalg::matrix<NT, NI, NIS_SQUARE> temp(a);
-            for (NI i = 0; i < temp.n; i++)
+            linalg::matrix<T, I> temp(a);
+            for (I i = 0; i < temp.n; i++)
             {
-                for (NI j = 0; j < temp.m; j++)
+                for (I j = 0; j < temp.m; j++)
                 {
                     temp.a[i][j] = temp.a[i][j] / k;
                 }
             }
             return temp;
         }
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend linalg::matrix<NT, NI, NIS_SQUARE> operator/(const NT &k, const linalg::matrix<NT, NI, NIS_SQUARE> &a)
+        friend linalg::matrix<T, I> operator/(const T &k, const linalg::matrix<T, I> &a)
         {
-            linalg::matrix<NT, NI, NIS_SQUARE> temp(a);
-            for (NI i = 0; i < temp.n; i++)
+            linalg::matrix<T, I> temp(a);
+            for (I i = 0; i < temp.n; i++)
             {
-                for (NI j = 0; j < temp.m; j++)
+                for (I j = 0; j < temp.m; j++)
                 {
                     temp.a[i][j] = k / temp.a[i][j];
                 }
@@ -380,7 +347,7 @@ namespace linalg
             }
         }
 
-        bool operator==(const linalg::matrix<T, I, IS_SQUARE> &b)
+        bool operator==(const linalg::matrix<T, I> &b)
         {
             if (this->n != b.n || this->m != b.m)
                 return false;
@@ -390,7 +357,7 @@ namespace linalg
                         return false;
             return true;
         }
-        bool operator!=(const linalg::matrix<T, I, IS_SQUARE> &b)
+        bool operator!=(const linalg::matrix<T, I> &b)
         {
             if (this->n != b.n || this->m != b.m)
                 return true;
@@ -412,15 +379,14 @@ namespace linalg
                 }
             return true;
         }
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend bool operator==(const NT &k, const linalg::matrix<NT, NI, NIS_SQUARE> &a)
+        friend bool operator==(const T &k, const linalg::matrix<T, I> &a)
         {
             if (a.n != a.m)
                 return false;
-            for (NI i = 0; i < a.n; i++)
-                for (NI j = 0; j < a.m; j++)
+            for (I i = 0; i < a.n; i++)
+                for (I j = 0; j < a.m; j++)
                 {
-                    if ((i == j ? k : NT()) != a.a[i][j])
+                    if ((i == j ? k : T()) != a.a[i][j])
                         return false;
                 }
             return true;
@@ -438,63 +404,64 @@ namespace linalg
                 }
             return false;
         }
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend bool operator!=(const NT &k, const linalg::matrix<NT, NI, NIS_SQUARE> &a)
+        friend bool operator!=(const T &k, const linalg::matrix<T, I> &a)
         {
             if (a.n != a.m)
                 return true;
-            for (NI i = 0; i < a.n; i++)
-                for (NI j = 0; j < a.m; j++)
+            for (I i = 0; i < a.n; i++)
+                for (I j = 0; j < a.m; j++)
                 {
-                    if ((i == j ? k : NT()) != a.a[i][j])
+                    if ((i == j ? k : T()) != a.a[i][j])
                         return true;
                 }
             return false;
         }
-        
+
         /// this -= k * a
-        void reduce(const T &k, const linalg::matrix<T, I, IS_SQUARE> &a)
+        void reduce(const T &k, const linalg::matrix<T, I> &a)
         {
-            assert(a.n==this->n);
-            assert(a.m==this->m);
-            if(linalg::isZero(k))
+            assert(a.n == this->n);
+            assert(a.m == this->m);
+            if (linalg::isZero(k))
             {
                 return;
             }
-            (*this) -= k*a;
+            (*this) -= k * a;
         }
-        // linalg::matrix<T, I, IS_SQUARE>[i][:] -= k*linalg::matrix<T, I, IS_SQUARE>[j][:]
+        // linalg::matrix<T, I>[i][:] -= k*linalg::matrix<T, I>[j][:]
         void row_reduce(I i, I j, const T &k)
         {
-            if(linalg::isZero(k)) return;
+            if (linalg::isZero(k))
+                return;
             for (I t = 0; t < this->m; t++)
                 this->a[i][t] -= k * this->a[j][t];
         }
         // mat[:][i] -= k*mat[:][j]
         void col_reduce(I i, I j, const T &k)
         {
-            if(linalg::isZero(k)) return;
+            if (linalg::isZero(k))
+                return;
             for (I t = 0; t < this->n; t++)
                 this->a[t][i] -= k * this->a[t][j];
         }
         void row_scale(I i, const T &k)
         {
-            if(linalg::isZero(k))
+            if (linalg::isZero(k))
             {
                 for (I t = 0; t < this->m; t++)
                     this->a[i][t] = T();
-                    return;
+                return;
             }
             for (I t = 0; t < this->m; t++)
                 this->a[i][t] *= k;
         }
         void col_scale(I i, const T &k)
         {
-            if(linalg::isZero(k))
+            if (linalg::isZero(k))
             {
                 for (I t = 0; t < this->n; t++)
                     this->a[t][0] = T();
-                    return;
+                return;
             }
             for (I t = 0; t < this->n; t++)
                 this->a[t][i] *= k;
@@ -513,14 +480,13 @@ namespace linalg
                 std::swap(this->a[t][i], this->a[t][j]);
         }
 
-        template <typename NT, typename NI, bool NIS_SQUARE>
-        friend std::ostream &operator<<(std::ostream &os, const linalg::matrix<NT, NI, NIS_SQUARE> &a)
+        friend std::ostream &operator<<(std::ostream &os, const linalg::matrix<T, I> &a)
         {
             os << "[";
-            for (NI i = 0; i < a.n; i++)
+            for (I i = 0; i < a.n; i++)
             {
                 os << "[";
-                for (NI j = 0; j < a.m; j++)
+                for (I j = 0; j < a.m; j++)
                 {
                     os << a.a[i][j];
                     if (j != a.m - 1)
@@ -540,8 +506,8 @@ namespace linalg
     };
 
     // @tparam `T` floating point value or something which has `/=(T)` and `>0` defined
-    template <typename T, typename I, bool IS_SQUARE>
-    inline void row_normalize(linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    inline void row_normalize(linalg::matrix<T, I> &a)
     {
         for (I i = 0; i < a.n; i++)
         {
@@ -558,8 +524,8 @@ namespace linalg
     }
 
     // @tparam `T` floating point value or something which has `/=(T)` and `>0` defined
-    template <typename T, typename I, bool IS_SQUARE>
-    inline void col_normalize(linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    inline void col_normalize(linalg::matrix<T, I> &a)
     {
         std::vector<T> sus(a.m);
         for (I i = 0; i < a.n; i++)
@@ -595,8 +561,8 @@ namespace linalg
         return ta;
     }
 
-    template <typename T, typename I, bool IS_SQUARE>
-    I rank(linalg::matrix<T, I, IS_SQUARE> a)
+    template <typename T, typename I>
+    I rank(linalg::matrix<T, I> a)
     {
         I rk = 0;
         for (I i = 0; i < std::min(a.n, a.m); i++)
@@ -632,8 +598,8 @@ namespace linalg
         return rk;
     }
 
-    template <typename T, typename I, bool IS_SQUARE>
-    linalg::matrix<T, I, IS_SQUARE> submatrix(const linalg::matrix<T, I, IS_SQUARE> &a, const std::vector<I> &r, const std::vector<I> &c, bool include_rc = true)
+    template <typename T, typename I>
+    linalg::matrix<T, I> submatrix(const linalg::matrix<T, I> &a, const std::vector<I> &r, const std::vector<I> &c, bool include_rc = true)
     {
         std::vector<I> nr, nc;
         if (!include_rc)
@@ -679,7 +645,7 @@ namespace linalg
             nr = r;
             nc = c;
         }
-        linalg::matrix<T, I, IS_SQUARE> suba((I)nr.size(), (I)nc.size());
+        linalg::matrix<T, I> suba((I)nr.size(), (I)nc.size());
         I rid = 0, cid = 0;
         for (auto ri : nr)
         {
@@ -694,8 +660,8 @@ namespace linalg
         return suba;
     }
 
-    template <typename T, typename I, bool IS_SQUARE>
-    T trace(const linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    T trace(const linalg::matrix<T, I> &a)
     {
         assert(a.n == a.m);
         T t = T();
@@ -704,10 +670,10 @@ namespace linalg
         return t;
     }
 
-    template <typename T, typename I, bool IS_SQUARE>
-    T det(linalg::matrix<T, I, IS_SQUARE> a)
+    template <typename T, typename I>
+    T det(linalg::matrix<T, I> a)
     {
-        if (IS_SQUARE || a.n == a.m)
+        if (a.n == a.m)
         {
             T deta(1);
             for (I i = 0; i < a.n; i++)
@@ -751,17 +717,17 @@ namespace linalg
         }
     }
 
-    template <typename T, typename I, bool IS_SQUARE>
-    linalg::matrix<T, I, IS_SQUARE> adjoint(const linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    linalg::matrix<T, I> adjoint(const linalg::matrix<T, I> &a)
     {
-        return linalg::inverse<T, I, IS_SQUARE>(a) * linalg::det<T, I, IS_SQUARE>(a);
+        return linalg::inverse<T, I>(a) * linalg::det<T, I>(a);
     }
 
     // FIXME: not-required : there is divide and conqure algo to reduce the cache misses
-    template <typename T, typename I, bool IS_SQUARE>
-    linalg::matrix<T, I, IS_SQUARE> transpose(const linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    linalg::matrix<T, I> transpose(const linalg::matrix<T, I> &a)
     {
-        linalg::matrix<T, I, IS_SQUARE> ta(a.m, a.n);
+        linalg::matrix<T, I> ta(a.m, a.n);
         for (I i = 0; i < a.n; i++)
         {
             for (I j = 0; j < a.m; j++)
@@ -773,31 +739,33 @@ namespace linalg
     }
 
     // only column vectors
-    template <typename T, typename I, bool IS_SQUARE>
-    T inner_product(const linalg::matrix<T, I, IS_SQUARE> &a, const linalg::matrix<T, I, IS_SQUARE> &b)
+    template <typename T, typename I>
+    T inner_product(const linalg::matrix<T, I> &a, const linalg::matrix<T, I> &b)
     {
         assert(a.m == (I)1);
         assert(b.m == (I)1);
         assert(a.n == b.n);
-        return (linalg::transpose<T, I, IS_SQUARE>(a) * b).a[0][0];
+        return (linalg::transpose<T, I>(a) * b).a[0][0];
     }
 
     // only column vectors
-    template <typename T, typename I, bool IS_SQUARE>
-    T norm_p(const linalg::matrix<T, I, IS_SQUARE> &a, T p)
+    template <typename T, typename I>
+    T norm_p(const linalg::matrix<T, I> &a, T p)
     {
-        assert(a.m == (I)1);
         T nor = 0;
-        for(I i=0;i<a.n;i++)
+        for (I i = 0; i < a.n; i++)
         {
-            nor+=std::pow(a[i][0],p);
+            for (I j = 0; j < a.m; j++)
+            {
+                nor += std::pow(a[i][j], p);
+            }
         }
-        return std::pow(nor,(1/p));
+        return std::pow(nor, (1 / p));
     }
 
     // FIXME test
-    template <typename T, typename I, bool IS_SQUARE>
-    void unitize(linalg::matrix<T, I, IS_SQUARE> &u)
+    template <typename T, typename I>
+    void unitize(linalg::matrix<T, I> &u)
     {
         assert(u.n == (I)1 || u.m == (I)1);
 
@@ -817,23 +785,23 @@ namespace linalg
                 u.a[i][0] /= su;
     }
 
-    template <typename T, typename I, bool IS_SQUARE>
-    void gram_schmidt_process(std::vector<linalg::matrix<T, I, IS_SQUARE>> &u)
+    template <typename T, typename I>
+    void gram_schmidt_process(std::vector<linalg::matrix<T, I>> &u,bool _unitize=false)
     {
         for (I i = 0; i < (I)u.size(); i++)
         {
-            linalg::matrix<T, I, IS_SQUARE> tp(u[i]);
+            linalg::matrix<T, I> tp(u[i]);
             for (I j = 0; j < i; j++)
             {
-                tp.reduce(linalg::inner_product<T, I, IS_SQUARE>(u[j], u[i]),u[j]);
+                tp.reduce(linalg::inner_product<T, I>(u[j], u[i]), u[j]);
             }
             u[i] = tp;
-            unitize<T, I, IS_SQUARE>(u[i]);
+            if(_unitize) unitize<T, I>(u[i]);
         }
     }
 
-    template <typename T, typename I, bool IS_SQUARE>
-    bool isdiagonal(const linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    bool isdiagonal(const linalg::matrix<T, I> &a)
     {
         if (a.n != a.m)
             return false;
@@ -850,8 +818,8 @@ namespace linalg
         return true;
     }
 
-    template <typename T, typename I, bool IS_SQUARE>
-    bool is_upper_triangular(const linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    bool is_upper_triangular(const linalg::matrix<T, I> &a)
     {
         if (a.n != a.m)
             return false;
@@ -868,8 +836,8 @@ namespace linalg
         return true;
     }
 
-    template <typename T, typename I, bool IS_SQUARE>
-    bool is_lower_triangular(const linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    bool is_lower_triangular(const linalg::matrix<T, I> &a)
     {
         if (a.n != a.m)
             return false;
@@ -887,116 +855,118 @@ namespace linalg
     }
 
     // FIXME test
-    template <typename T, typename I, bool IS_SQUARE>
-    std::pair<linalg::matrix<T, I, IS_SQUARE>, linalg::matrix<T, I, IS_SQUARE>> QR_factorization(const linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    std::pair<linalg::matrix<T, I>, linalg::matrix<T, I>> QR_factorization(const linalg::matrix<T, I> &a)
     {
         assert(a.n == a.m);
-        std::vector<linalg::matrix<T, I, false>> u(a.m, linalg::matrix<T, I, false>(a.n, (I)1));
+        std::vector<linalg::matrix<T, I>> u(a.m, linalg::matrix<T, I>(a.n, (I)1));
         for (I i = 0; i < a.n; i++)
         {
             for (I j = 0; j < a.m; j++)
                 u[j].a[i][0] = a.a[i][j];
         }
-        linalg::gram_schmidt_process<T, I, false>(u);
-        std::pair<linalg::matrix<T, I, IS_SQUARE>, linalg::matrix<T, I, IS_SQUARE>> QR = {a, a};
+        linalg::gram_schmidt_process<T, I>(u);
+        std::pair<linalg::matrix<T, I>, linalg::matrix<T, I>> QR = {a, a};
         for (I i = 0; i < a.n; i++)
         {
             for (I j = 0; j < a.m; j++)
                 QR.first.a[i][j] = u[j].a[i][0];
         }
-        QR.second = linalg::transpose<T, I, IS_SQUARE>(QR.first) * a;
+        QR.second = linalg::transpose<T, I>(QR.first) * a;
         return QR;
     }
 
     // FIXME test
-    template <typename T, typename I, bool IS_SQUARE>
-    std::pair<linalg::matrix<T, I, IS_SQUARE>, linalg::matrix<T, I, IS_SQUARE>> eigenpairs_QR_algorithm(const linalg::matrix<T, I, IS_SQUARE> &a, I k_max = 100)
+    template <typename T, typename I>
+    std::pair<linalg::matrix<T, I>, linalg::matrix<T, I>> eigenpairs_QR_algorithm(const linalg::matrix<T, I> &a, I k_max = 100)
     {
         assert(a.n == a.m);
         bool converged = false;
         I k = 0;
-        std::pair<linalg::matrix<T, I, IS_SQUARE>, linalg::matrix<T, I, IS_SQUARE>> QDk = {a, a};
+        std::pair<linalg::matrix<T, I>, linalg::matrix<T, I>> QDk = {a, a};
         while ((!converged) && k < k_max)
         {
-            QDk = linalg::QR_factorization<T, I, IS_SQUARE>(QDk.second);
+            QDk = linalg::QR_factorization<T, I>(QDk.second);
             QDk.second = QDk.second * QDk.first;
-            converged = linalg::isdiagonal<T, I, IS_SQUARE>(QDk.second);
+            converged = linalg::isdiagonal<T, I>(QDk.second);
             k++;
         }
         return QDk;
     }
 
     // FIXME other than QR algorithm
-    template <typename T, typename I, bool IS_SQUARE>
-    std::vector<T> eigenvalues(const linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    std::vector<T> eigenvalues(const linalg::matrix<T, I> &a)
     {
         return std::vector<T>();
     }
 
     // FIXME other than QR algorithm
-    template <typename T, typename I, bool IS_SQUARE>
-    linalg::matrix<T, I, IS_SQUARE> eigenvectors(const linalg::matrix<T, I, IS_SQUARE> &a)
+    template <typename T, typename I>
+    linalg::matrix<T, I> eigenvectors(const linalg::matrix<T, I> &a)
     {
-        return linalg::matrix<T, I, IS_SQUARE>();
+        return linalg::matrix<T, I>();
     }
 
-    template <typename T, typename I, bool IS_SQUARE>
-    void balancing_parlett_reinsch(linalg::matrix<T, I, IS_SQUARE> &a, T radix_base=(T)2,T p_norm=(T)2, double confidence = 0.95,I max_itr=100)
+    template <typename T, typename I>
+    void balancing_parlett_reinsch(linalg::matrix<T, I> &a, T radix_base = (T)2, T p_norm = (T)2, double confidence = 0.95, I max_itr = 100)
     {
-        assert(a.n==a.m);
+        assert(a.n == a.m);
         I n = a.n;
         // set D = I
-        linalg::matrix<T, I, IS_SQUARE> D(n,1);
-        for(I i=0;i<n;i++) D.a[i][0]=(T)1;
+        linalg::matrix<T, I> D(n, 1);
+        for (I i = 0; i < n; i++)
+            D.a[i][0] = (T)1;
 
         bool converged = false;
-
-        while (!converged&&max_itr>0)
+        T ip_norm = T(1) / p_norm;
+        while (!converged && max_itr > 0)
         {
-            confidence=true;
-            for(I i=0;i<n;i++)
+            confidence = true;
+            for (I i = 0; i < n; i++)
             {
-                T c=0,r=0,s=0,f=1;
-                for(I j=0;j<n;j++)
+                T c = 0, r = 0, s = 0, f = 1;
+                for (I j = 0; j < n; j++)
                 {
-                    if(j==i) continue;
-                    r+=std::pow(std::abs(a.a[i][j]),p_norm);
-                    c+=std::pow(std::abs(a.a[j][i]),p_norm);
+                    if (j == i)
+                        continue;
+                    r += std::pow(a.a[i][j], p_norm);
+                    c += std::pow(a.a[j][i], p_norm);
                 }
 
-                s = c+r;
-                c = std::pow(c,1.0/std::abs(p_norm));
-                r = std::pow(r,1/p_norm);
-                while(std::abs(c)<std::abs(r/radix_base))
+                s = c + r;
+                c = std::pow(c, ip_norm);
+                r = std::pow(r, ip_norm);
+                while (c < r / radix_base)
                 {
-                    c*=radix_base;
-                    f*=radix_base;
-                    r/=radix_base;
+                    c *= radix_base;
+                    f *= radix_base;
+                    r /= radix_base;
                 }
 
-                while(std::abs(c)>=std::abs(r*radix_base))
+                while (c >= r * radix_base)
                 {
-                    c/=radix_base;
-                    f/=radix_base;
-                    r*=radix_base;
+                    c /= radix_base;
+                    f /= radix_base;
+                    r *= radix_base;
                 }
-                c = std::pow(c,p_norm);
-                r = std::pow(r,p_norm);
-                if(std::abs(c+r)<confidence*std::abs(f))
+                c = std::pow(c, p_norm);
+                r = std::pow(r, p_norm);
+                if (c + r < confidence * f)
                 {
-                    converged=false;
-                    D.a[i][0]*=f;
-                    for(I j=0;j<n;j++)
+                    converged = false;
+                    D.a[i][0] *= f;
+                    for (I j = 0; j < n; j++)
                     {
-                        if(j==i) continue;
-                        a.a[j][i]*=f;
-                        a.a[i][j]/=f;
+                        if (j == i)
+                            continue;
+                        a.a[j][i] *= f;
+                        a.a[i][j] /= f;
                     }
                 }
             }
             max_itr--;
         }
-    
     }
 
     // FIXME LU decomposition

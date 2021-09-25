@@ -1,6 +1,6 @@
 #pragma once
 #include <bits/stdc++.h>
-#include "../utils/new_debug_out.hpp"
+#include "../utils/debug_out.hpp"
 using namespace std;
 
 template <typename I>

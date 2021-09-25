@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define GEOM_EPS 1e-9
+double GEOM_EPS = 1e-5;
 
 template <typename R>
 class point2
@@ -708,30 +708,56 @@ public:
         point3<R> A = v1 ^ v2;
         return ((R)0.5) * A.length();
     }
-
 };
+
+template <typename R>
+bool is_zero(const R &a) { return (a <= GEOM_EPS && a >= -GEOM_EPS); }
+
+template <typename R>
+bool sign_of(const R &a)
+{
+    int sg = 0;
+    if (a <= GEOM_EPS)
+        sg--;
+    if (a >= -GEOM_EPS)
+        sg++;
+    return sg;
+}
+
+template <typename R, int N>
+bool is_equal(const point<R, N> &p, const point<R, N> &q)
+{
+    for (int i = 0; i < N; i++)
+    {
+        if (!is_zero<R>(p[i] - tp[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 template <typename R, int N = 2>
 class point
 {
 public:
-    vector<R> x;
+    R x[N];
 
-    point()
+    point() { memset(x, (R)0, sizeof(x)); }
+    point(const vector<R> &_x)
     {
-        this->x.assign(N, 0);
+        for (int i = 0; i < N; i++)
+            this->x[i] = _x[i];
     }
-
-    point(vector<R> _x)
+    point(const R _x[N])
     {
-        this->x.resize(N);
-        this->x = _x;
+        for (int i = 0; i < N; i++)
+            this->x[i] = _x[i];
     }
-
-    void set(vector<R> _x)
+    point(const point<R, N> &_p)
     {
-        this->x.resize(N);
-        this->x = _x;
+        for (int i = 0; i < N; i++)
+            this->x[i] = _p.x[i];
     }
 
     // returns 1 if this comes before other -1 if other before this and else 0
@@ -755,10 +781,110 @@ public:
 
         return 0;
     }
+    bool operator<=(const point<R, N> &other) { return (this->before(other) >= 0); }
+    bool operator<(const point<R, N> &other) { return (this->before(other) > 0); }
+    bool operator>(const point<R, N> &other) { return (this->before(other) < 0); }
+    bool operator>=(const point<R, N> &other) { return (this->before(other) <= 0); }
+    bool operator==(const point<R, N> &other) { return (this->before(other) == 0); }
 
-    void operator&=(const point<R, N> &other)
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    void operator+=(const U &f)
     {
-        this->x = other.x;
+        for (int i = 0; i < N; i++)
+            this->x[i] += (R)f;
+    }
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    friend point<R, N> operator+(const U &f)
+    {
+        point<R, N> q;
+        for (int i = 0; i < N; i++)
+            q.x[i] = this->x[i] + (R)f;
+
+        return q;
+    }
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    friend point<R, N> operator+(const U &f, const point<R, N> &p)
+    {
+        point<R, N> q;
+        for (int i = 0; i < N; i++)
+            q.x[i] = p.x[i] + (R)f;
+
+        return q;
+    }
+
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    void operator-=(const U &f)
+    {
+        for (int i = 0; i < N; i++)
+            this->x[i] -= (R)f;
+    }
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    friend point<R, N> operator-(const U &f)
+    {
+        point<R, N> q;
+        for (int i = 0; i < N; i++)
+            q.x[i] = this->x[i] - (R)f;
+
+        return q;
+    }
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    friend point<R, N> operator-(const U &f, const point<R, N> &p)
+    {
+        point<R, N> q;
+        for (int i = 0; i < N; i++)
+            q.x[i] = (R)f - p.x[i];
+
+        return q;
+    }
+
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    void operator*=(const U &f)
+    {
+        for (int i = 0; i < N; i++)
+            this->x[i] *= (R)f;
+    }
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    friend point<R, N> operator*(const U &f)
+    {
+        point<R, N> q;
+        for (int i = 0; i < N; i++)
+            q.x[i] = this->x[i] * ((R)f);
+
+        return q;
+    }
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    friend point<R, N> operator*(const U &f, const point<R, N> &p)
+    {
+        point<R, N> q;
+        for (int i = 0; i < N; i++)
+            q.x[i] = ((R)f) * p.x[i];
+
+        return q;
+    }
+
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    void operator/=(const U &f)
+    {
+        for (int i = 0; i < N; i++)
+            this->x[i] /= (R)f;
+    }
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    friend point<R, N> operator/(const U &f)
+    {
+        point<R, N> q;
+        for (int i = 0; i < N; i++)
+            q.x[i] = this->x[i] / ((R)f);
+
+        return q;
+    }
+    template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
+    friend point<R, N> operator/(const U &f, const point<R, N> &p)
+    {
+        point<R, N> q;
+        for (int i = 0; i < N; i++)
+            q.x[i] = ((R)f) / p.x[i];
+
+        return q;
     }
 
     void operator+=(const point<R, N> &other)
@@ -766,25 +892,6 @@ public:
         for (int i = 0; i < N; i++)
             this->x[i] += other.x[i];
     }
-
-    void operator-=(const point<R, N> &other)
-    {
-        for (int i = 0; i < N; i++)
-            this->x[i] -= other.x[i];
-    }
-
-    void operator*=(R f)
-    {
-        for (int i = 0; i < N; i++)
-            this->x[i] *= f;
-    }
-
-    void operator/=(R f)
-    {
-        for (int i = 0; i < N; i++)
-            this->x[i] /= f;
-    }
-
     point<R, N> operator+(const point<R, N> &other)
     {
         point<R, N> opt(this->x);
@@ -792,6 +899,11 @@ public:
         return opt;
     }
 
+    void operator-=(const point<R, N> &other)
+    {
+        for (int i = 0; i < N; i++)
+            this->x[i] -= other.x[i];
+    }
     point<R, N> operator-(const point<R, N> &other)
     {
         point<R, N> opt(this->x);
@@ -799,32 +911,7 @@ public:
         return opt;
     }
 
-    bool operator<=(const point<R, N> &other)
-    {
-        return (this->before(other) >= 0);
-    }
-
-    bool operator<(const point<R, N> &other)
-    {
-        return (this->before(other) > 0);
-    }
-
-    bool operator>(const point<R, N> &other)
-    {
-        return (this->before(other) < 0);
-    }
-
-    bool operator>=(const point<R, N> &other)
-    {
-        return (this->before(other) <= 0);
-    }
-
-    bool operator==(const point<R, N> &other)
-    {
-        return (this->before(other) == 0);
-    }
-
-    R dot(point<R, N> &other)
+    R dot(const point<R, N> &other)
     {
         R dt = 0;
         for (int i = 0; i < N; i++)
@@ -833,9 +920,21 @@ public:
         }
         return dt;
     }
-
-    // O(N) time, returns distance square of this point from point a
-    R dist_square(point<R, N> origin = point<R, N>())
+    R norm_p(R p, bool root = true) const
+    {
+        R nr = 0;
+        for (int i = 0; i < N; i++)
+        {
+            nr += std::pow(this->x[i], p);
+        }
+        if (root)
+        {
+            p = (R)1 / p;
+            nr = pow(nr, p);
+        }
+        return nr;
+    }
+    R dist_square(const point<R, N> &origin)
     {
         R dist = 0;
         for (int i = 0; i < N; i++)

@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 
-#include "../../utils/new_debug_out.hpp"
+#include "../../utils/debug_out.hpp"
 #include "../real.hpp"
 using namespace real;
 using namespace std;
