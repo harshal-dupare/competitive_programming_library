@@ -1,16 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define using_rollup  1
-#define using_defines 1
-// #define using_pbds 1
-// #define LOCAL         1
-#define FAST_IO       1
-#define FILE_INPUT    0
-#define FILE_OUTPUT   0
-#define TESTCASES     1
-
-#ifdef using_rollup
 #ifdef using_pbds
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -18,17 +8,6 @@ using namespace __gnu_pbds;
 typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
 #endif
 
-#ifdef LOCAL
-#include "my_lib/utils/debug_out.hpp"
-#else
-#define debug(...)
-#define mdebug(...)
-#endif
-
-#define ok(a) cout << a << endl;
-#define okp(a, i) cout << fixed << setprecision(i) << a << endl;
-
-#ifdef using_defines
 #define REP(i, n) for (int64 i = 0; i < n; i++)
 #define rep(i, start, end, incr) for (__typeof(end) i = (start); i <= (end); i += (incr))
 #define inrange(i, a, b) ((i >= min(a, b)) && (i <= max(a, b)))
@@ -42,6 +21,8 @@ typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_
 #define MEM(a, b) memset(a, (b), sizeof(a))
 #define all(cont) cont.begin(), cont.end()
 #define rall(cont) cont.rbegin(), cont.rend()
+#define ok(a) cout << a << endl;
+#define okp(a, i) cout << fixed << setprecision(i) << a << endl;
 
 constexpr double PI = 3.1415926535897932384626433832795;
 constexpr long long MOD = 1000000007;
@@ -68,13 +49,19 @@ typedef vector<vl> vvl;
 // mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 // mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-#endif
+#define FAST_IO 1
+#define FILE_INPUT 0
+#define FILE_OUTPUT 0
+#define TESTCASES 1
+#define DEACTIVATE_DEBUG 
+#ifndef DEACTIVATE_DEBUG
+#include "debug"
+#else
+#define debug(...) 
 #endif
 
 typedef long long ll;
 typedef unsigned long long ull;
-
-ll TestCaseCount = 0;
 
 void solve()
 {
@@ -105,7 +92,6 @@ int main()
 
     while (T--)
     {
-        TestCaseCount++;
         solve();
     }
 

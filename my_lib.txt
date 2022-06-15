@@ -15,13 +15,15 @@ my_lib/data_structure/trie.hpp
 my_lib/data_structure/union_find.hpp
 my_lib/game_theory/game.hpp
 my_lib/game_theory/stable_matching.hpp
-my_lib/geometry/algos.hpp
+my_lib/geometry/convex_hull.hpp
+my_lib/geometry/geometry_utils.hpp
 my_lib/geometry/point.hpp
 my_lib/geometry/spaces.hpp
 my_lib/graphs/dgraph.hpp
 my_lib/graphs/generator.hpp
 my_lib/graphs/graph.hpp
 my_lib/graphs/tree.hpp
+my_lib/linear_programming/basic_feasible_solutions.hpp
 my_lib/linear_programming/big_M.hpp
 my_lib/linear_programming/branch_and_bound.hpp
 my_lib/linear_programming/cutting_plane.hpp

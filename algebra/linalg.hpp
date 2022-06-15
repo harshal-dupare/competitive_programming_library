@@ -15,11 +15,43 @@ namespace linalg
     template <typename T>
     bool isZero(const T &a)
     {
-        T eps = (T)1e-4;
+        T eps = (T)1e-7;
         if (a <= eps && a >= -eps)
             return true;
 
         return false;
+    }
+
+    template <typename T, typename I>
+    bool isZeroMatrix(const matrix<T,I>& a)
+    {
+        for(I i=0;i<a.n;i++)
+        {
+            for(I j=0;j<a.m;j++)
+            {
+                if(!isZero(a.a[i][j]))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    template <typename T, typename I>
+    void remove_precision_error(matrix<T,I>& a)
+    {
+        for(I i=0;i<a.n;i++)
+        {
+            for(I j=0;j<a.m;j++)
+            {
+                if(!isZero(a.a[i][j]))
+                {
+                    a.a[i][j] = (T)0;
+                }
+            }
+        }
     }
 
     // FIXME add extended inverse for non square matrix
@@ -50,11 +82,20 @@ namespace linalg
                 // swaps.emplace_back(i, maxi);
                 // bring max i'th col value in the i'th row
 
-                if (linalg::isZero<T>(maxt))
+                try
                 {
-                    std::cerr << a << std::endl;
-                    assert(false && "matrix is not invertable");
+                    if (linalg::isZero<T>(maxt))
+                    {
+                        throw std::string("\n\x1B[31mERROR\033[0m: Matrix is not invertable, Ignoring the column : ");
+                    }
                 }
+
+                catch(const std::string& execption)
+                {
+                    std::cerr << execption << i <<std::endl;
+                    continue;
+                }
+
                 T scale(1);
                 scale /= a.a[i][i];
                 a.row_scale(i, scale);
@@ -95,11 +136,11 @@ namespace linalg
         std::vector<std::vector<T>> a;
         I n, m;
         matrix() : n(0), m(0) {}
-        matrix(I _n, I _m)
+        matrix(I _n, I _m, T fill = T())
         {
             this->n = _n;
             this->m = _m;
-            a.assign(_n, std::vector<T>(_m, T()));
+            a.assign(_n, std::vector<T>(_m, fill));
         }
         matrix(const std::vector<std::vector<T>> &_a)
         {
@@ -263,9 +304,12 @@ namespace linalg
         friend linalg::matrix<T, I> operator-(const T &k, const linalg::matrix<T, I> &a)
         {
             linalg::matrix<T, I> temp(a);
-            for (I i = 0; i < std::min(temp.n, temp.m); i++)
+            for (I i = 0; i < temp.n; i++)
             {
-                temp.a[i][i] = k - temp.a[i][i];
+            for (I j = 0; j <  temp.m; j++)
+            {
+                temp.a[i][j] = (i==j?k:T(0)) - temp.a[i][j];
+            }
             }
             return temp;
         }
@@ -599,14 +643,13 @@ namespace linalg
     }
 
     template <typename T, typename I>
-    linalg::matrix<T, I> submatrix(const linalg::matrix<T, I> &a, const std::vector<I> &r, const std::vector<I> &c, bool include_rc = true)
+    linalg::matrix<T, I> submatrix(const linalg::matrix<T, I> &a, const std::vector<I> &r, const std::vector<I> &c, bool include_r = true, bool include_c = true)
     {
         std::vector<I> nr, nc;
-        if (!include_rc)
+        if (!include_r)
         {
-            std::vector<I> tnr = r, tnc = c;
+            std::vector<I> tnr = r;
             std::sort(tnr.begin(), tnr.end());
-            std::sort(tnc.begin(), tnc.end());
             I id = 0;
             for (I i = 0; i < a.n; i++)
             {
@@ -623,7 +666,16 @@ namespace linalg
                     id++;
                 }
             }
-            id = 0;
+        }
+        else
+        {
+            nr = r;
+        }
+        if (!include_c)
+        {
+            std::vector<I> tnc = c;
+            std::sort(tnc.begin(), tnc.end());
+            I id = 0;
             for (I i = 0; i < a.m; i++)
             {
                 if (id == (I)tnc.size())
@@ -642,7 +694,6 @@ namespace linalg
         }
         else
         {
-            nr = r;
             nc = c;
         }
         linalg::matrix<T, I> suba((I)nr.size(), (I)nc.size());
@@ -652,7 +703,7 @@ namespace linalg
             cid = 0;
             for (auto ci : nc)
             {
-                suba[rid][cid] = a[ri][ci];
+                suba.a[rid][cid] = a.a[ri][ci];
                 cid++;
             }
             rid++;
@@ -967,6 +1018,66 @@ namespace linalg
             }
             max_itr--;
         }
+    }
+
+    template <typename T, typename I>
+    std::pair<linalg::matrix<T, I>, linalg::matrix<T, I>> reduce_dim(linalg::matrix<T, I> &a, std::vector<I>& li_colids)
+    {
+        li_colids.clear();
+        std::vector<I> nonzero_rids;
+        I ct = 0;
+        std::vector<linalg::matrix<T, I>> li_cols;
+        for (I i = 0; ct < a.n && i < a.m; i++)
+        {
+            matrix<T,I> nvec(a.n,(I)1);
+            for(I j=0;j<a.n;j++)
+            {
+                nvec.a[j][0] = a.a[j][i];
+            }
+            for(I j=0;j<(I)li_cols.size();j++)
+            {
+                T scale = ((T)1)/li_colids[j].a[nonzero_rids[j]][0];
+                if(!isZero(nvec.a[nonzero_rids[j]][0])) nvec-=(nvec.a[nonzero_rids[j]][0])*(scale*li_cols[j]);
+            }
+
+            if(isZeroMatrix(nvec))
+            {
+                continue;
+            }
+
+            remove_precision_error(nvec);
+
+            li_colids.push_back(i);
+            li_cols.push_back(nvec);
+            ct++;
+            for(I j=0;j<nvec.n;j++)
+            {
+                if(!isZero(nvec.a[j][0]))
+                {
+                    nonzero_rids.push_back(j);
+                    break;
+                }
+            }
+        }
+
+        assert(nonzero_rids.size()==li_cols.size());
+        
+        std::pair<linalg::matrix<T, I>, linalg::matrix<T, I>> AinvA;
+        AinvA.first = linalg::matrix<T, I>(a.n,ct);
+
+        for(I i=0;i<a.n;i++)
+        {
+            for(I j=0;j<ct;j++)
+            {
+                AinvA.first.a[i][j] = a.a[i][li_colids[j]];
+            }
+        }
+
+        AinvA.second = inverse(AinvA.first);
+
+        a=AinvA.second*a;
+
+        return AinvA;
     }
 
     // FIXME LU decomposition

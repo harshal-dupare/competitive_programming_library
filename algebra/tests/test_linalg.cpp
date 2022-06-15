@@ -217,7 +217,7 @@ void test_gram_schmidt_process()
         {
             for(ll j=i+1;j<m;j++) cerr<<fixed<<setprecision(4)<<linalg::inner_product<R,ll>(u[i],u[j])<<" ";
         }
-        debug_out();
+        debug_space::debug_out();
     }
 }
 

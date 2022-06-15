@@ -110,4 +110,4 @@ if __name__ == '__main__':
 	print("completed")
 	graph.render(args.output, cleanup=True, view=args.view)
 
-# run$ python3 python3 dependency_graph.py -f jpg . ./my_lib_dependency
+# run$ python3 dependency_graph.py -f jpg . ./my_lib_dependency_graph

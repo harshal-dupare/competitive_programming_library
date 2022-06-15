@@ -1,102 +1,183 @@
+#pragma once
 #include <iostream>
 #include <vector>
-#include "../algebra/linear_eq.hpp"
+#include <string>
+#include "linear_programming_problem.hpp"
 
-using namespace std;
-typedef double R;
-typedef long long ll;
-typedef vector<vector<R>> vvr;
-typedef vector<R> vr;
-ll itrcount = 0;
-ll wd = 10;
-
-// to store the coefficients of objective function
-vector<R> zcoeff;
-
-struct big_m
+template <typename I, typename R>
+struct big_M
 {
-    vector<vector<R>> A;
-    vector<R> sol;
-    vector<R> z;
-    vector<ll> xids;
-    ll n_dv;
-    ll n_slc;
-    ll n_arf;
-    ll n_srp;
-    ll n_tot;
-    ll n_nbsc;
-    ll n_bsc;
-    R M = 1e5;
-    R EPS = 1e-6;
+    std::vector<std::vector<R>> a;
+    std::vector<R> sol;
+    std::vector<int> xids;
+    std::vector<string> varname;
+
+    int n_var, n_eq;
+    int n_slc, n_srp, n_arf, n_bsc, n_nbsc, n_tot;
+    int n_neg;
+    int min_or_max;
+    R M=(R)100;
+    R EPS = 1e-9;
     R _pEPS = 1e-9;
     R ninf = -1e20;
     R inf = 1e20;
+
+    int wd = 10;
     bool printtbl = true;
-    ll min_or_max = 1;
 
-    void log_details()
+    big_M(const linear_programming_problem<I, R> &lpp,const R& _M=(R)100)
     {
-        cout<<"n_dv : "<<n_dv<<"\n";
-        cout<<"n_slc : "<<n_slc<<"\n";
-        cout<<"n_arf : "<<n_arf<<"\n";
-        cout<<"n_srp : "<<n_srp<<"\n";
-        cout<<"n_tot : "<<n_tot<<"\n";
-        cout<<"n_nbsc : "<<n_nbsc<<"\n";
-        cout<<"n_bsc : "<<n_bsc<<"\n";
-        cout<<"A.size() : "<<A.size()<<"\n";
-        cout<<"A[0].size() : "<<A[0].size()<<"\n";
-        cout<<"sol.size() : "<<sol.size()<<"\n";
-        cout<<"xids.size() : "<<xids.size()<<"\n";
+        this->min_or_max = lpp.min_or_max;
+        this->n_var = lpp.n_var;
+        this->n_eq = lpp.n_eq;
+        this->n_slc = lpp.n_slc;
+        this->n_arf = lpp.n_arf;
+        this->n_srp = lpp.n_srp;
+        this->n_bsc = lpp.n_bsc;
+        this->M = _M;
+
+        std::vector<std::vector<int>> vtypes(3);
+        for (int i = 0; i < lpp.n_var; i++)
+        {
+            vtypes[lpp.var_sign[i] + 1].push_back(i);
+        }
+        this->n_neg = (int)vtypes[1].size();
+        this->n_tot = lpp.n_tot + this->n_neg;
+        this->n_nbsc = lpp.n_nbsc + this->n_neg;
+
+        assert(this->n_bsc == this->n_eq);
+
+        this->sol.assign((int)this->n_bsc + 1, (R)0);
+        for (int i = 1; i <= lpp.n_bsc; i++)
+        {
+            this->sol[i] = lpp.b[i - 1];
+        }
+
+        this->a.assign((int)this->n_bsc + 1, std::vector<R>((int)this->n_tot + 1, (R)0));
+
+        this->a[0][0] = (R)1;
+        for (int i = 0; i < (int)lpp.z.size(); i++)
+        {
+            this->a[0][i + 1] = -lpp.z[i];
+        }
+        for (int i = this->n_var+this->n_neg+this->n_srp+1; i <= this->n_tot-this->n_slc; i++)
+        {
+            this->a[0][i] = this->M;
+            if(this->min_or_max==-1)
+            {
+                this->a[0][i] = -this->M;
+            }
+        }
+        for (int i = 0; i < (int)lpp.a.size(); i++)
+        {
+            for (int j = 0; j < lpp.n_var; j++)
+            {
+                this->a[i + 1][j + 1] = lpp.a[i][j];
+            }
+        }
+
+        this->varname.assign((int)this->n_tot + 1, string());
+        this->varname[0] = "z";
+        this->xids.assign((int)this->n_bsc + 1, 0);
+
+        for (auto i : vtypes[0])
+        {
+            for (I j = 0; j <= this->n_eq; j++)
+            {
+                this->a[j][i + 1] = -this->a[j][i + 1];
+            }
+            this->varname[i + 1] = "-x_";
+            this->varname[i + 1].append(to_string(i + 1));
+        }
+
+        for (auto i : vtypes[2])
+        {
+            this->varname[i + 1] = "x_";
+            this->varname[i + 1].append(to_string(i + 1));
+        }
+
+        int k = this->n_var + 1;
+        for (auto i : vtypes[1])
+        {
+            for (I j = 0; j <= this->n_eq; j++)
+            {
+                this->a[j][k] = -this->a[j][i + 1];
+            }
+            this->varname[i + 1] = "xp_";
+            this->varname[i + 1].append(to_string(i + 1));
+            this->varname[k] = "xn_";
+            this->varname[k].append(to_string(i + 1));
+            k++;
+        }
+
+        std::vector<I> v_slc, v_srp, v_arf;
+        for (I i = 0; i < lpp.n_eq; i++)
+        {
+            if (lpp.eq_types[i] == (I)1)
+            {
+                // >=
+                v_arf.push_back(i);
+                v_srp.push_back(i);
+            }
+            else if (lpp.eq_types[i] == (I)0)
+            {
+                // ==
+                v_arf.push_back(i);
+            }
+            else
+            {
+                // <=
+                v_slc.push_back(i);
+            }
+        }
+        int k0 = k;
+        for (auto i : v_srp)
+        {
+            this->a[i + 1][k] = -((R)1);
+            this->varname[k] = "srp_";
+            this->varname[k].append(to_string(k - k0 + 1));
+            k++;
+        }
+        k0 = k;
+        int bscct = 1;
+        for (auto i : v_arf)
+        {
+            this->a[i + 1][k] = (R)1;
+            this->varname[k] = "arf_";
+            this->varname[k].append(to_string(k - k0 + 1));
+            this->xids[bscct] = k;
+            k++;
+            bscct++;
+        }
+        k0 = k;
+        for (auto i : v_slc)
+        {
+            this->a[i + 1][k] = (R)1;
+            this->varname[k] = "slc_";
+            this->varname[k].append(to_string(k - k0 + 1));
+            this->xids[bscct] = k;
+            k++;
+            bscct++;
+        }
     }
 
-    big_m(ll _n_dv, ll _n_slc, ll _n_srp, ll _n_arf)
+    void make_consistent()
     {
-        this->n_dv = _n_dv;
-        this->n_slc = _n_slc;
-        this->n_srp = _n_srp;
-        this->n_arf = _n_arf;
-        this->n_nbsc = _n_slc + _n_arf;
-        this->n_bsc = _n_srp + _n_dv;
-        this->n_tot = _n_dv + _n_slc + _n_srp + _n_arf;
-        this->A.assign(_n_slc + _n_arf + 1, vector<R>(this->n_tot + 1));
-        this->sol.assign(_n_slc + _n_arf + 1, 0);
-        this->xids.assign(_n_slc + _n_arf + 1, 0);
-        for (ll i = 1; i < _n_slc + _n_arf + 1; i++)
+        for (int i = 1; i <= this->n_eq; i++)
         {
-            this->xids[i] = i + _n_srp + _n_dv;
+            if(this->varname[this->xids[i]][0]=='a')
+            {
+                R scl = this->a[0][this->xids[i]];
+                this->r_reduce(0,i,scl);
+            }
         }
     }
 
-    string id_to_var(ll id)
+    void rswap(const int& i,const int& j)
     {
-        if (id == 0)
-        {
-            return "z";
-        }
-
-        if (id < this->n_dv + 1)
-        {
-            return "x_" + to_string(id);
-        }
-        else if (id < this->n_dv + this->n_srp + 1)
-        {
-            return "srp_" + to_string(id - this->n_dv);
-        }
-        else if (id < this->n_dv + this->n_arf + this->n_srp + 1)
-        {
-            return "art_" + to_string(id - (this->n_dv + this->n_srp));
-        }
-        else
-        {
-            return "s_" + to_string(id - (this->n_dv + this->n_srp + this->n_arf));
-        }
-    }
-
-    void rswap(ll i, ll j)
-    {
-        vector<R> tp = this->A[j];
-        this->A[j] = this->A[i];
-        this->A[i] = tp;
+        std::vector<R> tp = this->a[j];
+        this->a[j] = this->a[i];
+        this->a[i] = tp;
 
         R btp = this->sol[j];
         this->sol[j] = this->sol[i];
@@ -104,43 +185,34 @@ struct big_m
     }
 
     // R[i]<-R[i]-C*R[j]
-    void r_reduce(ll i, ll j, R C)
+    void r_reduce(const int& i,const int& j,const R C)
     {
-        for (ll k = 0; k < this->n_tot+1; k++)
+        for (int k = 0; k <= this->n_tot; k++)
         {
-            this->A[i][k] -= this->A[j][k] * C;
+            this->a[i][k] -= this->a[j][k] * C;
         }
         this->sol[i] -= this->sol[j] * C;
     }
 
-    void scale(ll j, R C)
+    void scale(const int& j, const R C)
     {
-        for (ll i = 0; i < n_tot+1; i++)
+        for (int i = 0; i <= n_tot; i++)
         {
-            this->A[j][i] /= C;
+            this->a[j][i] /= C;
         }
         this->sol[j] /= C;
     }
 
-    // makes the table consistant
-    void make_consistant()
-    {
-        for (ll i = this->n_bsc + 1; i < this->n_bsc + this->n_arf + 1; i++)
-        {
-            this->r_reduce(0ll, i - this->n_bsc, (this->min_or_max) * this->M);
-        }
-    }
-
     // optamilaity condition
-    ll new_entering_variable()
+    int new_entering_variable()
     {
-        R mxnv = 0.0;
-        ll mxid = -1;
-        for (ll i = 1; i < n_tot + 1; i++)
+        R mxnv = (R)0;
+        int mxid = -1;
+        for (int i = 1; i <= n_tot; i++)
         {
-            if ((this->A[0][i] * ((R)min_or_max)) < 0.0 && abs(this->A[0][i]) > mxnv)
+            if ((this->a[0][i] * ((R)this->min_or_max)) < 0.0 && abs(this->a[0][i]) > mxnv)
             {
-                mxnv = abs(this->A[0][i]);
+                mxnv = abs(this->a[0][i]);
                 mxid = i;
             }
         }
@@ -149,15 +221,15 @@ struct big_m
     }
 
     // feasibility condiion
-    ll new_leaving_variable(ll k)
+    int new_leaving_variable(const int &k)
     {
-        ll mnid = -1;
+        int mnid = -1;
         R mnv = inf;
-        for (ll i = 1; i < n_nbsc + 1; i++)
+        for (int i = 1; i <= this->n_bsc; i++)
         {
-            if (this->A[i][k] > 0 && ((this->sol[i] / this->A[i][k]) < mnv))
+            if (this->a[i][k] > 0 && ((this->sol[i] / this->a[i][k]) < mnv))
             {
-                mnv = (this->sol[i] / this->A[i][k]);
+                mnv = (this->sol[i] / this->a[i][k]);
                 mnid = i;
             }
         }
@@ -165,315 +237,79 @@ struct big_m
         return mnid;
     }
 
-    void printvar_category()
+    void compute_table(const int max_iter = 100)
     {
-        vector<ll> bsc(this->n_tot + 1, 0);
-        vector<ll> bvr, nbvr;
-        for (auto j : this->xids)
+        int itrrcount = 1;
+        while (max_iter > itrrcount)
         {
-            bsc[j] = 1;
-        }
-
-        for (ll i = 1; i < this->n_tot + 1; i++)
-        {
-            if (bsc[i] == 1)
-            {
-                bvr.push_back(i);
-            }
-            else
-            {
-                nbvr.push_back(i);
-            }
-        }
-
-        string ss;
-        cout << "Basic Variables Are :";
-        for (auto j : bvr)
-        {
-            cout << this->id_to_var(j) << ", ";
-        }
-        cout << "\n";
-
-        cout << "Non Basic Variables Are :";
-        for (auto j : nbvr)
-        {
-            cout << this->id_to_var(j) << ", ";
-        }
-
-        cout << "\n";
-    }
-
-    // 1 for max problem -1 for min problem
-    void compute_table()
-    {
-        ll itrrcount = 1;
-        while (true)
-        {
-            ll new_etr = this->new_entering_variable();
+            int new_etr = this->new_entering_variable();
             if (new_etr == -1)
             {
-                if(this->printtbl) cout << "Coudn't find entering variable, Simplex iteration completed\n\n";
+                // cout << "Coudn't find entering variable, Simplex iteration completed\n\n";
                 break;
             }
 
-            if(this->printtbl) cout << "Entering Variable at " << itrrcount << " iteration is " << this->id_to_var(new_etr) << "\n";
+            cout << "Entering Variable at " << itrrcount << " iteration is " << this->varname[new_etr] << "\n";
 
-            ll new_lev = this->new_leaving_variable(new_etr);
+            int new_lev = this->new_leaving_variable(new_etr);
             if (new_lev == -1)
             {
-                if(this->printtbl) cout << "Coudn't find leaving variable\n\n";
+                cout << "Coudn't find leaving variable\n\n";
                 break;
             }
 
-            if(this->printtbl) cout << "Leaving Variable at " << itrrcount << " iteration is " << this->id_to_var(this->xids[new_lev]) << "\n\n";
-            this->scale(new_lev, this->A[new_lev][new_etr]);
+            int new_levid = this->xids[new_lev];
+            cout << "Leaving Variable at " << itrrcount << " iteration is " << this->varname[new_levid] << "\n\n";
+            this->scale(new_lev, this->a[new_lev][new_etr]);
 
-            for (ll i = 0; i < n_nbsc + 1; i++)
+            for (int i = 0; i < n_bsc + 1; i++)
             {
                 if (i != new_lev)
                 {
-                    this->r_reduce(i, new_lev, this->A[i][new_etr]);
+                    this->r_reduce(i, new_lev, this->a[i][new_etr]);
                 }
             }
 
             this->xids[new_lev] = new_etr;
-            if (printtbl)
+            if (this->printtbl)
             {
-                if(this->printtbl) cout << "After " << itrrcount << "th interation the table is:\n";
+                cout << "After " << itrrcount << "th interation the table is:\n";
                 cout << (*this);
             }
-            if(this->printtbl) this->printvar_category();
             itrrcount++;
         }
     }
 
-    void input()
-    {
-
-        cout << "for each next " << this->n_bsc + 1 << " rows input " << this->n_tot + 2 << " space separtaed numbers in the format :\nz x[i][1] ... x[i][n_nbs] s[i][1] ... s[i][n_slc] Sol[i]\n";
-        for (ll i = 0; i < n_bsc + 1; i++)
-        {
-            for (ll j = 0; j < n_tot + 1; j++)
-            {
-                cin >> this->A[i][j];
-            }
-            cin >> this->sol[i];
-        }
-    }
-
-    friend ostream &operator<<(ostream &os, big_m &si)
+    friend ostream &operator<<(ostream &os,const big_M &bm)
     {
         string s = "Basic";
-        os.width(wd);
+        os.width(bm.wd);
         os << s;
 
-        for (ll i = 0; i < si.n_tot + 1; i++)
+        for (int i = 0; i <= bm.n_tot; i++)
         {
-            os.width(wd);
-            os << si.id_to_var(i);
+            os.width(bm.wd);
+            os << bm.varname[i];
         }
-        os.width(wd);
+        os.width(bm.wd);
         os << "Solution\n";
 
-        for (ll i = 0; i < si.n_nbsc + 1; i++)
+        for (int i = 0; i < bm.n_bsc + 1; i++)
         {
-            os.width(wd);
-            os << si.id_to_var(si.xids[i]);
+            os.width(bm.wd);
+            os << bm.varname[bm.xids[i]];
 
-            for (ll j = 0; j < si.n_tot + 1; j++)
+            for (int j = 0; j <= bm.n_tot; j++)
             {
-                os.width(wd);
-                os << si.A[i][j];
+                os.width(bm.wd);
+                os << bm.a[i][j];
             }
 
-            os.width(wd);
-            os << si.sol[i];
+            os.width(bm.wd);
+            os << bm.sol[i];
             os << "\n";
         }
 
         return os;
     }
-
-    void print_solution()
-    {
-        cout << "Final solution is:\n";
-
-        bool feasible=true;
-        vector<R> vvl(this->n_tot + 1, 0);
-        for (ll i = 1; i < n_nbsc + 1; i++)
-        {
-            vvl[xids[i]] = sol[i];
-            if(xids[i] >= this->n_bsc + 1 &&  xids[i] < this->n_bsc + this->n_arf + 1)
-            {
-                feasible=false;
-            }
-        }
-
-        if(!feasible)
-        {
-            cout<<"Probelem has NO SOLUTION / INFEASIBLE SOLUTION as there is/are artificial variables is in the non basic variables\n\n";
-            return;
-        }
-
-        cout << "z=" << sol[0] << "\n";
-        string ss;
-        for (ll i = 1; i < this->n_tot + 1; i++)
-        {
-            ss = this->id_to_var(i);
-            cout << ss << "=" << vvl[i] << "\n";
-        }
-        cout << "\n\n";
-    }
-
 };
-
-// function to compute the objective value
-R objective(vector<R> &xs)
-{
-    R val = 0;
-    for (ll i = 0; i < zcoeff.size(); i++)
-    {
-        val += zcoeff[i] * xs[i];
-    }
-    return val;
-}
-
-// to standardize the big-M table
-void standardize_big_m(vvr &AA, vr &BB, vector<char> &etyp, linear_eq &LE, ll tsrp)
-{
-    ll sct = 0;
-    ll srct = 0;
-    ll ndv = AA[0].size();
-
-    for (ll i = 0; i < etyp.size(); i++)
-    {
-        for (ll j = 0; j < ndv; j++)
-        {
-            LE.A[i][j] = AA[i][j];
-        }
-        LE.B[i] = BB[i];
-        if (etyp[i] == '<')
-        {
-            LE.A[i][ndv + sct + tsrp] = (R)1;
-            sct++;
-        }
-        else if (etyp[i] == '=')
-        {
-            LE.A[i][ndv + sct + tsrp] = (R)1;
-            sct++;
-        }
-        else if (etyp[i] == '>')
-        {
-            LE.A[i][ndv + sct + tsrp] = (R)(1);
-            LE.A[i][ndv + srct] = (R)(-1);
-            srct++;
-            sct++;
-        }
-    }
-}
-
-// to initilize the big-M table
-void init_big_m_table(linear_eq &LE, big_m &bm)
-{
-    bm.A[0][0] = 1;
-
-    for (ll i = 1; i < bm.n_dv + 1; i++)
-    {
-        bm.A[0][i] = (-1) * zcoeff[i - 1];
-    }
-
-    for (ll i = bm.n_bsc + 1; i < bm.n_bsc + bm.n_arf + 1; i++)
-    {
-        bm.A[0][i] = (bm.min_or_max) * bm.M;
-    }
-
-    for (ll i = 1; i < bm.n_nbsc + 1; i++)
-    {
-        for (ll j = 1; j < bm.n_tot + 1; j++)
-        {
-            bm.A[i][j] = LE.A[i - 1][j - 1];
-        }
-
-        bm.sol[i] = LE.B[i - 1];
-    }
-}
-
-void lab_4()
-{
-    zcoeff.clear();
-    ll morm = 1, ne, nv, tnv, ndv, nc;
-    cout << "Enter 1 is its maximization problem if minimization problem then -1:";
-    cin >> morm;
-    cout << "number of variables:";
-    cin >> nv;
-    tnv = nv;
-    ndv = nv;
-    ll tsrp = 0, tarf = 0, tslc = 0;
-    zcoeff.assign(nv, (R)0);
-    cout << "Enter the coefficients of variables in objective\nif cx[i] is coefficient of x_i then give input in format\ncx[1] cx[2] ... cx[n]\n";
-    for (ll i = 0; i < nv; i++)
-    {
-        cin >> zcoeff[i];
-    }
-    cout << "Enter number of conditions: ";
-    cin >> nc;
-    ne = nc;
-    vvr AA(nc, vr(nv));
-    vr VAL(nc);
-    vector<char> etyp(nc);
-
-    cout << "For each condition give input of the coefficient of the variables in condition\n "
-         << "for greater than equal to condition: coeff[i][0] .... coeff[i][number_variable] > val[i]\n "
-         << "for              equal to condition: coeff[i][0] .... coeff[i][number_variable] = val[i]\n "
-         << "for    less than equal to condition: coeff[i][0] .... coeff[i][number_variable] < val[i]\n";
-    for (ll i = 0; i < nc; i++)
-    {
-        for (ll j = 0; j < nv; j++)
-        {
-            cin >> AA[i][j];
-        }
-        cin >> etyp[i];
-        cin >> VAL[i];
-        if (etyp[i] == '<')
-        {
-            tnv++;
-            tslc++;
-        }
-        else if (etyp[i] == '=')
-        {
-            tnv++;
-            tarf++;
-        }
-        else if (etyp[i] == '>')
-        {
-            tnv++;
-            tsrp++;
-            tarf++;
-        }
-    }
-
-    linear_eq LE(ne, tnv + tsrp);
-    standardize_big_m(AA, VAL, etyp, LE, tsrp); // standardize the problem
-    cout << " ||   Standard Format of Problem is  ||\n";
-    cout << LE;
-    // debug(ndv,tslc,tsrp,tarf);
-    big_m bm(ndv, tslc, tsrp, tarf);
-    bm.M = 1e2;
-    bm.min_or_max = morm;
-    // debug("hie");
-    init_big_m_table(LE, bm); // initilize big-M simplex table
-
-    cout << "Initial Big-M Simplex table is :\n ";
-    cout << bm;
-
-    // bm.log_details();
-
-    cout << "\nAfter making the table consistant:\n";
-    bm.make_consistant();
-    cout << bm;
-
-    bm.compute_table();
-    cout << bm;
-    bm.print_solution();
-    return;
-}

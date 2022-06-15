@@ -1,6 +1,5 @@
 #pragma once
 
-#include "linear_eq.hpp"
 #include <iostream>
 #include <vector>
 
@@ -620,10 +619,3 @@ void lab_6()
     bm.print_solution();
     return;
 }
-
-int main()
-{
-    lab_6();
-    return 0;
-}
-

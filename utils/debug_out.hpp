@@ -324,8 +324,4 @@ namespace debug_space
     }
 }
 
-#ifndef DEACTIVATE_DEBUG
 #define debug(...) std::cerr << "# " << #__VA_ARGS__ << " = ", debug_space::debug_out(__VA_ARGS__), debug_space::debug_out()
-#else
-#define debug(...) 
-#endif

@@ -1,10 +1,11 @@
 #pragma once
 
 #include <bits/stdc++.h>
+#include "../utils/debug_out.hpp"
 
 using namespace std;
 
-double GEOM_EPS = 1e-5;
+const double GEOM_EPS = 1e-5;
 
 template <typename R>
 class point2
@@ -710,35 +711,11 @@ public:
     }
 };
 
-template <typename R>
-bool is_zero(const R &a) { return (a <= GEOM_EPS && a >= -GEOM_EPS); }
-
-template <typename R>
-bool sign_of(const R &a)
-{
-    int sg = 0;
-    if (a <= GEOM_EPS)
-        sg--;
-    if (a >= -GEOM_EPS)
-        sg++;
-    return sg;
-}
-
-template <typename R, int N>
-bool is_equal(const point<R, N> &p, const point<R, N> &q)
-{
-    for (int i = 0; i < N; i++)
-    {
-        if (!is_zero<R>(p[i] - tp[i]))
-        {
-            return false;
-        }
-    }
-    return true;
-}
+template<typename R>
+class general_point {};
 
 template <typename R, int N = 2>
-class point
+class point : general_point<R>
 {
 public:
     R x[N];
@@ -761,7 +738,7 @@ public:
     }
 
     // returns 1 if this comes before other -1 if other before this and else 0
-    int before(const point<R, N> &other)
+    int before(const point<R, N> &other) const
     {
         for (int i = 0; i < N; i++)
         {
@@ -781,11 +758,11 @@ public:
 
         return 0;
     }
-    bool operator<=(const point<R, N> &other) { return (this->before(other) >= 0); }
-    bool operator<(const point<R, N> &other) { return (this->before(other) > 0); }
-    bool operator>(const point<R, N> &other) { return (this->before(other) < 0); }
-    bool operator>=(const point<R, N> &other) { return (this->before(other) <= 0); }
-    bool operator==(const point<R, N> &other) { return (this->before(other) == 0); }
+    bool operator<=(const point<R, N> &other) const { return (this->before(other) >= 0); }
+    bool operator<(const point<R, N> &other) const { return (this->before(other) > 0); }
+    bool operator>(const point<R, N> &other) const { return (this->before(other) < 0); }
+    bool operator>=(const point<R, N> &other) const { return (this->before(other) <= 0); }
+    bool operator==(const point<R, N> &other) const { return (this->before(other) == 0); }
 
     template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
     void operator+=(const U &f)
@@ -794,11 +771,11 @@ public:
             this->x[i] += (R)f;
     }
     template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
-    friend point<R, N> operator+(const U &f)
+    friend point<R, N> operator+( const point<R, N> &p,const U &f)
     {
         point<R, N> q;
         for (int i = 0; i < N; i++)
-            q.x[i] = this->x[i] + (R)f;
+            q.x[i] = p.x[i]+(R)f;
 
         return q;
     }
@@ -819,11 +796,11 @@ public:
             this->x[i] -= (R)f;
     }
     template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
-    friend point<R, N> operator-(const U &f)
+    friend point<R, N> operator-( const point<R, N> &p,const U &f)
     {
         point<R, N> q;
         for (int i = 0; i < N; i++)
-            q.x[i] = this->x[i] - (R)f;
+            q.x[i] = p.x[i]-(R)f;
 
         return q;
     }
@@ -844,11 +821,11 @@ public:
             this->x[i] *= (R)f;
     }
     template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
-    friend point<R, N> operator*(const U &f)
+    friend point<R, N> operator*(const point<R, N> &p,const U &f)
     {
         point<R, N> q;
         for (int i = 0; i < N; i++)
-            q.x[i] = this->x[i] * ((R)f);
+            q.x[i] = p.x[i]*((R)f);
 
         return q;
     }
@@ -869,11 +846,11 @@ public:
             this->x[i] /= (R)f;
     }
     template <class U, class = typename std::enable_if<std::is_arithmetic<U>::value>::type>
-    friend point<R, N> operator/(const U &f)
+    friend point<R, N> operator/( const point<R, N> &p,const U &f)
     {
         point<R, N> q;
         for (int i = 0; i < N; i++)
-            q.x[i] = this->x[i] / ((R)f);
+            q.x[i] = p.x[i]/((R)f);
 
         return q;
     }
@@ -892,7 +869,7 @@ public:
         for (int i = 0; i < N; i++)
             this->x[i] += other.x[i];
     }
-    point<R, N> operator+(const point<R, N> &other)
+    point<R, N> operator+(const point<R, N> &other) const
     {
         point<R, N> opt(this->x);
         opt += other;
@@ -904,14 +881,14 @@ public:
         for (int i = 0; i < N; i++)
             this->x[i] -= other.x[i];
     }
-    point<R, N> operator-(const point<R, N> &other)
+    point<R, N> operator-(const point<R, N> &other) const
     {
         point<R, N> opt(this->x);
         opt -= other;
         return opt;
     }
 
-    R dot(const point<R, N> &other)
+    R dot(const point<R, N> &other) const
     {
         R dt = 0;
         for (int i = 0; i < N; i++)
@@ -934,7 +911,7 @@ public:
         }
         return nr;
     }
-    R dist_square(const point<R, N> &origin)
+    R dist_square(const point<R, N> &origin) const
     {
         R dist = 0;
         for (int i = 0; i < N; i++)
@@ -956,3 +933,34 @@ public:
         return os;
     }
 };
+
+template <typename R>
+bool is_zero(const R &a) { return (a <= GEOM_EPS && a >= -GEOM_EPS); }
+
+template <typename R>
+int sign_of(const R &a)
+{
+    int sg=0;
+    if(a>GEOM_EPS) sg=1;
+    else if(a<-GEOM_EPS)sg=-1;
+    return sg;
+}
+
+template <typename R, int N>
+bool is_equal(const point<R, N> &p, const point<R, N> &q)
+{
+    for (int i = 0; i < N; i++)
+    {
+        if (!is_zero<R>(p[i] - q[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+template <typename R>
+bool is_equal(const R &p, const R &q)
+{
+    return is_zero<R>(p - q);
+}

@@ -38,10 +38,49 @@ void test_edmonds_karp_max_flow()
     debug(rescap);
 }
 
+void test_tarjan_strongly_connected_components_recursive()
+{
+    dgraph<ll> g;
+    ll n,m;
+    cin>>n>>m;
+    
+    g.resize(n);
+    vector<vector<ll>> components;
+    for(ll i=0;i<m;i++)
+    {
+        ll u,v;
+        cin>>u>>v;
+        g.add_edge(u,v);
+    }
+
+    tarjan_strongly_connected_components_recursive(g,components);
+    debug(components);
+}
+
+void test_tarjan_strongly_connected_components()
+{
+    dgraph<ll> g;
+    ll n,m;
+    cin>>n>>m;
+    
+    g.resize(n);
+    vector<vector<ll>> components;
+    for(ll i=0;i<m;i++)
+    {
+        ll u,v;
+        cin>>u>>v;
+        g.add_edge(u,v);
+    }
+
+    tarjan_strongly_connected_components(g,components);
+    debug(components);
+}
+
 int main()
 {
-    freopen("input.txt","r",stdin);
-    test_edmonds_karp_max_flow();
+    //freopen("input.txt","r",stdin);
+    // test_tarjan_strongly_connected_components_recursive();
+    test_tarjan_strongly_connected_components();
     return 0;
 }
 

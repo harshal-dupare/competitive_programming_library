@@ -709,7 +709,6 @@ struct cutting_plane
 
     void input()
     {
-
         cout << "for each next " << this->n_bsc + 1 << " rows input " << this->n_tot + 2 << " space separtaed numbers in the format :\nz x[i][1] ... x[i][n_nbs] s[i][1] ... s[i][n_slc] Sol[i]\n";
         for (ll i = 0; i < n_bsc + 1; i++)
         {
@@ -785,17 +784,6 @@ struct cutting_plane
         cout << "\n\n";
     }
 };
-
-// function to compute the objective value
-R objective(vector<R> &xs)
-{
-    R val = 0;
-    for (ll i = 0; i < zcoeff.size(); i++)
-    {
-        val += zcoeff[i] * xs[i];
-    }
-    return val;
-}
 
 // to standardize the table
 void standardize_cutting_plane(vvr &AA, vr &BB, vector<char> &etyp, linear_eq &LE, ll tsrp)
@@ -927,63 +915,6 @@ void convert_to_dual(ll morm, vvr &A, vvr &DA, vr &B, vr &DB, vector<char> &et, 
     }
 }
 
-void print_LPP(ll mxormn, vvr &A, vr &B, vector<char> &et, vector<ll> &vsgn, vr &zc)
-{
-    ll n = zc.size();
-    ll m = A.size();
-    if (mxormn == 1)
-    {
-        cout << "Maximize \t ";
-    }
-    else
-    {
-        cout << "Minimize \t ";
-    }
-    cout << "Z = ";
-    for (ll i = 0; i < n; i++)
-    {
-        if (zc[i] != 0)
-        {
-            cout << std::showpos << zc[i] << std::noshowpos;
-            cout << "x_" << (i + 1) << " ";
-        }
-    }
-    cout << endl
-         << "Subject to:\n";
-
-    for (ll i = 0; i < m; i++)
-    {
-        cout << "\t";
-        for (ll j = 0; j < n; j++)
-        {
-            if (A[i][j] != 0)
-            {
-                cout << std::showpos << A[i][j] << std::noshowpos;
-                cout << "x_" << (j + 1) << " ";
-            }
-        }
-        cout << et[i] << " " << B[i] << endl;
-    }
-
-    for (ll i = 0; i < n; i++)
-    {
-        if (vsgn[i] == 1)
-        {
-            cout << "x_" << (i + 1) << " >= 0,";
-        }
-        else if (vsgn[i] == 0)
-        {
-            cout << "x_" << (i + 1) << " is unristrected, ";
-        }
-        else
-        {
-            cout << "x_" << (i + 1) << " <= 0,";
-        }
-    }
-    cout << endl
-         << endl;
-}
-
 void Lab_8()
 {
     zcoeff.clear();
@@ -1077,37 +1008,4 @@ void Lab_8()
 
     bm.print_solution();
     return;
-}
-
-void llcftest()
-{
-    ll N=1000ll;
-    ll itr = N;
-    while (itr > 0)
-    {
-        R x = ((R)(itr - (N/2)) / 100);
-        cout << std::setprecision(7) << x << "=" << (R)((ll)x) <<", " << (R)((ll)(x+1)) << endl;
-        itr--;
-    }
-}
-
-void test_frac()
-{
-    ll N=5000ll;
-    ll itr = N;
-    while (itr > 0)
-    {
-        R x = ((R)(itr - (N/2)) / 1000);
-        cout << std::setprecision(7) << x << "=" << integral_part(x) << " + (" << fractional_part(x) << ")" << endl;
-        itr--;
-    }
-}
-
-int main()
-{
-    // llcftest();
-    // test_frac();
-    // freopen("input.txt","r",stdin);
-    Lab_8();
-    return 0;
 }

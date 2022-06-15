@@ -16,8 +16,8 @@ namespace Zmod
     }
 
     // @tparam `inrange` if true then ensures that `0 <= output < mod`
-    template <typename I, I mod, bool inrange = true>
-    I inverse(I a)
+    template <typename I, bool inrange = true>
+    I inverse(I a, I mod)
     {
         I u = 0, v = 1;
         I m = mod;
@@ -342,7 +342,7 @@ namespace Zmod
         // may have incresed log(mod) factor if mod^2 > range(I)
         mint operator/(const mint &o)
         {
-            mint ans(Zmod::inverse<I, mod,false>(o.n));
+            mint ans(Zmod::inverse<I,false>(o.n,mod));
             ans *= (*this);
             return ans;
         }
@@ -352,7 +352,7 @@ namespace Zmod
         // may have incresed log(mod) factor if mod^2 > range(I)
         void operator/=(const mint &o)
         {
-            this->n *= mint(Zmod::inverse<I, mod>(o.n));
+            this->n *= mint(Zmod::inverse<I>(o.n,mod));
             if (this->n < 0)
                 this->n += mod;
         }

@@ -2,7 +2,7 @@
 
 #include <bits/stdc++.h>
 #include "point.hpp"
-#include "algos.hpp"
+#include "convex_hull.hpp"
 #include "../algebra/linalg.hpp"
 
 using namespace std;
@@ -141,5 +141,4 @@ public:
         }
         return true;
     }
-
 };

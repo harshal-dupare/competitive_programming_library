@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <list>
 #include <iostream>
 
 template <typename I>
@@ -199,3 +200,40 @@ public:
     }
 };
 
+
+// O(nlog(n))
+template<typename I>
+vector<I> iversion_table(const permutation<I> &p)
+{
+    vector<I> invtbl(p.n),sorted;
+    for(I i=0;i<p.n;i++)
+    {
+        invtbl[p[i]] = sorted.end()-lower_bound(sorted.begin(),sorted.end(),p[i]);
+    }
+    return invtbl;
+} 
+
+// O(n^2)
+template<typename I>
+permutation<I> perm_from_iversion_table(const vector<I> &invtbl)
+{
+    list<I> ls;
+    for(I i=invtbl.size()-1;i>=0;i--)
+    {
+        ls.
+    }
+    return invtbl;
+} 
+
+// O(n)
+// # perm idx=k == # perm inversions=k
+template<typename I>
+I index(const permutation<I> &p)
+{
+    I idx=0;
+    for(I i=0;i<p.n-1;i++)
+    {
+        if(p[i]>p[i+1]) idx+=i+1;
+    }
+    return idx;
+} 

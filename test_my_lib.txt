@@ -15,7 +15,8 @@ my_lib/data_structure/tests/test_trie.cpp
 my_lib/data_structure/tests/test_union_find.cpp
 my_lib/game_theory/tests/test_game.cpp
 my_lib/game_theory/tests/test_stable_matching.cpp
-my_lib/geometry/tests/test_algos.cpp
+my_lib/geometry/tests/test_convex_hull.cpp
+my_lib/geometry/tests/test_geometry_utils.cpp
 my_lib/geometry/tests/test_point.cpp
 my_lib/geometry/tests/test_spaces.cpp
 my_lib/graphs/tests/test_dgraph.cpp

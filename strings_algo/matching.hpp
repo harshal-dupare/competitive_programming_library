@@ -160,7 +160,7 @@ namespace string_matching
     template <typename I>
     void automaton(std::string &s, std::vector<std::vector<I>> &aut)
     {
-        s += "$";
+        s += string_matching::out_char;
         aut.assign(s.size(), std::vector<I>(string_matching::char_size, 0));
         std::vector<I> prefx;
         string_matching::prefix_function(s, prefx);

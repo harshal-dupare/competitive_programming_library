@@ -4,52 +4,56 @@
 #include "../../utils/debug_out.hpp"
 
 typedef double R;
-
 using namespace std;
-void test_opt_matrix()
+
+void test_classes()
 {
-    markov_chain<R> m;
     int n;
     cin>>n;
-    vector<int> d(n+1);
-    vector<pair<int,int>> md(n);
-    for(int i=0;i<n+1;i++)
-    {
-        cin>>d[i];
-    }
-    for(int i=0;i<n;i++)
-    {
-        md[i].first=d[i];
-        md[i].second=d[i+1];
-    }
-    vector<vector<int>> dp(n,vector<int>(n,1e8));
-    for(int i=0;i<n;i++)
-    {
-        dp[i][i]=0;
-    }
+    markov_chain<R,int> mc(n);
+    mc.input();
+    vector<vector<int>> cc;
+    mc.communicating_classes(cc);
+    debug(cc);
+    return;
+}
 
-    debug(d);
-    debug(md);
-    
-    for(int k=1;k<n+1;k++)
-    {
-        for(int i=0;i<n-k;i++)
-        {
-            for(int j=i;j<i+k;j++)
-            {
-                dp[i][i+k]=min(dp[i][i+k],dp[i][j]+dp[j+1][i+k]+md[i].first*md[j].second*md[i+k].second);
-            }
-        }
-        // debug(dp);
-    }
+void test_f_star_u_star_i()
+{
+    int n,i;
+    cin>>n;
+    markov_chain<R,int> mc(n);
+    mc.input();
+    cin>>i;
+    auto fusi = mc.f_star_u_star_i(i);
+    debug(fusi);
+    return;
+}
 
-    // debug(dp);
-    debug(dp[0][n-1]);
+void test_steady_state_distribution()
+{
+    int n,i;
+    cin>>n;
+    markov_chain<R,int> mc(n);
+    mc.input();
+    auto s = mc.steady_state_distribution(0);
+    debug(s);
+    return;
+}
 
+void test_first_passage_time()
+{
+    int n,i;
+    cin>>n;
+    markov_chain<R,int> mc(n);
+    mc.input();
+    cin>>i;
+    auto u = mc.first_passage_time(i);
+    debug(u);
 }
 
 int main()
 {
-    test_opt_matrix();
+    test_steady_state_distribution();
     return 0;
 }

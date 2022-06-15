@@ -171,9 +171,9 @@ template <typename I>
 void assign_adj_matrix(dgraph<I> &G, vector<vector<I>> &adjm)
 {
     adjm.assign(G.n, vector<I>(G.n, 0));
-    for(I i=0;i<G.n;i++)
+    for (I i = 0; i < G.n; i++)
     {
-        for(auto u: G.oadjl[i])
+        for (auto u : G.oadjl[i])
         {
             adjm[i][u] = 1;
         }
@@ -359,11 +359,143 @@ I underlining_connected_components(dgraph<I> &G, vector<I> &component)
     return c;
 }
 
-// FIXME complete
 template <typename I>
-I connected_components(dgraph<I> &G, vector<I> &component)
+void tarjan_strongly_connected_components(dgraph<I> &G, vector<vector<I>> &components)
 {
+    stack<pair<I, I>> call_stack;
+    vector<I> vindex(G.n, I(-1));
+    vector<I> vlowlink(G.n, I(-1));
+    vector<bool> vonstack(G.n, false);
+    stack<I> S;
+    I index = 0;
 
+    for (I v = 0; v < G.n; v++)
+    {
+        if (vindex[v] == -1)
+        {
+            call_stack.push(make_pair(v, I(0)));
+
+            while (!call_stack.empty())
+            {
+                pair<I,I> vt = call_stack.top();
+                call_stack.pop();
+
+                if(vt.second == 0)
+                {
+                    // first time we visit vt.first
+                    vindex[vt.first] = index;
+                    vlowlink[vt.first] = index;
+                    index++;
+                    S.push(vt.first);
+                    vonstack[vt.first] = true;
+                }
+                else
+                {
+                    // we have visited it before and recursed for the previous out edge
+                    // so account for that update here
+                    I prev = G.oadjl[vt.first][vt.second-1];
+                    vlowlink[vt.first] = min(vlowlink[vt.first],vlowlink[prev]);
+                }
+                // find the next outedge to recurse on
+                while (vt.second < G.odeg[vt.first] && vindex[G.oadjl[vt.first][vt.second]] != -1)
+                {
+                    I w = G.oadjl[vt.first][vt.second];
+                    if(vonstack[w])
+                    {
+                        vlowlink[vt.first] = min(vlowlink[vt.first],vindex[w]);
+                    }
+                    vt.second++;
+                }
+
+                // if found then add it to call_stack also add this vertex before to visit it again 
+                // for updating its lowlink through this edge
+                if(vt.second < G.odeg[vt.first])
+                {
+                    I w = G.oadjl[vt.first][vt.second];
+                    call_stack.push(make_pair(vt.first,vt.second+1));
+                    call_stack.push(make_pair(w,I(0)));
+                    continue;
+                }
+
+                // if v is the root of the connected component
+                // pop all the elements on the top till we find root
+                if (vlowlink[vt.first] == vindex[vt.first])
+                {
+                    I id = components.size();
+                    components.push_back(vector<I>(0));
+                    I w;
+                    do
+                    {
+                        w = S.top();
+                        S.pop();
+                        vonstack[w] = false;
+                        components[id].push_back(w);
+                    } while (w != vt.first);
+
+                }
+            }
+        }
+    }
+
+    return;
+}
+
+template <typename I>
+void _recursion_tarjan_strongly_connected_components(I v, I &index, dgraph<I> &G, vector<I> &vindex, vector<I> &vlowlink, vector<bool> &vonstack, stack<I> &S,vector<vector<I>>& components)
+{
+    vindex[v] = index;
+    vlowlink[v] = index;
+    index++;
+    S.push(v);
+    vonstack[v] = true;
+
+    for (I w : G.oadjl[v])
+    {
+        if (vindex[w] == -1)
+        {
+            _recursion_tarjan_strongly_connected_components(w, index, G, vindex, vlowlink, vonstack, S,components);
+            vlowlink[v] = min(vlowlink[v], vlowlink[w]);
+        }
+        else if (vonstack[w])
+        {
+            vlowlink[v] = min(vlowlink[v], vindex[w]);
+        }
+    }
+
+    if (vlowlink[v] == vindex[v])
+    {
+        // new component found
+        I id = I(components.size());
+        components.push_back(vector<I>(0));
+        I w;
+        do
+        {
+            w = S.top();
+            S.pop();
+            vonstack[w] = false;
+            components[id].push_back(w);
+        } while (w != v);
+    }
+
+    return;
+}
+
+template <typename I>
+void tarjan_strongly_connected_components_recursive(dgraph<I> &G, vector<vector<I>> &component)
+{
+    I index = 0;
+    vector<I> vindex(G.n, I(-1));
+    vector<I> vlowlink(G.n, I(-1));
+    vector<bool> vonstack(G.n, false);
+    stack<I> S;
+    for (I v = 0; v < G.n; v++)
+    {
+        if (vindex[v] == -1)
+        {
+            _recursion_tarjan_strongly_connected_components(v, index, G, vindex, vlowlink , vonstack, S,component);
+        }
+    }
+    return;
 }
 
 template <typename I>
@@ -442,50 +574,50 @@ I dinics_algorithm()
 }
 
 template <typename I>
-I augmenting_flow_bfs(I s, I t, dgraph<I> &G, vector<unordered_map<I,I>> &residual_capacity, vector<I> &parents,vector<bool> &visited)
+I augmenting_flow_bfs(I s, I t, dgraph<I> &G, vector<unordered_map<I, I>> &residual_capacity, vector<I> &parents, vector<bool> &visited)
 {
-    visited.assign(G.n,false);
-    queue<pair<I,I>> Q;
-    Q.push(make_pair(s,G.inf));
-    visited[s]=true;
-    
+    visited.assign(G.n, false);
+    queue<pair<I, I>> Q;
+    Q.push(make_pair(s, G.inf));
+    visited[s] = true;
+
     while (!Q.empty())
     {
-        pair<I,I> uaf = Q.front();
+        pair<I, I> uaf = Q.front();
         I u = uaf.first;
         I af = uaf.second;
         Q.pop();
 
         // note we need to consider edges in both direction
-        for(auto v : G.oadjl[u])
+        for (auto v : G.oadjl[u])
         {
             // note that we need to allow negative residual flow
-            if(visited[v]||(residual_capacity[u][v]==0))
+            if (visited[v] || (residual_capacity[u][v] == 0))
             {
                 continue;
             }
             parents[v] = u;
             visited[v] = true;
-            if(v==t)
+            if (v == t)
             {
-                return min(residual_capacity[u][v],af);
+                return min(residual_capacity[u][v], af);
             }
-            Q.push(make_pair(v,min(residual_capacity[u][v],af)));
+            Q.push(make_pair(v, min(residual_capacity[u][v], af)));
         }
-        for(auto v : G.iadjl[u])
+        for (auto v : G.iadjl[u])
         {
             // note that we need to allow negative residual flow
-            if(visited[v]||(residual_capacity[u][v]==0))
+            if (visited[v] || (residual_capacity[u][v] == 0))
             {
                 continue;
             }
             parents[v] = u;
             visited[v] = true;
-            if(v==t)
+            if (v == t)
             {
-                return min(residual_capacity[u][v],af);
+                return min(residual_capacity[u][v], af);
             }
-            Q.push(make_pair(v,min(residual_capacity[u][v],af)));
+            Q.push(make_pair(v, min(residual_capacity[u][v], af)));
         }
     }
 
@@ -494,24 +626,24 @@ I augmenting_flow_bfs(I s, I t, dgraph<I> &G, vector<unordered_map<I,I>> &residu
 
 // FIXME correct the error of not finding optimal path check other resources
 template <typename I>
-I edmonds_karp_max_flow(I s, I t, dgraph<I> &G, vector<unordered_map<I,I>> &residual_capacity, vector<bool> &min_cut)
+I edmonds_karp_max_flow(I s, I t, dgraph<I> &G, vector<unordered_map<I, I>> &residual_capacity, vector<bool> &min_cut)
 {
-    I flow=0;
-    I augmenting_flow=0;
+    I flow = 0;
+    I augmenting_flow = 0;
     do
     {
-        vector<I> parents(G.n,-1);
-        augmenting_flow = augmenting_flow_bfs(s,t,G,residual_capacity,parents,min_cut);
-        flow+=augmenting_flow;
+        vector<I> parents(G.n, -1);
+        augmenting_flow = augmenting_flow_bfs(s, t, G, residual_capacity, parents, min_cut);
+        flow += augmenting_flow;
         I ut = t;
-        while (parents[ut]!=-1)
+        while (parents[ut] != -1)
         {
             residual_capacity[parents[ut]][ut] -= augmenting_flow;
             residual_capacity[ut][parents[ut]] += augmenting_flow;
             ut = parents[ut];
         }
-        
-    } while (augmenting_flow!=0);
+
+    } while (augmenting_flow != 0);
 
     return flow;
 }

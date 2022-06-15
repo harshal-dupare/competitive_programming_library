@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #include "../../utils/debug_out.hpp"
-#include "../big_M.hpp"
+#include "../basic_feasible_solutions.hpp"
 #include "../linear_programming_problem.hpp"
 
 using namespace std;
@@ -12,10 +12,8 @@ int main()
     linear_programming_problem<int, R> lpp;
     lpp.input();
     cout << lpp << endl;
-    big_M<int, R> bm(lpp);
-    cout << bm << endl;
-    bm.make_consistent();
-    cout << bm << endl;
-    bm.compute_table();
+    vector<vector<R>> bfs;
+    basic_feasible_solutions(lpp,bfs);
+    debug(bfs);
     return 0;
 }

@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-test_my_lib = "test_my_lib.txt"
+test_my_lib = "my_lib.txt"
 out_file = "compile_result.txt"
 tfl = open(test_my_lib,'r')
 tls = tfl.readlines()
@@ -28,7 +28,7 @@ tfl.close()
 # opf.close()
 
 n = len(tls)
-i = 0
+i = 20
 while i < n:
     l = tls[i]
     l = l[0:-1]
