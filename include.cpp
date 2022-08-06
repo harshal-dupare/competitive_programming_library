@@ -4,14 +4,22 @@
 #include <fstream>
 
 using namespace std;
+string PATH_TO_MY_LIB="my_lib/lib/my_lib.txt";
 // identify the include statement
 string incs = "#include";
 // to identify the my_lib content from "my_lib/.." folder call
 vector<string> is_my_lib_inc = {"#include \"my_lib", "#include\"my_lib"};
 // exclude these files
-vector<string> my_lib_dont_inc = {"my_lib/utils/debugger.hpp", "my_lib/utils/debug_out.hpp", "my_lib/utils/plotting.hpp", "my_lib/utils/timer.hpp"};
+vector<string> my_lib_dont_inc = {
+    "my_lib/lib/utils/debugger.hpp",
+    "my_lib/lib/utils/debug_out.hpp", 
+    "my_lib/lib/utils/plotting.hpp",
+    "my_lib/lib/utils/timer.hpp"};
 // content to ignore in .hpp files
-vector<string> hpp_ignore_content = {"#pragma", "using namespace std;", "#include <bits/stdc++.h>"};
+vector<string> hpp_ignore_content = {
+    "#pragma",
+    "using namespace std;",
+    "#include <bits/stdc++.h>"};
 // to store all my_lib function
 vector<string> my_lib;
 // to store included lib strings
@@ -345,7 +353,7 @@ void test()
 
 int main()
 {
-    my_lib = load_lib_paths("my_lib/my_lib.txt");
+    my_lib = load_lib_paths(PATH_TO_MY_LIB);
     // test();
     char fs[100];
     cin >> fs;
