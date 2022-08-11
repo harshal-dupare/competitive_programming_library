@@ -15,6 +15,7 @@ my_lib/lib/data_structure/trie.hpp
 my_lib/lib/data_structure/union_find.hpp
 my_lib/lib/game_theory/game.hpp
 my_lib/lib/game_theory/stable_matching.hpp
+my_lib/lib/geometry/algorithms.hpp
 my_lib/lib/geometry/convex_hull.hpp
 my_lib/lib/geometry/geometry_utils.hpp
 my_lib/lib/geometry/point.hpp
@@ -53,7 +54,7 @@ my_lib/lib/polynomials/symmetric_function.hpp
 my_lib/lib/probability_and_statistics/markov_chain.hpp
 my_lib/lib/probability_and_statistics/statistics.hpp
 my_lib/lib/randoms/random_gen.hpp
-my_lib/lib/strings_algo/matching.hpp
+my_lib/lib/string_algo/matching.hpp
 my_lib/lib/utils/debug_out.hpp
 my_lib/lib/utils/plotting.hpp
 my_lib/lib/utils/timer.hpp

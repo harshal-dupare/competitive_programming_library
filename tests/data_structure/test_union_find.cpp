@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "../../lib/utils/debug_out.hpp"
+#include "../../lib/randoms/random_gen.hpp"
 #include "../../lib/data_structure/union_find.hpp"
 
 using namespace std;
@@ -38,7 +39,32 @@ void test_dsu()
 
 }
 
+void test_simple_fast_dsu_performance()
+{
+    ll n = 1000;
+    auto rg = random_gens::uniform_int<ll>(0,n);
+    union_find<ll> dsu(n);
+    dsu.parent[0] = 0;
+    for(ll i=1;i<n;i++)
+    {
+        dsu.parent[i]=i-1;
+    }
+
+    int k = 20;
+    for(int i=0;i<k;i++)
+    {
+        dsu.find_set(rg());
+        ll net = 0;
+        for(int j=0;j<n;j++)
+        {
+            net += dsu._count_jumps_to_find_parent_of(j);
+        }
+        cout<<i<<": "<<net<<endl;
+    }
+}
+
 int main()
 {
+    test_simple_fast_dsu_performance();
     return 0;
 }

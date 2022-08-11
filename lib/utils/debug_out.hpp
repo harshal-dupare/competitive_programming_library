@@ -20,8 +20,6 @@ namespace debug_space
     void debug_out(const std::vector<T> &x);
     template <typename T>
     void debug_out(const std::set<T> &x);
-    template <typename T>
-    void debug_out(const T x[], const int n);
     template <typename T, typename I>
     void debug_out(T *x, const std::vector<I> &dim);
     template <typename T>
@@ -107,18 +105,6 @@ namespace debug_space
             debug_out(", ");
         }
         debug_out("}");
-    }
-
-    template <typename T>
-    void debug_out(const T x[], const int n)
-    {
-        debug_out("[ ");
-        for (int i = 0; i < n; i++)
-        {
-            debug_out(x[i]);
-            debug_out(", ");
-        }
-        debug_out("]");
     }
 
     template <typename T, typename I>

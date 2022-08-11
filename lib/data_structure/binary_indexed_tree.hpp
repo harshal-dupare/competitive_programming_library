@@ -46,6 +46,7 @@ public:
         }
         else
         {
+            return I(-1);
         }
     }
     // query specific

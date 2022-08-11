@@ -66,6 +66,18 @@ public:
         }
         return x;
     }
+    I _count_jumps_to_find_parent_of(I x) const
+    {
+        I ct = 0;
+        if (this->parent[x] == -1)
+            return ct;
+        while (x != this->parent[x])
+        {
+            x = this->parent[x];
+            ct++;
+        }
+        return ct;
+    }
     friend std::ostream &operator<<(std::ostream &os, const union_find<I> &uf)
     {
         for (I i = 0; i < uf.n; i++)
@@ -112,7 +124,7 @@ public:
         }
         return false;
     }
-    I find_set(I x) const
+    I find_set(I x)
     {
         if (this->parent[x] == -1)
             return -1;
@@ -139,6 +151,18 @@ public:
             x = this->parent[x];
         }
         return x;
+    }
+    I _count_jumps_to_find_parent_of(I x) const
+    {
+        I ct = 0;
+        if (this->parent[x] == -1)
+            return ct;
+        while (x != this->parent[x])
+        {
+            x = this->parent[x];
+            ct++;
+        }
+        return ct;
     }
     friend std::ostream &operator<<(std::ostream &os, const simple_union_find<I> &uf)
     {
@@ -184,7 +208,7 @@ public:
         }
         return false;
     }
-    I find_set(I x) const
+    I find_set(I x)
     {
         if (this->parent[x] == -1)
             return -1;
@@ -205,6 +229,18 @@ public:
         }
         return x;
     }
+    I _count_jumps_to_find_parent_of(I x) const
+    {
+        I ct = 0;
+        if (this->parent[x] == -1)
+            return ct;
+        while (x != this->parent[x])
+        {
+            x = this->parent[x];
+            ct++;
+        }
+        return ct;
+    }
     friend std::ostream &operator<<(std::ostream &os, const union_find<I> &uf)
     {
         for (I i = 0; i < uf.n; i++)
@@ -219,6 +255,76 @@ public:
             {
                 os << uf.size[u] << "), ";
             }
+        }
+        os << "\n";
+        return os;
+    }
+};
+
+template <typename I>
+class simple_fast_union_find
+{
+public:
+    std::vector<I> parent;
+    I n;
+    simple_fast_union_find(I _n)
+    {
+        this->n = _n;
+        this->parent = std::vector<I>(_n, -1); // no element in the sets hence all empty as -1
+    }
+    void make_set(I x)
+    {
+        this->parent[x] = x;
+    }
+    bool union_sets(I x, I y)
+    {
+        I sx = this->find_set(x);
+        I sy = this->find_set(y);
+        if (sx != sy)
+        {
+            this->parent[sy] = sx;
+            return true;
+        }
+        return false;
+    }
+    I find_set(I x)
+    {
+        if (this->parent[x] == -1)
+            return -1;
+        // decreases the path length to top by half for x and everyone above it
+        while (x != this->parent[x])
+        {
+            x = this->parent[x] = this->parent[this->parent[x]]; 
+        }
+        return x;
+    }
+    I _const_find_set(I x) const
+    {
+        if (this->parent[x] == -1)
+            return -1;
+        while (x != this->parent[x])
+        {
+            x = this->parent[x];
+        }
+        return x;
+    }
+    I _count_jumps_to_find_parent_of(I x) const
+    {
+        I ct = 0;
+        if (this->parent[x] == -1)
+            return ct;
+        while (x != this->parent[x])
+        {
+            x = this->parent[x];
+            ct++;
+        }
+        return ct;
+    }
+    friend std::ostream &operator<<(std::ostream &os, const union_find<I> &uf)
+    {
+        for (I i = 0; i < uf.n; i++)
+        {
+            os << i << ":" << uf._const_find_set(i) << ", ";
         }
         os << "\n";
         return os;
