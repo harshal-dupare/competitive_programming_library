@@ -33,7 +33,7 @@ public:
             if (this->size[sx] < this->size[sy])
                 std::swap(sx, sy);
             this->parent[sy] = sx;
-            this->size[sy] += this->size[sx];
+            this->size[sx] += this->size[sy];
             return true;
         }
         return false;
@@ -203,7 +203,7 @@ public:
             if (this->size[sx] < this->size[sy])
                 std::swap(sx, sy);
             this->parent[sy] = sx;
-            this->size[sy] += this->size[sx];
+            this->size[sx] += this->size[sy];
             return true;
         }
         return false;

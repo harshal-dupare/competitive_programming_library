@@ -66,6 +66,110 @@ public:
         this->n++;
     }
 
+    // assumes that adjl has no special order
+    void swap_vertex(I u, I v)
+    {
+        if (u == v)
+            return;
+        I szu = 0, szv = 0;
+        for (auto w : adjl[u])
+        {
+            szu += (I)adjl[w].size();
+        }
+        for (auto w : adjl[v])
+        {
+            szv += (I)adjl[w].size();
+        }
+        if (szu > szv)
+        {
+            swap(u, v);
+        }
+        // assumes that szu <= szv
+
+        for (auto w : adjl[u])
+        {
+            for (I i = 0; i < (I)adjl[w].size(); i++)
+            {
+                if (adjl[w][i] == u)
+                {
+                    // mark it as last node
+                    adjl[w][i] = n;
+                }
+            }
+        }
+        for (auto w : adjl[v])
+        {
+            if (w == n)
+            {
+                // i.e. u and v are adj
+                for (I i = 0; i < (I)adjl[u].size(); i++)
+                {
+                    if (adjl[u][i] == v)
+                    {
+                        // mark it as u i.e. new id
+                        adjl[u][i] = u;
+                    }
+                }
+                continue;
+            }
+            for (I i = 0; i < (I)adjl[w].size(); i++)
+            {
+                if (adjl[w][i] == v)
+                {
+                    // mark it as u i.e. new id
+                    adjl[w][i] = u;
+                }
+            }
+        }
+        for (auto w : adjl[u])
+        {
+            if (w == u)
+            {
+                // assuming no self loop
+                for (I i = 0; i < (I)adjl[v].size(); i++)
+                {
+                    if (adjl[v][i] == n)
+                    {
+                        // mark it as last node
+                        adjl[v][i] = v;
+                    }
+                }
+                continue;
+            }
+            for (I i = 0; i < (I)adjl[w].size(); i++)
+            {
+                if (adjl[w][i] == n)
+                {
+                    // mark it as last node
+                    adjl[w][i] = v;
+                }
+            }
+        }
+        swap(adjl[u], adjl[v]);
+    }
+
+    void remove_vertex(I u)
+    {
+        this->swap_vertex(u, n - (I)1);
+        I nm = n - (I)1;
+        for (I v : this->adjl[nm])
+        {
+            I nz = (I)adjl[v].size() - (I)1;
+            for (I i = 0; i < nz; i++)
+            {
+                if (this->adjl[v][i] == nm)
+                {
+                    swap(adjl[v][i], adjl[v][nz]);
+                    // assuming simple graph, hence breaking
+                    break;
+                }
+            }
+            this->adjl[v].pop_back();
+        }
+        adjl.pop_back();
+        this->n--;
+    }
+
     graph<I> operator+(const graph<I> &O)
     {
         graph<I> GO(O.n + this->n);
@@ -135,8 +239,8 @@ public:
     const V inf_v = std::numeric_limits<V>::max();
     unordered_map<I, V> edge_weight;
 
-    wgraph()  : graph<I>() {}
-    wgraph(I n)  : graph<I>(n) {}
+    wgraph() : graph<I>() {}
+    wgraph(I n) : graph<I>(n) {}
 
     void add_edge(I x, I y, V w)
     {
@@ -188,14 +292,14 @@ void assign_adj_matrix(graph<I> &G, vector<vector<I>> &adjm)
 }
 
 template <typename I, typename V>
-void assign_adj_matrix(wgraph<I,V> &G, vector<vector<V>> &adjm)
+void assign_adj_matrix(wgraph<I, V> &G, vector<vector<V>> &adjm)
 {
     adjm.assign(G.n, vector<V>(G.n, 0));
     for (I i = 0; i < G.n; i++)
     {
         for (auto j : G.adjl[i])
         {
-            adjm[i][j] = G.edge_weight[i*G.N+j];
+            adjm[i][j] = G.edge_weight[i * G.N + j];
         }
     }
 }
@@ -719,6 +823,54 @@ void dfs_bridges_rec(I v, I p, I rtimer, graph<I> &G, vector<I> &tin, vector<I> 
             {
                 bridges.push_back(make_pair(u, v));
             }
+        }
+    }
+}
+
+template <typename I>
+void dfs_cut_vertices(I v, I p,graph<I> &G, vector<bool> &visited, vector<I> &tin, vector<I> &low, I &timer, vector<I> &is_cut_vertex)
+{
+    visited[v] = true;
+    tin[v] = low[v] = timer++;
+    I children = 0;
+    for (I to : G.adj[v])
+    {
+        if (to == p)
+            continue;
+        if (visited[to])
+        {
+            low[v] = min(low[v], tin[to]);
+        }
+        else
+        {
+            dfs_cut_vertices(to, v,G, visited, tin, low, timer);
+            low[v] = min(low[v], low[to]);
+            if (low[to] >= tin[v] && p != -(I)1)
+            {
+                is_cut_vertex[v] = 1;
+            }
+            ++children;
+        }
+    }
+    if (p == -(I)1 && children > (I)1)
+    {
+        is_cut_vertex[v] = 1;
+    }
+}
+
+template <typeanme I>
+void cut_vertices(graph<I> &G, vector<I> &is_cut_vertex)
+{
+    I timer = (I)0;
+    is_cut_vertex.assign(G.n, 0);
+    vector<bool> visited(G.n, false);
+    vector<I> tin(G.n, -(I)1), low(G.n, -(I)1);
+
+    for (int i = 0; i < G.n; ++i)
+    {
+        if (!visited[i])
+        {
+            dfs_cut_vertices(i,-(I)1,G,visited,tin,low,is_cut_vertex);
         }
     }
 }

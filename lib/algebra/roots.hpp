@@ -113,23 +113,25 @@ namespace roots
     template <typename R>
     std::vector<R> quadratic_roots(R a0, R a1, R a2)
     {
-        a1 /= a2;
+        // as m d sq
+        // 3  1 2 1
+        a1 /= (R)(-2.0)*a2;
         a0 /= a2;
-        R det = a1 * a1 - (R)4.0 * a0;
+        R det = a1 * a1 - a0;
         std::vector<R> ans(4,(R)0);
         if (det < 0)
         {
-            det = std::sqrt(std::abs(det));
-            ans[0] = (-a1) / (2.0);
-            ans[1] = (det) / (2.0);
-            ans[2] = ans[0];
-            ans[3] = -ans[1];
+            det = std::sqrt(-det);
+            ans[0] = a1;
+            ans[1] = det;
+            ans[2] = a1;
+            ans[3] = -det;
         }
         else
         {
             det = std::sqrt(det);
-            ans[0] = (-a1 + det) / (2.0);
-            ans[2] = (-a1 - det) / (2.0);
+            ans[0] = a1 + det;
+            ans[2] = a1 - det;
         }
 
         return ans;

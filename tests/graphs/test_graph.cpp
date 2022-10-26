@@ -99,9 +99,22 @@ void test_assign_adj_matrix()
     debug(wadjm);
 }
 
+void test_remove_vertex()
+{
+    graph<ll> g;
+    normal_graph(g);
+    ll rmn;
+    cin>>rmn;
+    debug(g.adjl);
+    debug("removing ",rmn);
+    g.remove_vertex(rmn);
+    debug(g.adjl);
+}
+
 int main()
 {
     freopen("input.txt","r",stdin);
-    test_assign_adj_matrix();
+    // test_assign_adj_matrix();
+    test_remove_vertex();
     return 0;
 }

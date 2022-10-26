@@ -31,24 +31,26 @@ I lcm(I a, I b)
 }
 
 template <typename I>
-I extended_gcd(I n, I n0, I &x, I &y)
+I extended_gcd(I n0, I n1, I &n0cn0, I &n0cn1)
 {
-    x = 1;
-    y = 0;
-    I xp = 0, yp = 1;
+    // n_(i+1) < n_i
+    n0cn0 = 1, n0cn1 = 0;   // n0 = n1*n0cn1 + n0*n0cn0 = (n0cn1, n0cn0)
+    I n1cn0 = 0, n1cn1 = 1; // n1 = n1*n1cn1 + n0*n1cn0  = (n1cn1, n1cn0)
 
-    // n  - n0*k = n1
-    // n0 - n1*x1=n2
-    // n1 - n2*x2=n3
-    while (n0 > 0)
+    // k = n0/n1
+    // n2 = n0  - n1*k --> n_(i+1) = n_(i-1) - k*n_(i)
+    // n2 = (n0cn1-k*n1cn1, n0cn0-k*n1cn0) -> new n1
+    // n1 = (        n1cn1,         n1cn0) -> new n0
+
+    while (n1 > 0)
     {
-        I k = n / n0;
-        std::tie(x, xp) = std::make_pair(xp, x - k * xp);
-        std::tie(y, yp) = std::make_pair(yp, y - k * yp);
-        std::tie(n, n0) = std::make_pair(n0, n % n0);
+        I k = n0 / n1;
+        std::tie(n0, n1) = std::make_pair(n1, n0 % n1);
+        std::tie(n0cn0, n1cn0) = std::make_pair(n1cn0, n0cn0 - k * n1cn0);
+        std::tie(n0cn1, n1cn1) = std::make_pair(n1cn1, n0cn1 - k * n1cn1);
     }
 
-    return n;
+    return n0;
 }
 
 template <typename I>
