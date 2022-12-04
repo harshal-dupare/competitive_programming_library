@@ -25,7 +25,7 @@ struct big_M
     int wd = 10;
     bool printtbl = true;
 
-    big_M(const linear_programming_problem<I, R> &lpp,const R& _M=(R)100)
+    big_M(const linear_programming_problem<I, R> &lpp, const R& _M=(R)100)
     {
         this->min_or_max = lpp.min_or_max;
         this->n_var = lpp.n_var;

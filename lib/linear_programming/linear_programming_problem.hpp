@@ -5,15 +5,24 @@
 using namespace std;
 
 template <typename I, typename R>
-struct linear_programming_problem
+class linear_programming_problem
 {
+public:
     bool is_input_taken;
     I n_var, n_eq;
     I n_slc, n_srp, n_arf, n_bsc, n_nbsc, n_tot;
-
+    /*
+    Min :: -1
+    Max ::  1
+    */
     I min_or_max;
     vector<R> z;
     vector<I> var_sign;
+    /*
+    -1 :: AX <= b
+    0 :: AX == b
+    1 :: AX >= b
+    */
     vector<I> eq_types;
     vector<vector<R>> a;
     vector<R> b;
@@ -28,11 +37,11 @@ struct linear_programming_problem
         this->n_slc = 0, this->n_srp = 0, this->n_arf = 0;
         for (I i = 0; i < this->n_eq; i++)
         {
-            if (this->eq_types[i] == (R)-1)
+            if (this->eq_types[i] == (I)-1)
             {
                 this->n_slc++;
             }
-            else if (this->eq_types[i] == 0)
+            else if (this->eq_types[i] == (I)0)
             {
                 this->n_arf++;
             }
@@ -113,14 +122,14 @@ struct linear_programming_problem
     {
         for(I i=0;i<this->n_var;i++)
         {
-            if(this->var_sign[i]==-1)
+            if(this->var_sign[i]==(I)-1)
             {
                 if(sol[i]>(R)0)
                 {
                     return false;
                 }
             } 
-            else if (this->var_sign[i]==1)
+            else if (this->var_sign[i]==(I)1)
             {
                 if(sol[i]<(R)0)
                 {
@@ -201,7 +210,7 @@ struct linear_programming_problem
     R objective(const vector<R> &xs)
     {
         R val = 0;
-        for (int i = 0; i < z.size(); i++)
+        for (int i = 0; i < (int)z.size(); i++)
         {
             val += z[i] * xs[i];
         }
@@ -232,7 +241,7 @@ linear_programming_problem<I, R> dual_problem(const linear_programming_problem<I
 
     // easier way to do this is multiply by lpp.min_or_max before asigning
     // but this needs multiplication to computing is expensive
-    if (lpp.min_or_max == (R)1)
+    if (lpp.min_or_max == (I)1)
     {
         // lpp :: max problem
         for (I i = 0; i < dual.z.size(); i++)

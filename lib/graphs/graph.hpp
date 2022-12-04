@@ -858,7 +858,7 @@ void dfs_cut_vertices(I v, I p,graph<I> &G, vector<bool> &visited, vector<I> &ti
     }
 }
 
-template <typeanme I>
+template <typename I>
 void cut_vertices(graph<I> &G, vector<I> &is_cut_vertex)
 {
     I timer = (I)0;
@@ -1082,7 +1082,7 @@ void level_graph_dinitz(I s, I t, graph<I> &G, vector<vector<I>> &residual_capac
 
 // FIXME complete
 template <typename I>
-I dinitz_algorithm(I s, I t, graph<I> &G, vector<vector<I>> &capacity, vector<vector<I>> &flow)
+I dinitz_algorithm(I s, I t, graph<I> &G, vector<vector<I>> &capacity, vector<vector<I>> &flow,vector<bool> &min_cut)
 {
     I max_flow = 0;
     return max_flow;
@@ -1397,63 +1397,4 @@ V krushal_wrange(wgraph<I, V> &G, vector<I> &parent, V W_max)
     }
 
     return tweight;
-}
-
-// opt <= output <= 2*opt
-template <typename I, typename V>
-void approximate_stiner_tree(wgraph<I, V> &g, vector<I> &stiner_vertices, vector<pair<I, I>> &stiner_edges)
-{
-    I sn = stiner_vertices.size();
-    wgraph<I, V> Hs(sn), G(g.n);
-
-    vector<vector<V>> wg(sn);
-    vector<vector<I>> prev(sn);
-    for (I i = 0; i < sn; i++)
-    {
-        dijkstra(g, stiner_vertices[i], wg[i], prev[i]);
-    }
-
-    for (I i = 0; i < sn; i++)
-    {
-        for (I j = i + 1; j < sn; j++)
-        {
-            Hs.add_edge(i, j, wg[i][j]);
-        }
-    }
-
-    vector<pair<I, I>> MSTh, MSTg;
-
-    V tw = krushal(Hs, MSTh);
-    unordered_map<I, bool> added;
-    for (auto ep : MSTh)
-    {
-        I i = stiner_vertices[ep.first];
-        I j = stiner_vertices[ep.second];
-
-        while (j != i)
-        {
-            if (i < j)
-            {
-                if (!added[i * g.N + j])
-                {
-                    G.add_edge(i, j, g.edge_weight[i * g.N + j]);
-                    added[i * g.N + j] = true;
-                }
-            }
-            else
-            {
-                if (!added[j * g.N + i])
-                {
-                    G.add_edge(i, j, g.edge_weight[j * g.N + i]);
-                    added[j * G.N + i] = true;
-                }
-            }
-
-            j = prev[ep.first][j];
-        }
-    }
-
-    V temp = krushal(G, MSTg);
-
-    stiner_edges = MSTg;
 }
