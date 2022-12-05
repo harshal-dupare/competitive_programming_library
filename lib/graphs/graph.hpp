@@ -276,10 +276,12 @@ public:
             this->add_edge(v1, v2, w);
         }
     }
+
+    
 };
 
 template <typename I>
-void assign_edge_list(const graph<I> &G, vector<pair<I,I>> &edge_list)
+void get_edge_list_of_graph(const graph<I> &G, vector<pair<I,I>> &edge_list)
 {
     edge_list.clear();
     for(I u=0;u<G.n;u++)
@@ -291,8 +293,21 @@ void assign_edge_list(const graph<I> &G, vector<pair<I,I>> &edge_list)
     }
 }
 
+template <typename I, typename R>
+void get_edge_list_of_graph(const wgraph<I,R> &G, vector<pair<pair<I,I>,R>> &edge_list)
+{
+    edge_list.clear();
+    for(I u=0;u<G.n;u++)
+    {
+        for(I v: G.adjl[u])
+        {
+            if(u<=v) edge_list.push_back(make_pair(make_pair(u,v),G.edge_weight[G.N*u+v]));
+        }
+    }
+}
+
 template <typename I>
-void assign_adj_matrix(graph<I> &G, vector<vector<I>> &adjm)
+void assign_adj_matrix(const graph<I> &G, vector<vector<I>> &adjm)
 {
     adjm.assign(G.n, vector<I>(G.n, 0));
     for (I i = 0; i < G.n; i++)
