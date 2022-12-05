@@ -1,8 +1,3 @@
-
-// FIXME understadn seg heap
-// FIXME read other seg trees and find imp ways & their advantages
-// FIXME impliment seg tree
-
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -84,7 +79,6 @@ public:
         }
         if (szr < l || szl > r)
         {
-            debug(this->null_value);
             return this->null_value;
         }
 
@@ -104,13 +98,11 @@ public:
     }
 
     // give zero indexed query
+    // @param i : 0 <= i <= n-1 
+    // @param j : i <= j <= n-1
+    // @return sum a[t], t=i,...,j
     I query(I i, I j)
     {
-        I k = 1;
-        while (k < n)
-        {
-            k <<= 1;
-        }
         return get(1, i, j, 0, this->n - 1);
     }
 
@@ -129,10 +121,11 @@ class segment_heap
 {
 public:
     // only heap is one indexed to allow for better access
+    // elements of original array starts from `n`
     vector<I> heap;
     I null_value = 0;
-    I N;
-    I n;
+    I N; // original array length
+    I n; // n = 2^k >= N, for such smallest k
 
     segment_heap();
     // @param
@@ -168,11 +161,11 @@ public:
             I lc = i << 1;
             I rc = lc + 1;
             if (rc >= 2 * this->n)
-                rc = 0;
+                rc = 0; // 0th element of heap is null value
             heap[i] = this->f(heap[lc], heap[rc]);
         }
     }
-
+    
     void update(I i, I val)
     {
         i += this->n;
@@ -192,17 +185,12 @@ public:
     // give zero indexed
     I get(I i, I l, I r, I szl, I szr)
     {
-        // debug(i);
-        // debug(szl);
-        // debug(szr);
         if (szl >= l && szr <= r)
         {
-            // debug(this->heap[i]);
             return this->heap[i];
         }
         if (szr < l || szl > r)
         {
-            // debug(this->null_value);
             return this->null_value;
         }
 
@@ -211,12 +199,10 @@ public:
         I rc = lc + 1;
         if (rc < 2 * this->n)
         {
-            // debug("rl");
             return this->f(get(lc, l, r, szl, mid), get(rc, l, r, mid + 1, szr));
         }
         else
         {
-            // debug("l");
             return get(lc, l, r, szl, mid);
         }
     }

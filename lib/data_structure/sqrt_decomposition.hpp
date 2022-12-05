@@ -5,7 +5,7 @@
 // FIXME improve the roubstness 
 // FIXME try to add template to make it all in 1 only if possible
 
-// properties: (updatable array, range_value:{add*,min*})
+// (updatable array, range_value:{add*,min*})
 template <typename I>
 class sqrt_dec_purq
 {

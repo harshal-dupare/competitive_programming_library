@@ -279,6 +279,19 @@ public:
 };
 
 template <typename I>
+void assign_edge_list(const graph<I> &G, vector<pair<I,I>> &edge_list)
+{
+    edge_list.clear();
+    for(I u=0;u<G.n;u++)
+    {
+        for(I v: G.adjl[u])
+        {
+            if(u<=v) edge_list.push_back(make_pair(u,v));
+        }
+    }
+}
+
+template <typename I>
 void assign_adj_matrix(graph<I> &G, vector<vector<I>> &adjm)
 {
     adjm.assign(G.n, vector<I>(G.n, 0));
