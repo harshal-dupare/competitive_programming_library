@@ -2,9 +2,17 @@ my_lib/tests/algebra/test_group.cpp
 my_lib/tests/algebra/test_linalg.cpp
 my_lib/tests/algebra/test_linear_eq.cpp
 my_lib/tests/algebra/test_roots.cpp
+my_lib/tests/approximation_algorithms/test_hamiltonian_cycle.cpp
+my_lib/tests/approximation_algorithms/test_multiway_cut.cpp
+my_lib/tests/approximation_algorithms/test_set_cover.cpp
+my_lib/tests/approximation_algorithms/test_stiner_tree.cpp
 my_lib/tests/bit_representation/test_bit_operations.cpp
 my_lib/tests/calculus/test_calculus.cpp
+my_lib/tests/data_structure/test_avl_tree.cpp
 my_lib/tests/data_structure/test_binary_indexed_tree.cpp
+my_lib/tests/data_structure/test_heap.cpp
+my_lib/tests/data_structure/test_kd_trees.cpp
+my_lib/tests/data_structure/test_rb_tree.cpp
 my_lib/tests/data_structure/test_segment_tree.cpp
 my_lib/tests/data_structure/test_sparse_table.cpp
 my_lib/tests/data_structure/test_special_stacks_queue.cpp
@@ -13,6 +21,7 @@ my_lib/tests/data_structure/test_suffix_tree.cpp
 my_lib/tests/data_structure/test_treap.cpp
 my_lib/tests/data_structure/test_trie.cpp
 my_lib/tests/data_structure/test_union_find.cpp
+my_lib/tests/data_structure/test_van_emde_boas_tree.cpp
 my_lib/tests/game_theory/test_game.cpp
 my_lib/tests/game_theory/test_stable_matching.cpp
 my_lib/tests/geometry/test_algorithms.cpp
@@ -45,6 +54,8 @@ my_lib/tests/number_theory/test_number_properties.cpp
 my_lib/tests/number_theory/test_primes.cpp
 my_lib/tests/number_theory/test_rational.cpp
 my_lib/tests/number_theory/test_real.cpp
+my_lib/tests/parameterized_algorithms/test_general_reduction_rules.cpp
+my_lib/tests/parameterized_algorithms/test_vertex_cover.cpp
 my_lib/tests/pnc/test_combinations.cpp
 my_lib/tests/pnc/test_counting_lemmas.cpp
 my_lib/tests/pnc/test_permutations.cpp
@@ -53,6 +64,7 @@ my_lib/tests/polynomials/test_polynomial.cpp
 my_lib/tests/polynomials/test_symmetric_function.cpp
 my_lib/tests/probability_and_statistics/test_markov_chain.cpp
 my_lib/tests/probability_and_statistics/test_statistics.cpp
+my_lib/tests/randomized_algorithms/test_min_cut.cpp
 my_lib/tests/randoms/test_random_gen.cpp
 my_lib/tests/string_algo/test_matching.cpp
 my_lib/tests/utils/test_debug_out.cpp

@@ -97,9 +97,9 @@ public:
     }
     I _count_jumps_to_find_parent_of(I x) const
     {
-        I ct = 0;
         if (this->parent[x] == -1)
-            return ct;
+            return (I)-1;
+        I ct = 0;
         while (x != this->parent[x])
         {
             x = this->parent[x];

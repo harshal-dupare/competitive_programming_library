@@ -9,7 +9,7 @@ typedef double R;
 
 void test_dsu()
 {
-    union_find<int> uf(100);
+    union_find_infpcq<int> uf(100);
 
     int t;
     cin >> t;
@@ -43,7 +43,7 @@ void test_simple_fast_dsu_performance()
 {
     ll n = 1000;
     auto rg = random_gens::uniform_int<ll>(0,n);
-    union_find<ll> dsu(n);
+    union_find_2pc<ll> dsu(n);
     dsu.parent[0] = 0;
     for(ll i=1;i<n;i++)
     {

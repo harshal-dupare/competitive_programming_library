@@ -2,9 +2,17 @@ my_lib/lib/algebra/group.hpp
 my_lib/lib/algebra/linalg.hpp
 my_lib/lib/algebra/linear_eq.hpp
 my_lib/lib/algebra/roots.hpp
+my_lib/lib/approximation_algorithms/hamiltonian_cycle.hpp
+my_lib/lib/approximation_algorithms/multiway_cut.hpp
+my_lib/lib/approximation_algorithms/set_cover.hpp
+my_lib/lib/approximation_algorithms/stiner_tree.hpp
 my_lib/lib/bit_representation/bit_operations.hpp
 my_lib/lib/calculus/calculus.hpp
+my_lib/lib/data_structure/avl_tree.hpp
 my_lib/lib/data_structure/binary_indexed_tree.hpp
+my_lib/lib/data_structure/heap.hpp
+my_lib/lib/data_structure/kd_trees.hpp
+my_lib/lib/data_structure/rb_tree.hpp
 my_lib/lib/data_structure/segment_tree.hpp
 my_lib/lib/data_structure/sparse_table.hpp
 my_lib/lib/data_structure/special_stacks_queue.hpp
@@ -13,6 +21,7 @@ my_lib/lib/data_structure/suffix_tree.hpp
 my_lib/lib/data_structure/treap.hpp
 my_lib/lib/data_structure/trie.hpp
 my_lib/lib/data_structure/union_find.hpp
+my_lib/lib/data_structure/van_emde_boas_tree.hpp
 my_lib/lib/game_theory/game.hpp
 my_lib/lib/game_theory/stable_matching.hpp
 my_lib/lib/geometry/algorithms.hpp
@@ -45,6 +54,8 @@ my_lib/lib/number_theory/number_properties.hpp
 my_lib/lib/number_theory/primes.hpp
 my_lib/lib/number_theory/rational.hpp
 my_lib/lib/number_theory/real.hpp
+my_lib/lib/parameterized_algorithms/general_reduction_rules.hpp
+my_lib/lib/parameterized_algorithms/vertex_cover.hpp
 my_lib/lib/pnc/combinations.hpp
 my_lib/lib/pnc/counting_lemmas.hpp
 my_lib/lib/pnc/permutations.hpp
@@ -53,6 +64,7 @@ my_lib/lib/polynomials/polynomial.hpp
 my_lib/lib/polynomials/symmetric_function.hpp
 my_lib/lib/probability_and_statistics/markov_chain.hpp
 my_lib/lib/probability_and_statistics/statistics.hpp
+my_lib/lib/randomized_algorithms/min_cut.hpp
 my_lib/lib/randoms/random_gen.hpp
 my_lib/lib/string_algo/matching.hpp
 my_lib/lib/utils/debug_out.hpp

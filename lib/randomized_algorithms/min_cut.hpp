@@ -11,14 +11,17 @@
 
 using namespace std;
 
-// assumes graph is connected
-// O(|V|+|E|*log_star(|V|))
-// P[|solution|==|min_cut|] >= tC2/nC2
+/**
+ * Requires :
+ * ---> Graph is connected
+ * Time Complexity : O(|V|+|E|*log_star(|V|))
+ * Probability : P[|solution|=|min_cut|] >= tC2/nC2
+ */
 template <typename I>
 I kargers_randomized_algorithm_for_min_cut(I n, const vector<pair<I, I>> &edge_list, vector<I> &min_cut, vector<pair<I, I>> &min_cut_edges, I t = 2)
 {
 
-    simple_fast_union_find<I> uf(n);
+    union_find_2pc<I> uf(n);
     for (I i = 0; i < n; i++)
     {
         uf.make_set(i);
@@ -70,10 +73,15 @@ I kargers_randomized_algorithm_for_min_cut(I n, const vector<pair<I, I>> &edge_l
     return (I)min_cut_edges.size();
 }
 
-// assumes graph is connected
-// brute force : O(2^(n/2)*|E|)
-// if |E| = O(|V|^2) at all stages then we have : O(n^2*log_star(n)*log(n))
-// P[|solution|==|min_cut|] >= c/log(n) , for some c
+/**
+ * Requires :
+ * ---> Graph is connected
+ * Time Complexity :
+ * ---> Brute force : O(2^(n/2)*|E|)
+ * ---> If |E| = O(|V|^2) at all stages then we have : O(n^2*log_star(n)*log(n))
+ * Probability :
+ * ---> P[|solution|=|min_cut|] >= c/log(n) , for some c > 0
+ */
 template <typename I>
 I karger_stine_randomized_algorithm_for_min_cut(I n, const vector<pair<I, I>> &edge_list, vector<I> &min_cut, vector<pair<I, I>> &min_cut_edges, const I n_bruteforce_limit = 6)
 {

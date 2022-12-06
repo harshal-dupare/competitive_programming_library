@@ -60,12 +60,16 @@ def includefl(l):
 
 for l in ls:
     tpl = testfl(l)
+    tpl_dir = os.path.join(*(getloclist(tpl)[:-1]))
+    if not os.path.exists(tpl_dir):
+        print(f"Path {tpl_dir} doesn't exists making it")
+        os.makedirs(tpl_dir)
     if not os.path.exists(tpl):
         touch(os.path.join(*getloclist(tpl)))
     
     ifl,ict = includefl(l)
-    print(ifl,ict)
     if not os.path.exists(ifl):
+        print(ifl,ict)
         fldrpt = '/'.join(getloclist(ifl)[:-1])
         if not os.path.exists(fldrpt):
             print(f"Path {fldrpt} doesn't exists making it")
