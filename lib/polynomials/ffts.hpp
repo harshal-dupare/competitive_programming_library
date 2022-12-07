@@ -72,12 +72,15 @@ namespace fft
         // resize and do bit reversal for inplace fft
         a.resize(n, std::complex<R>((R)0, (R)0));
         fft::bit_reversal_permutation<std::complex<R>>(a);
+        R two_R = (R)2.0;
+        if (inverse)
+        {
+            two_R = -two_R;
+        }
 
         for (int len = 2; len <= n; len <<= 1)
         {
-            R ang = (R)2.0 * std::acos((R)(-1.0)) / len;
-            if (inverse)
-                ang = -ang;
+            R ang = two_R * std::acos((R)(-1.0)) / len;
             std::complex<R> wlen(std::cos(ang), std::sin(ang));
             for (int i = 0; i < n; i += len)
             {

@@ -294,7 +294,7 @@ void get_edge_list_of_graph(const graph<I> &G, vector<pair<I,I>> &edge_list)
 }
 
 template <typename I, typename R>
-void get_edge_list_of_graph(const wgraph<I,R> &G, vector<pair<pair<I,I>,R>> &edge_list)
+void get_edge_list_of_wgraph(const wgraph<I,R> &G, vector<pair<pair<I,I>,R>> &edge_list)
 {
     edge_list.clear();
     for(I u=0;u<G.n;u++)
@@ -320,7 +320,7 @@ void assign_adj_matrix(const graph<I> &G, vector<vector<I>> &adjm)
 }
 
 template <typename I, typename V>
-void assign_adj_matrix(wgraph<I, V> &G, vector<vector<V>> &adjm)
+void assign_wadj_matrix(wgraph<I, V> &G, vector<vector<V>> &adjm)
 {
     adjm.assign(G.n, vector<V>(G.n, 0));
     for (I i = 0; i < G.n; i++)
@@ -1292,7 +1292,7 @@ void floyd_warshall(wgraph<I, V> &G, vector<vector<V>> &min_distance)
     }
 }
 
-// O(E*log(E)+V)
+// O(E*log(E)+E*log_star(V)+V)
 template <typename I, typename V>
 V krushal(wgraph<I, V> &G, vector<I> &parent)
 {
@@ -1318,9 +1318,9 @@ V krushal(wgraph<I, V> &G, vector<I> &parent)
         I b = itr.second % G.N;
         I ida = a, idb = b;
         while (ida != dsu[ida])
-            ida = dsu[ida];
+            ida = dsu[ida] = dsu[dsu[ida]];
         while (idb != dsu[idb])
-            idb = dsu[idb];
+            idb = dsu[idb] = dsu[dsu[idb]];
 
         if (ida != idb)
         {
@@ -1348,7 +1348,7 @@ V krushal(wgraph<I, V> &G, vector<I> &parent)
     return tweight;
 }
 
-// O(E*W+V)
+// O(E*W+E*log_star(V)+V)
 template <typename I, typename V>
 V krushal_wrange(wgraph<I, V> &G, vector<I> &parent, V W_max)
 {
@@ -1396,10 +1396,10 @@ V krushal_wrange(wgraph<I, V> &G, vector<I> &parent, V W_max)
         I a = itr.first;
         I b = itr.second;
         I ida = a, idb = b;
-        while (ida != dsu[dsu[ida]])
-            ida = dsu[dsu[ida]];
-        while (idb != dsu[dsu[idb]])
-            idb = dsu[dsu[idb]];
+        while (ida != dsu[ida])
+            ida = dsu[ida] = dsu[dsu[ida]];
+        while (idb != dsu[idb])
+            idb = dsu[idb] = dsu[dsu[idb]];
 
         if (ida != idb)
         {

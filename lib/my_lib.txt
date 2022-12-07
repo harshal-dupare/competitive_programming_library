@@ -66,6 +66,7 @@ my_lib/lib/probability_and_statistics/markov_chain.hpp
 my_lib/lib/probability_and_statistics/statistics.hpp
 my_lib/lib/randomized_algorithms/min_cut.hpp
 my_lib/lib/randoms/random_gen.hpp
+my_lib/lib/randoms/random_sampling.hpp
 my_lib/lib/string_algo/matching.hpp
 my_lib/lib/utils/debug_out.hpp
 my_lib/lib/utils/plotting.hpp
